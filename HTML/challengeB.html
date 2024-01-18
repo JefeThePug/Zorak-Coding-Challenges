@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Python Zorak's Coding Challenges</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <a class="float" href="index.html">&lt;</a>
+
+    <header>
+        <h1>Challenge Y</h1>
+    </header>
+
+    <section id="partone">
+        <div class="header">
+            <h2>Part One: <br>TBD</h2>
+        </div>
+        <p>
+            Some sort of flood fill/dfs bfs grid problem to build a flood fill function.
+        </p>
+    </section>
+
+    <section id="parttwo">
+        <div class="header">
+            <h2>Part Two: <br>To the Stars</h2>
+        </div>
+        <p>
+            Having successfully passed the comprehension exam, you are admitted into the Laser Room.
+            You see a gigantic machine pointed toward the sky with a rather simple control panel of
+            two large buttons. The label on the machine reads "<span class="b i">P.I.L.</span>" which 
+            stands for "<span class="b i">Pulsar&nbsp;Intercepting&nbsp;Laser</span>". 
+        </p>
+        <p>
+            On the monitor, you see a map of the pulsars within the laser's range. 
+        </p>
+        <div>
+            <a href="starmap.png">
+                <div class="imgcontainer code">
+                    <img src="starmap.png">
+                </div>
+            <p class="main ssm attach">[ click to view full sized image ]</p>
+            </a>
+        </div>
+        <p>
+            You are briefed on the PIL by the lead technician:
+        </p>
+        <div class="shadow pad">
+            <ul>
+                <li>
+                    The PIL will emit a frequency of light in the direction of your provided
+                    coordinates, which hits the pulsar, causing it to <span class="b i">flood 
+                    out</span> in all directions until it reaches an edge. 
+                </li>
+                <li>
+                    This reaction, if present on the <span class="b i">entire pulsar</span>, will 
+                    emit 200 gigajoules (GJ) of energy, received by the PIL's sensors.
+                </li>
+                <li>
+                    Unfortunately, a single pulse of the PIL costs 100 GJ so the <span class="b i">
+                    net energy gained</span> from completely filling a pulsar is 100 GJ, not 200 GJ.
+                </li>
+                <li>
+                    If a pulsar is completely filled <span class="b i">more than once</span>, the PIL's 
+                    sensors are able to intercept 1100 GJ from it instead of 200 GJ. 
+                    <br><span class="i sm">It does not matter if the pulsar is filled more than twice.
+                    It will only either emit 200 GJ for one fill or 1100 GJ for more than one.</span>
+                </li>
+            </ul>
+        </div>
+        <p>
+            She continues to explain how the PIL's sensors are able to receive and store the energy 
+            from the pulsars, but you start to zone out. Science has never been your strong suit. 
+            What you do know, however, is that your job is to determine if the energy gained from 
+            your printout of coordinates <span class="i sm">(your puzzle input)</span> is worth the 
+            cost of running the PIL and, if so, how much energy is net.  
+        </p>
+        <p>
+            You notice that the pulsars on the monitor overlap and manage to ask the lead technician
+            before she leaves if the laser will flood to the edge of the pulsar you hit only, or to 
+            any edge of any pulsar it encounters when they overlap. 
+            <br>She lets you know that the PIL only floods until it encounters 
+            <span class="b">any edge</span> including the boundaries of the map and to think of the map 
+            as a <span class="b i"><a href="https://numpy.org/doc/stable/reference/arrays.ndarray.html">
+            2D grid</a> of pixels</span>. Each of your coordinates targets a pixel on the map.
+            You can press the "scan" button as many times as you like to check your net energy, and 
+            the PIL will not waste any energy. Energy is only lost when retrieving the pulsars' energy
+            by pushing the "collect" button which will only be done once you deliver your results to
+            the lead technician. 
+        </p>
+            For example, looking at a smaller map and list of coordinates:
+        </p>
+        <div class="shadow">
+            <div class="flex-container">
+                <div class="column">
+                    <img class="smallpic" src="test.png">
+                </div>
+                <div class="column">
+                    <p>
+                        <span class="code">
+                            66, 147,<br>
+                            120, 123,<br>
+                            329, 181,<br>
+                            368, 339
+                        </span>
+                        Coordinates are indicated by red dots on the following map
+                    </p>
+                </div>
+            </div>
+            <div class="flex-container">
+                <div class="column">
+                    <img class="smallpic" src="testresult0a.png">
+                </div>
+                <div class="column">
+                    <p>
+                        After the PIL floods those areas
+                        you see them indicated in yellow
+                        on the following map
+                    </p>
+                </div>   
+            </div>   
+            <div class="flex-container">
+                <div class="column">
+                    <img class="smallpic" src="testresult0b.png">
+                </div>
+                <div class="column">
+                    <p>
+                        There are two full pulsars colored (circled). 
+                        The other yellow area does not count because
+                        the pulsar is not fully flooded.
+                    </p>
+                </div>   
+            </div>   
+        </div>
+        <p>
+            Two full pulsars flooded only once provides 400 GJ of energy. 
+            But four coordinates cost 400 GJ of energy, making the net 0 GJ.
+            This process does not seem as efficient as it could be. You open
+            the metal cover on the side of the laser labeled "CALIBRATIONS" 
+            and inside you see an empty rectangular slot like you'd find in a
+            camera. You open the desk drawer looking for something that would 
+            fit inside that slot and discover a small square <span class="b i">
+            mirror</span> that is the perfect length for the slot. Of course!
+            You could double the output of the laser by <span class="b i">
+            mirroring the x and y coordinates</span>!  
+        </p>
+        <p>
+            This would mean, at the energy cost of your four coordinates,
+            <span class="code sm">
+                (66, 147) (120, 123) (329, 181) (368, 339)
+            </span>
+            you could fill eight coordinates worth of pulsars!
+            <span class="code sm">
+                (66, 147) (120, 123) (329, 181) (368, 339)<br>
+                (147, 68) (123, 120) (181, 329) (339, 368)
+            </span>
+        </p>
+        <div class="flex-container">
+            <div class="column">
+                <img class="smallpic" src="testresult1.png">
+            </div>
+            <div class="column">
+                <p>
+                    Two coordinates in each area of the upper left pulsar 
+                    painted cyan to indicate it was flooded twice. A single 
+                    coordinate in the bottom, left-of-the-middle pulsar 
+                    painted yellow to indicate it was flooded only once.
+                </p>
+            </div>  
+        </div>
+        <p>
+            The other pulsars on the right side are not completely 
+            filled, either getting interrupted by the boundary, or
+            missing a small area (circled in red). 
+        </p> 
+        <p>
+            The one complete cyan pulsar provides an energy gain of 1100 GJ
+            and the one complete yellow pulsar provides 200 GJ. When you 
+            subtract the 400 GJ it cost to send a pulse to these eight 
+            coordinates with the mirror, you get a total net energy of 900 GJ. 
+        </p>
+        <p>
+            Lucky for you, you are a wiz at Python and just so happen to know
+            there is a <a href="https://pypi.org/project/pillow/">PIL Library</a> 
+            at your disposal. You can bang out your coordinates in no time!
+        </p>
+        <p class="hint-label ssm"> HINT (mouse-over to view):</p>
+        <p class="hint ssm">
+            PIL Library (pillow) comes with a built-in flood fill function, but 
+            try to use the flood fill function you made for Part One instead.
+            numpy.array() can easily take a PIL.Image object and turn it into
+            an array of RGB values representing each pixel. You can also use
+            the PIL.Image.fromarray() method to take a numpy array turn it back
+            into an image to view your results.
+        </p>
+
+        <p class="main">
+            Use the initial pulsar map (in full size) and the following coordinates:
+        </p>
+        <div class="input">
+            <a href="input3.txt" class="input">
+                <span class="code main">
+                    420, 115<br>
+                    616, 616<br>
+                    329, 128<br>
+                    889, 699<br>
+                    599, 843<br>
+                    524, 152<br>
+                    &nbsp;︙&nbsp;&nbsp;&nbsp;︙
+                </span>
+                <p class="main ssm attach">[&nbsp;click&nbsp;for&nbsp;COMPLETE&nbsp;input&nbsp;]</p>
+            </a>
+        </div>
+        
+        <div class="shimmer">
+            <form>
+                <div class="form-box">
+                    <label class="main">What is the net energy (in GJ) gained?<br></label>
+                        <input type="text" id="answer2" placeholder="...">
+                    <button>Submit</button>
+                </div>
+            </form>
+        </div>
+    </section>
+
+</body>
+
+</html>
