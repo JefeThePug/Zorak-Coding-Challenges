@@ -37,6 +37,6 @@ R,L, ,L,W,S,Y,R,F, ,I,S,H, ,F,O,O,D,N
 
 
 
-U,N,D,I,S,C,O,V,E,R,E,D, ,E,A,S,T,E,R, ,E,G,G,S
+U,N,D,I,S,C,O,V,E,R,E,D, ,E,A,S,T,E,R, ,E,G,G
 T,O,O,F
 ',S,I,T,V,B,I,E,I,;,!
