@@ -33,7 +33,7 @@ J,S,;,H,V,B,Z,.,O,R
 B,R,B,F,C,',I,T,G,N
 J,K,',W,Q,C,A,',W,V,N
 ;,K,G,M,E,V
-R,L, ,L,W,S,Y,R,F, ,I,S,H, ,F,O,O,D,N
+R,L, ,L,W,S,Y,R,G, ,R,E,E,N,M,E,N,U,N
 
 
 
