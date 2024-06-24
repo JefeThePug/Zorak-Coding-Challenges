@@ -2,13 +2,13 @@ import os
 import sys
 import requests
 
-from flask import Flask, redirect, url_for, request, session
+from flask import Flask, redirect, render_template, url_for, request, session
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.')
 app.secret_key = os.urandom(24)
 
 DISCORD_CLIENT_ID = os.getenv('CLIENT_ID')
@@ -16,8 +16,19 @@ DISCORD_CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 DISCORD_REDIRECT_URI = "http://127.0.0.1:5000/callback"
 
 @app.route("/")
-def home():
-    return '<h2><a href="/login">Login with Discord</a></h2>'
+def index():
+    img = "images/index/blank.png"
+    text = "Log-in<br>with Discord"
+    if "user_data" in session:
+        img = session["user_data"]["img"]
+        text = "Logout"
+    return render_template("index.html", img=img, text=text)
+
+@app.route("/pre-login")
+def pre_login():
+    if "user_data" in session:
+        return render_template("logout.html", img=session["user_data"]["img"], text="")
+    return render_template("login.html", img="images/index/blank.png", text="")
 
 @app.route("/login")
 def login():
@@ -31,6 +42,11 @@ def login():
 
 @app.route("/callback")
 def callback():
+    error = request.args.get("error")
+    if error:
+        print(session, file=sys.stderr)
+        return render_template("index.html", img="images/index/blank.png", text="Log-in<br>with Discord")
+    
     code = request.args.get("code")
     if not code:
         return 'Error: No code provided', 400
@@ -69,17 +85,14 @@ def profile():
 
     user_id = user_data["id"]
     avatar_hash = user_data["avatar"]
-    avatar_url = "blank.png"
+    avatar_url = "images/index/blank.png"
     if avatar_hash:
         file_type = ['png','gif'][avatar_hash.startswith("a_")]
         avatar_url = f"https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.{file_type}"
-    
-    return f"""
-    Logged in as {user_data['username']}#{user_data['discriminator']}<br>
-    <img src="{avatar_url}" alt="User Avatar"><br>
-    <a href='/access'>Grant Access</a>
-    <a href='/logout'>Logout</a>
-    """
+        session["user_data"]["img"] = avatar_url
+
+    return render_template("index.html", img=avatar_url, text="Logout")
+
 
 @app.route("/access")
 def access():
@@ -124,7 +137,8 @@ def access():
 @app.route('/logout')
 def logout():
     session.pop('token', None)
-    return redirect(url_for('home'))
+    session.pop('user_data', None)
+    return redirect(url_for('index'))
 
 
 if __name__ == '__main__':

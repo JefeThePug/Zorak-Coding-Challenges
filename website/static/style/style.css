@@ -17,7 +17,7 @@ body {
     color: var(--t-main);
     font-family: "Roboto Mono", monospace;
     font-optical-sizing: auto;
-    font-weight: 300;
+    font-weight: 400;
     margin: 0;
 }
 
@@ -31,9 +31,14 @@ section {
 /* Headers */
 header {
     background-color: var(--b-focus1);
+    display: flex;
     max-width: 870px;
     padding: 5px;
+    position: relative;
     text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
 }
 .header {text-align: center;}
 h2 {border-bottom: 2px solid var(--t-main);}
@@ -266,6 +271,32 @@ img {
 }
 .smallpic {
     width: 150px;
+}
+#navbar-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid var(--b-main);
+    position: absolute;
+    right: 20px;
+}
+#navbar-img:hover {
+    background-color: var(--t-focus);
+}
+.hover-text {
+    color: var(--b-main);
+    display: none;
+    position: absolute;
+    right: 80px; /* Position text next to the image */
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--t-focus);
+    padding: 5px;
+    border-radius: 3px;
+}
+
+#navbar-img:hover + .hover-text {
+    display: inline-block;
 }
 
 

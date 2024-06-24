@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Python Zorak's Coding Challenges</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>{% block title %}{% endblock %}</h1>
+        <a href="/pre-login">
+            <img id="navbar-img" src="{% block image %}{% endblock %}" alt="Navbar Image">
+            <span class="hover-text">{% block hovertext %}{% endblock %}</span>
+        </a>
+    </header>
+
+    {% block main %}
+    {% endblock %}
+
+</body>
+
+</html>

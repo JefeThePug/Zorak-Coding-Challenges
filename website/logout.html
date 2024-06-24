@@ -1,0 +1,28 @@
+{% extends "templates/default.html" %}
+
+{% block title %}
+    <br>Logout Confirmation
+{% endblock %}
+
+{% block image %}
+    {{ img }}
+{% endblock %}
+
+{% block hovertext %}
+    {{ txt }}
+{% endblock %}
+
+{% block main %}
+    <section id="announcement">
+        <div class="imgcontainer">
+            <img src="{{ url_for('static', filename='images/index/blank.png') }}">
+        </div>
+        <div>
+            <p>
+                Are you sure you want to Logout?
+            </p>
+            <button onclick="location.href='/logout'">Yes</button>
+            <button onclick="location.href='/'">No</button>
+        </div>
+    </section>
+{% endblock %}

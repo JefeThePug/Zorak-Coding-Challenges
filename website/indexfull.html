@@ -1,25 +1,23 @@
-{% extends "templates/default.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}
-    Practical Python<br>Zorak's Coding Challenges
-{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Python Zorak's Coding Challenges</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
 
-{% block image %}
-    {% if img.startswith('http') %}
-        {{ img }}
-    {% else %}
-        {{ url_for('static', filename=img) }}
-    {% endif %}
-{% endblock %}
+<body>
+    <header>
+        <h1>Practical Python<br>Zorak's Coding Challenges</h1>
+        <img id="navbar-img" src="images/index/blank.png">
+        <span class="hover-text">Log-in<br>with Discord</span>
+    </header>
 
-{% block hovertext %}
-    {{ txt }}
-{% endblock %}
-
-{% block main %}
     <section id="logo">
         <div class="imgcontainer">
-            <img src="{{ url_for('static', filename='images/index/logo.png') }}">
+            <img src="images/index/logo.png">
         </div>
         <div>
             <p>
@@ -47,4 +45,7 @@
             <li><a href="#">Coming Soon</a></li>
         </ul>
     </section>
-{% endblock %}
+
+</body>
+
+</html>
