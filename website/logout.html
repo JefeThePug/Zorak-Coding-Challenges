@@ -1,7 +1,7 @@
 {% extends "templates/default.html" %}
 
 {% block title %}
-    <br>Logout Confirmation
+    Logout Confirmation
 {% endblock %}
 
 {% block image %}
@@ -9,13 +9,13 @@
 {% endblock %}
 
 {% block hovertext %}
-    {{ txt }}
+    {{ text|safe }}
 {% endblock %}
 
 {% block main %}
     <section id="announcement">
         <div class="imgcontainer">
-            <img src="{{ url_for('static', filename='images/index/blank.png') }}">
+            <img src="{{ url_for('static', filename='images/index/bye.png') }}">
         </div>
         <div>
             <p>

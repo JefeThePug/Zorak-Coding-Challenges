@@ -1,7 +1,7 @@
 {% extends "templates/default.html" %}
 
 {% block title %}
-    <br>Login with Discord
+    Login with Discord
 {% endblock %}
 
 {% block image %}
@@ -9,18 +9,18 @@
 {% endblock %}
 
 {% block hovertext %}
-    {{ txt }}
+    {{ text|safe }}
 {% endblock %}
 
 {% block main %}
     <section id="announcement">
         <div class="imgcontainer">
-            <img src="https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/636e0b5061df29d55a92d945_full_logo_blurple_RGB.svg">
+            <img src="{{ url_for('static', filename='images/index/hi.png') }}">
         </div>
         <div>
             <p>
-                Logging into your Discord account will save your progress on this site with your completed 
-                challenges. Additionally, this app gives you access to private discussion channels for each 
+                Logging into your Discord account will save your progress with completed challengeson this 
+                site. Additionally, this app gives you access to private discussion channels for each 
                 challenge within the Practical Python server.
             </p>
             <p>

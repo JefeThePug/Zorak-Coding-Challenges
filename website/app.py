@@ -15,6 +15,8 @@ DISCORD_CLIENT_ID = os.getenv('CLIENT_ID')
 DISCORD_CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 DISCORD_REDIRECT_URI = "http://127.0.0.1:5000/callback"
 
+NUM = 2
+
 @app.route("/")
 def index():
     img = "images/index/blank.png"
@@ -22,7 +24,7 @@ def index():
     if "user_data" in session:
         img = session["user_data"]["img"]
         text = "Logout"
-    return render_template("index.html", img=img, text=text)
+    return render_template("index.html", img=img, text=text, num=NUM)
 
 @app.route("/pre-login")
 def pre_login():
@@ -45,7 +47,7 @@ def callback():
     error = request.args.get("error")
     if error:
         print(session, file=sys.stderr)
-        return render_template("index.html", img="images/index/blank.png", text="Log-in<br>with Discord")
+        return render_template("index.html", img="images/index/blank.png", text="Log-in<br>with Discord", num=NUM)
     
     code = request.args.get("code")
     if not code:
@@ -91,7 +93,7 @@ def profile():
         avatar_url = f"https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.{file_type}"
         session["user_data"]["img"] = avatar_url
 
-    return render_template("index.html", img=avatar_url, text="Logout")
+    return render_template("index.html", img=avatar_url, text="Logout", num=NUM)
 
 
 @app.route("/access")

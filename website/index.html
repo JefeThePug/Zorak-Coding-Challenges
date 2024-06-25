@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block hovertext %}
-    {{ txt }}
+    {{ text|safe }}
 {% endblock %}
 
 {% block main %}
@@ -22,29 +22,24 @@
             <img src="{{ url_for('static', filename='images/index/logo.png') }}">
         </div>
         <div>
+            <p>Hi! I'm Xarlos. It's like Carlos, but from Space.</p>
             <p>
-            Hi! I'm Xarlos. It's like Carlos, but from Space.
-            I am desperately in need of you to join me on an 
+            I desperately need you to join me on an 
             important mission abord the STS Space Ghost and use 
-            your Python skills to help us defeat the evil Zorak.
-            <br>
-            Quick! There's no time! We have to move now!
-        </p>
+            your Python skills to help us defeat the evil alien, Zorak.
+            </p>
+            <p>Quick! There's no time! We have to move now!</p>
         </div>
     </section>
 
     <section id="challenges">
         <ul>
-            <li><a href="challengeA.html">Day X</a></li>
-            <li><a href="challengeB.html">Day Y (coming soon)</a></li>
-            <li><a href="#">Coming Soon</a></li>
-            <li><a href="#">Coming Soon</a></li>
-            <li><a href="#">Coming Soon</a></li>
-            <li><a href="#">Coming Soon</a></li>
-            <li><a href="#">Coming Soon</a></li>
-            <li><a href="#">Coming Soon</a></li>
-            <li><a href="#">Coming Soon</a></li>
-            <li><a href="#">Coming Soon</a></li>
+            {% for week in range(1, num + 1) %}
+                <li><a href="/challenge/{{ week }}">Week {{ week }}</a></li>
+            {% endfor %}
+            {% if num < 10 %}
+            More Challenges Coming Soon...
+            {% endif %}
         </ul>
     </section>
 {% endblock %}

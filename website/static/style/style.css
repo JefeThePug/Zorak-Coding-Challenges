@@ -62,9 +62,10 @@ a.float {
     position: fixed;
     text-shadow: 0 0 0.1em #25b525;
     width: fit-content;
+    z-index: 100;
+    &::after {content: "";}
+    &:hover::after {content: " BACK";}
 }
-a.float::after {content: "";}
-a.float:hover::after {content: " BACK";}
 
 /* Text Adjustments */
 .b {
@@ -176,12 +177,13 @@ input {
     color: var(--t-code);
     margin: 0;
     padding: 0 2px;
-    &::placeholder{color: var(--t-code);}
+    &::placeholder {color: var(--t-code);}
+    &:focus {
+        border-width: 2px;
+        outline: none;
+    }
 }
-input:focus {
-    border-width: 2px;
-    outline: none;
-}
+
 div.input {
     min-width: 30%;
     width: fit-content;
@@ -194,14 +196,9 @@ button {
     font-size: 15px;
     font-weight: bold;
     white-space: nowrap;
-}
-button::before {
-    content: "[ ";
-    font-size: 1.5em;
-}
-button::after {
-    content: " ]";
-    font-size: 1.5em;
+    &::before, &::after {font-size: 1.5em;}
+    &::before {content: "{ ";}
+    &::after {content: " }";}
 }
 button.bigtext {font-size: 80px;}
 
@@ -279,10 +276,14 @@ img {
     border: 3px solid var(--b-main);
     position: absolute;
     right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    &:hover {
+        background-color: var(--t-focus);
+        + .hover-text {display: inline-block;}
+    }
 }
-#navbar-img:hover {
-    background-color: var(--t-focus);
-}
+
 .hover-text {
     color: var(--b-main);
     display: none;
@@ -295,9 +296,6 @@ img {
     border-radius: 3px;
 }
 
-#navbar-img:hover + .hover-text {
-    display: inline-block;
-}
 
 
 /* Mobile Adjustments */
@@ -309,7 +307,7 @@ img {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-    .mlb {display: block;}
+    /* .mlb {display: block;} */
     .sm {font-size: x-small;}
     .spacer {margin: 0;}
 }

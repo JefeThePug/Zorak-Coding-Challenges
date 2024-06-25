@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical Python Zorak's Coding Challenges</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
+</head>
+
+<body>
+    <a class="float" href="index.html">&lt;</a>
+
+    <header>
+        <h1>{% block title %}{% endblock %}</h1>
+        <a href="/pre-login">
+            <img id="navbar-img" src="{% block image %}{% endblock %}" alt="Navbar Image">
+            <span class="hover-text">{% block hovertext %}{% endblock %}</span>
+        </a>
+    </header>
+
+    <section id="partone">
+        <div class="header">
+            <h2>{% block subtitle1 %}{% endblock %}</h2>
+        </div>
+
+        {% block section1 %}
+        {% endblock %}
+
+        <p class="main">
+            {% block intro1 %}{% endblock %}
+        </p>
+        <div class="input">
+            {% block input1 %}
+            {% endblock %}
+        </div>
+
+        <div class="shimmer">
+            <form>
+                <div class="form-box">
+                    {% block solution1 %}
+                    {% endblock %}
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section id="partone">
+        <div class="header">
+            <h2>{% block subtitle1 %}{% endblock %}</h2>
+        </div>
+
+        {% block section1 %}
+        {% endblock %}
+
+        <p class="main">
+            {% block intro1 %}{% endblock %}
+        </p>
+        <div class="input">
+            {% block input1 %}
+            {% endblock %}
+        </div>
+
+        <div class="shimmer">
+            <form>
+                <div class="form-box">
+                    {% block solution1 %}
+                    {% endblock %}
+                </div>
+            </form>
+        </div>
+    </section>
+
+    
+</body>
+
+</html>
