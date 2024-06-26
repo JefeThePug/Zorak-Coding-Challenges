@@ -123,9 +123,9 @@ def get_challenge(num):
             "a": a,
             "b": b,
             "sol1": a["solution"],
-            "sol2": b["solution"],
+            "sol2": b["form"],
             "parttwo": True,
-            "done": True,
+            "done": False,
         }
         return render_template("challenge.html", **params)
         
