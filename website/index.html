@@ -35,7 +35,7 @@
     <section id="challenges">
         <ul>
             {% for week in range(1, num + 1) %}
-                <li><a href="/challenge/{{ week }}">Week {{ week }}</a></li>
+                <li><a href="/challenge/{{ obfuscate(week) }}">Week {{ week }}</a></li>
             {% endfor %}
             {% if num < 10 %}
             More Challenges Coming Soon...

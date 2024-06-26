@@ -7,6 +7,8 @@ from flask import Flask, redirect, render_template, url_for, request, session, c
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 
+from helper import *
+
 load_dotenv()
 
 app = Flask(__name__, template_folder=".")
@@ -102,9 +104,14 @@ def callback():
 
     return render_template("index.html", img=avatar_url, text="Logout", num=NUM)
 
+@app.template_global()
+def obfuscate(value):
+    return OBFUSCATE[f"{value}"]
+
 
 @app.route("/challenge/<num>", methods=["GET", "POST"])
 def get_challenge(num):
+    num = DEOBFUSCATE[num]
     if request.method == "GET":
         img = session["user_data"]["img"] if "user_data" in session else "images/index/blank.png"
         text = "Logout" if "user_data" in session else "Log-in<br>with Discord"
