@@ -18,7 +18,7 @@ DISCORD_CLIENT_ID = os.getenv("CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 DISCORD_REDIRECT_URI = "http://127.0.0.1:5000/callback"
 
-NUM = 2
+NUM = 10
 
 
 @app.route("/")
@@ -54,12 +54,7 @@ def callback():
     error = request.args.get("error")
     if error:
         print(session, file=sys.stderr)
-        return render_template(
-            "index.html",
-            img="images/index/blank.png",
-            text="Log-in<br>with Discord",
-            num=NUM,
-        )
+        return redirect(url_for("index"))
 
     code = request.args.get("code")
     if not code:
@@ -102,7 +97,7 @@ def callback():
         )
         session["user_data"]["img"] = avatar_url
 
-    return render_template("index.html", img=avatar_url, text="Logout", num=NUM)
+    return redirect(url_for("index"))
 
 @app.template_global()
 def obfuscate(value):
@@ -121,7 +116,7 @@ def get_challenge(num):
         try:
             a, b = data[num].values()
         except KeyError:
-            return render_template("index.html", img=img, text=text, num=NUM)
+            return redirect(url_for("index"))
         
         params = {
             "img": img,
