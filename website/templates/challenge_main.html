@@ -10,7 +10,14 @@
 
 <body>
     <a class="float" href="/">&lt;</a>
-
+    {% if error %}
+        <dialog open>
+            <p>{{ error }}</p>
+            <form method="dialog">
+            <button>OK</button>
+            </form>
+        </dialog>
+    {% endif %}
     <header>
         <h1>{% block title %}{% endblock %}</h1>
         <a href="/pre-login">
@@ -30,13 +37,14 @@
         <h4 class="main">
             {% block intro1 %}{% endblock %}
         </h4>
+        <a id="a"></a>
         <div class="input">
             {% block input1 %}
             {% endblock %}
         </div>
 
         <div class="shimmer">
-            <form>
+            <form action="#a" method="post">
                 <div class="form-box">
                     {% block solution1 %}
                     {% endblock %}
@@ -57,13 +65,14 @@
             <p class="main">
                 {% block intro2 %}{% endblock %}
             </p>
+            <a id="b"></a>
             <div class="input">
                 {% block input2 %}
                 {% endblock %}
             </div>
 
             <div class="shimmer">
-                <form>
+                <form action="#b" method="post">
                     <div class="form-box">
                         {% block solution2 %}
                         {% endblock %}
@@ -71,7 +80,7 @@
                 </form>
             </div>
         {% if done %}
-            <form class="form-box">
+            <form class="form-box" action="/access" method="post">
                 <input type="hidden" name="num" value="{{ num }}">
                 <button>Access Discussion Channel</button>
             </form>

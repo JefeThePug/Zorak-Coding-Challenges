@@ -35,7 +35,19 @@
     <section id="challenges">
         <ul>
             {% for week in range(1, num + 1) %}
-                <li><a href="/challenge/{{ obfuscate(week) }}">Week {{ week }}</a></li>
+                <li>
+                    <a href="/challenge/{{ obfuscate(week) }}">Week {{ week }}</a>
+                    {% if rockets[week - 1][0] %}
+                        <span class="material-symbols-outlined rocket on" alt="finished part 1">rocket</span>
+                    {% else %}
+                        <span class="material-symbols-outlined rocket off" alt="part 1">rocket</span>
+                    {% endif %}
+                    {% if rockets[week - 1][1] %}
+                        <span class="material-symbols-outlined rocket on" alt="finished part 2">rocket_launch</span>
+                    {% else %}
+                        <span class="material-symbols-outlined rocket off" alt="part 2">rocket_launch</span>
+                    {% endif %}
+                </li>
             {% endfor %}
             {% if num < 10 %}
             More Challenges Coming Soon...

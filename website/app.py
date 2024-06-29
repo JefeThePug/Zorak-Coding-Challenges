@@ -3,16 +3,22 @@ import sys
 import json
 import requests
 
-from flask import Flask, redirect, render_template, url_for, request, session, current_app
+from flask import Flask, redirect, render_template, url_for, request, session, current_app, jsonify
+from flask_pymongo import PyMongo
 from dotenv import load_dotenv
 from urllib.parse import urlencode
-
-from helper import *
 
 load_dotenv()
 
 app = Flask(__name__, template_folder=".")
 app.secret_key = os.urandom(24)
+
+app.config["MONGO_URI"] = os.getenv("MONGO_URI")
+mongo = PyMongo(app)
+db = mongo.cx["ZorakCodingChallenge"]
+obfs = db["html"]
+prog = db["progress"]
+sols = db["solutions"]
 
 DISCORD_CLIENT_ID = os.getenv("CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
@@ -28,7 +34,12 @@ def index():
     if "user_data" in session:
         img = session["user_data"]["img"]
         text = "Logout"
-    return render_template("index.html", img=img, text=text, num=NUM)
+        progress = prog.find_one({"id": session["user_data"]["id"]})
+        rockets = [progress[f"c{i}"] for i in range(1, 11)]
+    else:
+        rockets = [(True, True) for _ in range(10)]
+    print(f"{rockets=}", file=sys.stderr)
+    return render_template("index.html", img=img, text=text, num=NUM, rockets=rockets)
 
 
 @app.route("/pre-login")
@@ -89,51 +100,72 @@ def callback():
 
     user_id = user_data["id"]
     avatar_hash = user_data["avatar"]
-    avatar_url = "images/index/blank.png"
+    avatar_url = "images/index/noimg.png"
     if avatar_hash:
         file_type = ["png", "gif"][avatar_hash.startswith("a_")]
         avatar_url = (
             f"https://cdn.discordapp.com/avatars/{user_id}/{avatar_hash}.{file_type}"
         )
-        session["user_data"]["img"] = avatar_url
+    session["user_data"]["img"] = avatar_url
+
+    if prog.find_one({"id": session["user_data"]["id"]}) is None:
+        new_doc = {f"c{i}": [False, False] for i in range(1, 11)}
+        new_doc["id"] = session["user_data"]["id"]
+        new_doc["name"] = session["user_data"]["username"]
+        prog.insert_one(new_doc)
 
     return redirect(url_for("index"))
 
+
 @app.template_global()
 def obfuscate(value):
-    return OBFUSCATE[f"{value}"]
+    return obfs.find_one({"num": value})["obs"]
 
 
 @app.route("/challenge/<num>", methods=["GET", "POST"])
 def get_challenge(num):
-    num = DEOBFUSCATE[num]
-    if request.method == "GET":
-        img = session["user_data"]["img"] if "user_data" in session else "images/index/blank.png"
-        text = "Logout" if "user_data" in session else "Log-in<br>with Discord"
+    num = f"{obfs.find_one({'obs': num})['num']}"
+    img = session["user_data"]["img"] if "user_data" in session else "images/index/blank.png"
+    text = "Logout" if "user_data" in session else "Log-in<br>with Discord"
+    error = None
+    
+    if request.method == "POST":
+        answers = [request.form.get(f"answer{i}", None) for i in (1,2)]
+        solutions = sols.find_one({"num": num})
 
-        with open(os.path.join(current_app.static_folder, "data.json")) as f:
-            data = json.load(f)
-        try:
-            a, b = data[num].values()
-        except KeyError:
-            return redirect(url_for("index"))
-        
-        params = {
-            "img": img,
-            "text": text,
-            "num":num,
-            "a": a,
-            "b": b,
-            "sol1": a["solution"],
-            "sol2": b["form"],
-            "parttwo": True,
-            "done": False,
-        }
-        return render_template("challenge.html", **params)
-        
+        for n, answer in enumerate(answers, 1):
+            if answer:
+                if answer.upper().replace("_", " ").strip() == solutions[f"part{n}"]:
+                    print(f"{answer} is correct!", file=sys.stderr)
+                    prog.update_one({"id": session["user_data"]["id"]}, {"$set":{f"c{num}.{n - 1}": True}})
+                else:
+                    error = "Incorrect. Please try again."
+                    print(f"{answer} != {solutions[f'part{n}']}", file=sys.stderr)
 
-    else:  # POST
-        return "Method not allowed", 405
+
+
+    with open(os.path.join(current_app.static_folder, "data.json")) as f:
+        data = json.load(f)
+    try:
+        a, b = data[num].values()
+    except KeyError:
+        return redirect(url_for("index"))
+    
+    progress = prog.find_one({"id": session["user_data"]["id"]})[f"c{num}"]
+
+    params = {
+        "img": img,
+        "text": text,
+        "num":num,
+        "a": a,
+        "b": b,
+        "sol1": a["solution"] if progress[0] else a["form"],
+        "sol2": b["solution"] if progress[1] else b["form"],
+        "parttwo": progress[0],
+        "done": progress[1],
+        "error": error
+    }
+    return render_template("challenge.html", **params)
 
 
 @app.route("/access")
