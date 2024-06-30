@@ -37,8 +37,7 @@ def index():
         progress = prog.find_one({"id": session["user_data"]["id"]})
         rockets = [progress[f"c{i}"] for i in range(1, 11)]
     else:
-        rockets = [(True, True) for _ in range(10)]
-    print(f"{rockets=}", file=sys.stderr)
+        rockets = [(False, False) for _ in range(10)]
     return render_template("index.html", img=img, text=text, num=NUM, rockets=rockets)
 
 
@@ -136,11 +135,11 @@ def get_challenge(num):
         for n, answer in enumerate(answers, 1):
             if answer:
                 if answer.upper().replace("_", " ").strip() == solutions[f"part{n}"]:
-                    print(f"{answer} is correct!", file=sys.stderr)
+                    #print(f"{answer} is correct!", file=sys.stderr)
                     prog.update_one({"id": session["user_data"]["id"]}, {"$set":{f"c{num}.{n - 1}": True}})
                 else:
                     error = "Incorrect. Please try again."
-                    print(f"{answer} != {solutions[f'part{n}']}", file=sys.stderr)
+                    #print(f"{answer} != {solutions[f'part{n}']}", file=sys.stderr)
 
 
 

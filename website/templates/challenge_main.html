@@ -11,12 +11,16 @@
 <body>
     <a class="float" href="/">&lt;</a>
     {% if error %}
-        <dialog open>
+        <dialog id="incorrect">
             <p>{{ error }}</p>
             <form method="dialog">
             <button>OK</button>
             </form>
         </dialog>
+        <script>
+            const dialog = document.getElementById("incorrect");
+            dialog.showModal();
+        </script>
     {% endif %}
     <header>
         <h1>{% block title %}{% endblock %}</h1>
