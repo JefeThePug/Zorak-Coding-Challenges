@@ -3,14 +3,14 @@ import sys
 import json
 import requests
 
-from flask import Flask, redirect, render_template, url_for, request, session, current_app, jsonify
+from flask import Flask, redirect, render_template, url_for, request, session, current_app
 from flask_pymongo import PyMongo
 from dotenv import load_dotenv
 from urllib.parse import urlencode
 
 load_dotenv()
 
-app = Flask(__name__, template_folder=".")
+app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 app.config["MONGO_URI"] = os.getenv("MONGO_URI")
@@ -24,7 +24,7 @@ DISCORD_CLIENT_ID = os.getenv("CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 DISCORD_REDIRECT_URI = "http://127.0.0.1:5000/callback"
 
-NUM = 10
+NUM = db["release"].find_one({"name": "release"})["num"]
 
 
 @app.route("/")
@@ -134,17 +134,12 @@ def get_challenge(num):
 
         for n, answer in enumerate(answers, 1):
             if answer:
-                if answer.upper().replace("_", " ").strip() == solutions[f"part{n}"]:
-                    #print(f"{answer} is correct!", file=sys.stderr)
+                if answer.replace("_", " ").upper().strip() == solutions[f"part{n}"]:
                     prog.update_one({"id": session["user_data"]["id"]}, {"$set":{f"c{num}.{n - 1}": True}})
                 else:
                     error = "Incorrect. Please try again."
-                    #print(f"{answer} != {solutions[f'part{n}']}", file=sys.stderr)
 
-
-
-    with open(os.path.join(current_app.static_folder, "data.json")) as f:
-        data = json.load(f)
+    data = dict(db["data"].find_one({"id": "html"}))
     try:
         a, b = data[num].values()
     except KeyError:
