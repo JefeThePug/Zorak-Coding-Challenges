@@ -3,7 +3,15 @@ import sys
 import json
 import requests
 
-from flask import Flask, redirect, render_template, url_for, request, session, current_app
+from flask import (
+    Flask,
+    redirect,
+    render_template,
+    url_for,
+    request,
+    session,
+    make_response,
+)
 from flask_pymongo import PyMongo
 from dotenv import load_dotenv
 from urllib.parse import urlencode
@@ -27,25 +35,42 @@ DISCORD_REDIRECT_URI = "http://127.0.0.1:5000/callback"
 NUM = db["release"].find_one({"name": "release"})["num"]
 
 
+def get_progress():
+    if "user_data" in session:
+        progress = prog.find_one({"id": session["user_data"]["id"]})
+        return {
+            "img": session["user_data"]["img"],
+            "text": "Logout",
+            "login": "logout.html",
+            "progress": progress,
+            "rockets": [progress[f"c{i}"] for i in range(1, 11)],
+        }
+    else:
+        return {
+            "img": "images/index/blank.png",
+            "text": "Log-in<br>with Discord",
+            "login": "login.html",
+            "progress": "",
+            "rockets": [(False, False) for _ in range(10)],
+        }
+
+
 @app.route("/")
 def index():
-    img = "images/index/blank.png"
-    text = "Log-in<br>with Discord"
-    if "user_data" in session:
-        img = session["user_data"]["img"]
-        text = "Logout"
-        progress = prog.find_one({"id": session["user_data"]["id"]})
-        rockets = [progress[f"c{i}"] for i in range(1, 11)]
-    else:
-        rockets = [(False, False) for _ in range(10)]
-    return render_template("index.html", img=img, text=text, num=NUM, rockets=rockets)
+    user = get_progress()
+    return render_template(
+        "index.html",
+        img=user["img"],
+        text=user["text"],
+        rockets=user["rockets"],
+        num=NUM,
+    )
 
 
 @app.route("/pre-login")
 def pre_login():
-    if "user_data" in session:
-        return render_template("logout.html", img=session["user_data"]["img"], text="")
-    return render_template("login.html", img="images/index/blank.png", text="")
+    user = get_progress()
+    return render_template(user["login"], img=user["img"], text="")
 
 
 @app.route("/login")
@@ -54,7 +79,7 @@ def login():
         "client_id": DISCORD_CLIENT_ID,
         "redirect_uri": DISCORD_REDIRECT_URI,
         "response_type": "code",
-        "scope": "identify guilds guilds.members.read guilds.join role_connections.write",
+        "scope": "identify guilds.members.read guilds.join",
     }
     return redirect(f"https://discord.com/api/oauth2/authorize?{urlencode(params)}")
 
@@ -124,42 +149,44 @@ def obfuscate(value):
 @app.route("/challenge/<num>", methods=["GET", "POST"])
 def get_challenge(num):
     num = f"{obfs.find_one({'obs': num})['num']}"
-    img = session["user_data"]["img"] if "user_data" in session else "images/index/blank.png"
-    text = "Logout" if "user_data" in session else "Log-in<br>with Discord"
     error = None
-    
+
     if request.method == "POST":
-        answers = [request.form.get(f"answer{i}", None) for i in (1,2)]
+        guesses = [request.form.get(f"answer{i}", None) for i in (1, 2)]
         solutions = sols.find_one({"num": num})
 
-        for n, answer in enumerate(answers, 1):
-            if answer:
-                if answer.replace("_", " ").upper().strip() == solutions[f"part{n}"]:
-                    prog.update_one({"id": session["user_data"]["id"]}, {"$set":{f"c{num}.{n - 1}": True}})
+        for n, guess in enumerate(guesses, 1):
+            if guess:
+                if guess.replace("_", " ").upper().strip() == solutions[f"part{n}"]:
+                    prog.update_one(
+                        {"id": session["user_data"]["id"]},
+                        {"$set": {f"c{num}.{n - 1}": True}},
+                    )
                 else:
                     error = "Incorrect. Please try again."
 
+    user = get_progress()
+    progress = user["progress"][f"c{num}"]
     data = dict(db["data"].find_one({"id": "html"}))
     try:
         a, b = data[num].values()
     except KeyError:
         return redirect(url_for("index"))
     
-    progress = prog.find_one({"id": session["user_data"]["id"]})[f"c{num}"]
 
-    params = {
-        "img": img,
-        "text": text,
-        "num":num,
-        "a": a,
-        "b": b,
-        "sol1": a["solution"] if progress[0] else a["form"],
-        "sol2": b["solution"] if progress[1] else b["form"],
-        "parttwo": progress[0],
-        "done": progress[1],
-        "error": error
-    }
-    return render_template("challenge.html", **params)
+    return render_template(
+        "challenge.html",
+        img=user["img"],
+        text=user["text"],
+        num=num,
+        a=a,
+        b=b,
+        sol1=a["solution"] if progress[0] else a["form"],
+        sol2=b["solution"] if progress[1] else b["form"],
+        parttwo=progress[0],
+        done=progress[1],
+        error=error,
+    )
 
 
 @app.route("/access")
