@@ -1,0 +1,43 @@
+{% extends "default.html" %}
+
+{% block title %}
+    Access Granted
+{% endblock %}
+
+{% block image %}
+    {% if img.startswith('http') %}
+        {{ img }}
+    {% else %}
+        {{ url_for('static', filename=img) }}
+    {% endif %}
+{% endblock %}
+
+{% block hovertext %}
+    {{ text|safe }}
+{% endblock %}
+
+{% block main %}
+    <section id="announcement">
+        <div class="imgcontainer">
+            <img src="{{ url_for('static', filename='images/index/goodjob.png') }}">
+        </div>
+        <div>
+            <p>
+                You have gained access to the discussion channel for Challenge {{ num }}. 
+                Feel free to share your code and discuss what lead you to the solutions
+                for both Part 1 and Part 2 there. 
+            </p>
+            <p>
+                <a href="discord://discordapp.com/channels/900302240559018015/953576255435997234">
+                    Visit the channel now
+                </a>
+            </p>
+            or
+            <p>
+                <button onclick="location.href='/'">
+                    Go back to solve more challenges
+                </button>
+            </p>
+        </div>
+    </section>
+{% endblock %}

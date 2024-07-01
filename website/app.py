@@ -241,7 +241,15 @@ def access():
                 print(f"Error: {e}", file=sys.stderr)
                 pass
             return f"Error: Failed to assign role: {error_message}", 400
-    return "Role assigned successfully!"
+        
+    user = get_progress()
+
+    return render_template(
+        "linkcomplete.html",
+        img=user["img"],
+        text="",
+        num=num,
+    )
 
 
 @app.route("/logout")
