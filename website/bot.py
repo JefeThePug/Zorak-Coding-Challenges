@@ -14,10 +14,22 @@ async def on_ready():
     await bot.wait_until_ready()          
     print(f'{bot.user} has connected to Discord!')
 
-        
-
 @bot.command()
 async def ping(ctx):
     await ctx.send('Pong!')
+
+@bot.command()
+async def get_roles(ctx):
+    guild = ctx.guild
+    roles = guild.roles
+    role_details = [f'{role.name}: {role.id}' for role in roles]
+    await ctx.send('\n'.join(role_details))
+
+@bot.command()
+async def get_channels(ctx):
+    guild = ctx.guild
+    channels = guild.channels
+    channel_details = [f'{channel.name}: {channel.id}' for channel in channels]
+    await ctx.send('\n'.join(channel_details))
 
 bot.run(os.environ.get("BOT_TOKEN"))

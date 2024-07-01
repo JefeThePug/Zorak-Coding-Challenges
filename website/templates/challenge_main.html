@@ -85,7 +85,7 @@
             </div>
         {% if done %}
             <form class="form-box" action="/access" method="post">
-                <input type="hidden" name="num" value="{{ num }}">
+                <input type="hidden" name="num" value="{{ obscure_post(num) }}">
                 <button>Access Discussion Channel</button>
             </form>
         {% endif %}

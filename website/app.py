@@ -27,6 +27,7 @@ db = mongo.cx["ZorakCodingChallenge"]
 obfs = db["html"]
 prog = db["progress"]
 sols = db["solutions"]
+roles = db["roles"]
 
 DISCORD_CLIENT_ID = os.getenv("CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
@@ -54,10 +55,18 @@ def get_progress():
             "rockets": [(False, False) for _ in range(10)],
         }
 
+@app.template_global()
+def obfuscate(value):
+    return obfs.find_one({"num": value})["obs"]
+
+@app.template_global()
+def obscure_post(value):
+    return roles.find_one({"name": "to"})[f"{value}"]
 
 @app.route("/")
 def index():
     user = get_progress()
+    print(user, file=sys.stderr)
     return render_template(
         "index.html",
         img=user["img"],
@@ -66,12 +75,10 @@ def index():
         num=NUM,
     )
 
-
 @app.route("/pre-login")
 def pre_login():
     user = get_progress()
     return render_template(user["login"], img=user["img"], text="")
-
 
 @app.route("/login")
 def login():
@@ -82,7 +89,6 @@ def login():
         "scope": "identify guilds.members.read guilds.join",
     }
     return redirect(f"https://discord.com/api/oauth2/authorize?{urlencode(params)}")
-
 
 @app.route("/callback")
 def callback():
@@ -140,12 +146,6 @@ def callback():
 
     return redirect(url_for("index"))
 
-
-@app.template_global()
-def obfuscate(value):
-    return obfs.find_one({"num": value})["obs"]
-
-
 @app.route("/challenge/<num>", methods=["GET", "POST"])
 def get_challenge(num):
     num = f"{obfs.find_one({'obs': num})['num']}"
@@ -188,16 +188,21 @@ def get_challenge(num):
         error=error,
     )
 
-
-@app.route("/access")
+@app.route("/access", methods=["POST"])
 def access():
     bot_token = os.environ.get("BOT_TOKEN")
     if not bot_token:
         return "Error: Bot token not found", 500
+    
+    num = roles.find_one({"name": "from"})[f"{request.form.get('num')}"]
+    print(f"{num=}", file=sys.stderr)
 
     guild_id = 1251181792111755391
     user_id = session["user_data"]["id"]
-    role_id = 1252507286489010178
+    R = roles.find_one({"name": "roles"})
+    print(f"{R=} {type(num)=}", file=sys.stderr)
+    role_id = R[num]
+    print(f"{role_id=} == 1252507286489010178 {role_id=='1252507286489010178'}", file=sys.stderr)
     headers = {"Authorization": f"Bot {bot_token}", "Content-Type": "application/json"}
 
     response = requests.get(
