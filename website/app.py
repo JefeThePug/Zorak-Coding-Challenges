@@ -1,6 +1,5 @@
 import os
 import sys
-import json
 import requests
 
 from flask import (
@@ -12,6 +11,7 @@ from flask import (
     session,
     make_response,
 )
+from itsdangerous import URLSafeTimedSerializer
 from flask_pymongo import PyMongo
 from dotenv import load_dotenv
 from urllib.parse import urlencode
@@ -19,7 +19,7 @@ from urllib.parse import urlencode
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = os.getenv("SECRET_KEY")
 
 app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 mongo = PyMongo(app)
@@ -47,6 +47,7 @@ def get_progress():
             "rockets": [progress[f"c{i}"] for i in range(1, 11)],
         }
     else:
+        cookies = session
         return {
             "img": "images/index/blank.png",
             "text": "Log-in<br>with Discord",
@@ -184,7 +185,7 @@ def get_challenge(num):
         sol1=a["solution"] if progress[0] else a["form"],
         sol2=b["solution"] if progress[1] else b["form"],
         parttwo=progress[0],
-        done=progress[1],
+        done=progress[1] and "user_data" in session,
         error=error,
     )
 
@@ -195,14 +196,10 @@ def access():
         return "Error: Bot token not found", 500
     
     num = roles.find_one({"name": "from"})[f"{request.form.get('num')}"]
-    print(f"{num=}", file=sys.stderr)
 
     guild_id = 1251181792111755391
     user_id = session["user_data"]["id"]
-    R = roles.find_one({"name": "roles"})
-    print(f"{R=} {type(num)=}", file=sys.stderr)
-    role_id = R[num]
-    print(f"{role_id=} == 1252507286489010178 {role_id=='1252507286489010178'}", file=sys.stderr)
+    role_id = roles.find_one({"name": "roles"})[num]
     headers = {"Authorization": f"Bot {bot_token}", "Content-Type": "application/json"}
 
     response = requests.get(
@@ -230,16 +227,10 @@ def access():
         )
         response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error: {e}", file=sys.stderr)
+        return f"Error: {e}", 400
     else:
         if response.status_code != 204:
             error_message = response.text
-            try:
-                error_json = response.json()
-                error_message = error_json.get("message", error_message)
-            except ValueError as e:
-                print(f"Error: {e}", file=sys.stderr)
-                pass
             return f"Error: Failed to assign role: {error_message}", 400
         
     user = get_progress()
@@ -250,7 +241,6 @@ def access():
         text="",
         num=num,
     )
-
 
 @app.route("/logout")
 def logout():
