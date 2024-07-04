@@ -19,6 +19,7 @@ from urllib.parse import urlencode
 load_dotenv()
 
 app = Flask(__name__)
+app.config["TEMPLATES_AUTO_RELOAD"] = True #DEBUG Environment ONLY
 app.secret_key = os.getenv("SECRET_KEY")
 serializer = URLSafeTimedSerializer(app.secret_key, salt="cookie")
 
@@ -257,6 +258,12 @@ def access():
         num=num,
         egg=egg,
     )
+
+@app.route("/help")
+def help():
+    user = get_progress()
+    return render_template("howto.html", img=user["img"], text=user["text"])
+
 
 @app.route("/logout")
 def logout():

@@ -28,6 +28,7 @@ section {
     padding: 20px;
 }
 
+
 /* Headers */
 header {
     background-color: var(--b-focus1);
@@ -190,6 +191,11 @@ input {
 div.input {
     min-width: 30%;
     width: fit-content;
+}
+div.right{
+    margin: 20px;
+    max-width: 800px;
+    text-align: right;
 }
 
 button {
