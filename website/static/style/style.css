@@ -43,6 +43,7 @@ header {
 }
 .header {text-align: center;}
 h2 {border-bottom: 2px solid var(--t-main);}
+h3 {color: var(--t-code);}
 
 /* Links */
 a {
