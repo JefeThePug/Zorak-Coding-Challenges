@@ -26,6 +26,12 @@ async def get_roles(ctx):
     await ctx.send('\n'.join(role_details))
 
 @bot.command()
+async def list_members(ctx):
+    members = sorted(ctx.guild.members, key=lambda m: m.joined_at)
+    member_list = '\n'.join(f'{member.name} joined at {member.joined_at}' for member in members)
+    await ctx.send(member_list)
+
+@bot.command()
 async def get_channels(ctx):
     guild = ctx.guild
     channels = guild.channels

@@ -20,6 +20,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
+serializer = URLSafeTimedSerializer(app.secret_key, salt="cookie")
 
 app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 mongo = PyMongo(app)
@@ -36,6 +37,15 @@ DISCORD_REDIRECT_URI = "http://127.0.0.1:5000/callback"
 NUM = db["release"].find_one({"name": "release"})["num"]
 
 
+def set_progress(num, n):
+    if "user_data" in session:
+        prog.update_one(
+            {"id": session["user_data"]["id"]},
+            {"$set": {f"c{num}.{n}": True}},
+        )
+    else:
+        return serializer.dumps(f"{num}{'AB'[n]}")
+
 def get_progress():
     if "user_data" in session:
         progress = prog.find_one({"id": session["user_data"]["id"]})
@@ -47,13 +57,16 @@ def get_progress():
             "rockets": [progress[f"c{i}"] for i in range(1, 11)],
         }
     else:
-        cookies = session
+        cookies = [*request.cookies.keys()]
+        s = "".join(serializer.loads(x) for x in cookies)
+        rockets = [[f"{n}{p}" in s for p in "AB"] for n in range(1, 11)]
+        progress = {f"c{i}": pair for i, pair in enumerate(rockets, 1)}
         return {
             "img": "images/index/blank.png",
             "text": "Log-in<br>with Discord",
             "login": "login.html",
-            "progress": "",
-            "rockets": [(False, False) for _ in range(10)],
+            "progress": progress,
+            "rockets": rockets,
         }
 
 @app.template_global()
@@ -67,7 +80,6 @@ def obscure_post(value):
 @app.route("/")
 def index():
     user = get_progress()
-    print(user, file=sys.stderr)
     return render_template(
         "index.html",
         img=user["img"],
@@ -151,21 +163,22 @@ def callback():
 def get_challenge(num):
     num = f"{obfs.find_one({'obs': num})['num']}"
     error = None
+    cookie = None
 
     if request.method == "POST":
         guesses = [request.form.get(f"answer{i}", None) for i in (1, 2)]
         solutions = sols.find_one({"num": num})
-
-        for n, guess in enumerate(guesses, 1):
+        for n, guess in enumerate(guesses):
             if guess:
-                if guess.replace("_", " ").upper().strip() == solutions[f"part{n}"]:
-                    prog.update_one(
-                        {"id": session["user_data"]["id"]},
-                        {"$set": {f"c{num}.{n - 1}": True}},
-                    )
+                if guess.replace("_", " ").upper().strip() == solutions[f"part{n + 1}"]:
+                    cookie = set_progress(num, n)
+                    resp = make_response(redirect(url_for("get_challenge", num=obfuscate(int(num)))))
+                    if cookie:
+                        resp.set_cookie(cookie, f"{num}{'AB'[n]}")
+                    return resp
                 else:
                     error = "Incorrect. Please try again."
-
+                
     user = get_progress()
     progress = user["progress"][f"c{num}"]
     data = dict(db["data"].find_one({"id": "html"}))
@@ -174,20 +187,19 @@ def get_challenge(num):
     except KeyError:
         return redirect(url_for("index"))
     
-
-    return render_template(
-        "challenge.html",
-        img=user["img"],
-        text=user["text"],
-        num=num,
-        a=a,
-        b=b,
-        sol1=a["solution"] if progress[0] else a["form"],
-        sol2=b["solution"] if progress[1] else b["form"],
-        parttwo=progress[0],
-        done=progress[1] and "user_data" in session,
-        error=error,
-    )
+    params = {
+        "img": user["img"],
+        "text": user["text"],
+        "num": num,
+        "a": a,
+        "b": b,
+        "sol1": a["solution"] if progress[0] else a["form"],
+        "sol2": b["solution"] if progress[1] else b["form"],
+        "parttwo": progress[0],
+        "done": progress[1] and "user_data" in session,
+        "error": error,
+    }
+    return render_template("challenge.html", **params)
 
 @app.route("/access", methods=["POST"])
 def access():
