@@ -154,9 +154,11 @@ tbody :nth-child(even) {background-color: var(--b-focus2);}
     font-weight: bold;
     margin-bottom: 10px;
     margin-top: 5px;
+    max-width: 400px;
     overflow: auto;
     padding: 5px 10px;
     width: fit-content;
+    word-wrap: break-word;
 }
 .part {
     display: inline-flex;
@@ -219,7 +221,7 @@ button.bigtext {font-size: 80px;}
     overflow: hidden;
     padding: 20px 10px;
     position: relative;
-    width: 400px;
+    width: 600px;
 }
 .shimmer:hover::before {
     animation: rotate 2s linear infinite;
@@ -248,7 +250,7 @@ button.bigtext {font-size: 80px;}
     position: absolute;
     z-index: 10;
 }
-.shimmer input {width: 70%;}
+.shimmer input {width: 75%;}
 .form-box {margin:10px;}
 
 @keyframes rotate {
