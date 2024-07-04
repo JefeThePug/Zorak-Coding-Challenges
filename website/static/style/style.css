@@ -163,6 +163,7 @@ tbody :nth-child(even) {background-color: var(--b-focus2);}
 .part {
     display: inline-flex;
     margin: 2px;
+    max-width: 100%;
     padding: 2px;
 }
 
@@ -317,9 +318,11 @@ dialog {
     z-index: 100;
   }
 
-.rocket {vertical-align: middle;}
+.icon {vertical-align: middle;}
 .on {color: var(--t-focus);}
 .off {color: var(--b-main);}
+.egg{color: var(--t-code-main)}
+.egghouse{margin-top: 200px;}
 
 /* Mobile Adjustments */
 @media (max-width: 600px) {

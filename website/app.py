@@ -29,6 +29,7 @@ obfs = db["html"]
 prog = db["progress"]
 sols = db["solutions"]
 roles = db["roles"]
+data = db["data"]
 
 DISCORD_CLIENT_ID = os.getenv("CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
@@ -181,9 +182,9 @@ def get_challenge(num):
                 
     user = get_progress()
     progress = user["progress"][f"c{num}"]
-    data = dict(db["data"].find_one({"id": "html"}))
+    data_raw = dict(data.find_one({"id": "html"}))
     try:
-        a, b = data[num].values()
+        a, b, _ = data_raw[num].values()
     except KeyError:
         return redirect(url_for("index"))
     
@@ -246,12 +247,15 @@ def access():
             return f"Error: Failed to assign role: {error_message}", 400
         
     user = get_progress()
+    egg = data.find_one({"id": "html"})[num]["EE"]
+
 
     return render_template(
         "linkcomplete.html",
         img=user["img"],
         text="",
         num=num,
+        egg=egg,
     )
 
 @app.route("/logout")
