@@ -19,7 +19,7 @@
 {% block main %}
     <section id="announcement">
         <div class="imgcontainer">
-            <img src="{{ url_for('static', filename='images/index/goodjob.png') }}">
+            <img src="{{ url_for('static', filename='images/index/goodjob.png') }}" alt="good job image">
         </div>
         <div>
             <p>
@@ -41,7 +41,7 @@
             </p>
             <p class="sm egghouse">
                 <span class="material-symbols-outlined icon egg" alt="easter egg">egg</span>
-                <span class="egg">I wonder what "Retroflex" means in the book publisher's name...</span>
+                <span class="egg">{{ egg|safe }}</span>
             </p>
         </div>
     </section>
