@@ -31,15 +31,15 @@ section {
 
 /* Headers */
 header {
+    align-items: center;
     background-color: var(--b-focus1);
     display: flex;
+    justify-content: center;
+    margin: 0;
     max-width: 870px;
     padding: 5px;
     position: relative;
     text-align: center;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
 }
 .header {text-align: center;}
 h2 {border-bottom: 2px solid var(--t-main);}
@@ -69,16 +69,13 @@ a.float {
     &:hover::after {content: " BACK";}
 }
 .skip-link {
+    background-color: #fff;
+    left: 0;
+    padding: 10px;
     position: absolute;
     top: -100px;
-    left: 0;
-    background-color: #fff;
-    padding: 10px;
-    &:focus {
-        top: 0;
-        left: 0;
-        z-index: 1;
-      }
+    z-index: 1;
+    &:focus {top: 0;}
   }
 
 /* Text Adjustments */
@@ -297,14 +294,14 @@ img {
     width: 150px;
 }
 #navbar-img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
     border: 3px solid var(--b-main);
+    border-radius: 50%;
+    height: 50px;
     position: absolute;
     right: 20px;
     top: 50%;
     transform: translateY(-50%);
+    width: 50px;
     &:hover {
         background-color: var(--t-focus);
         + .hover-text {display: inline-block;}
@@ -312,28 +309,28 @@ img {
 }
 
 .hover-text {
+    background-color: var(--t-focus);
+    border-radius: 3px;
     color: var(--b-main);
     display: none;
+    padding: 5px;
     position: absolute;
     right: 80px; /* Position text next to the image */
     top: 50%;
     transform: translateY(-50%);
-    background-color: var(--t-focus);
-    padding: 5px;
-    border-radius: 3px;
 }
 
 dialog {
-    position: fixed;
-    top: 50vh;
-    left: 50vw;
-    transform: translate(-150%, -10%);
     background-color: var(--b-code);
-    color: var(--t-code);
     border: 1px solid var(--t-code);
     border-radius: 10px;
-    padding: 20px;
     box-shadow: 0 0 500px 500px rgba(0, 0, 0, 0.8);
+    color: var(--t-code);
+    left: 50vw;
+    padding: 20px;
+    position: fixed;
+    top: 50vh;
+    transform: translate(-150%, -10%);
     z-index: 100;
   }
 
