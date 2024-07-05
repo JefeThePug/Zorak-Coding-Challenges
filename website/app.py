@@ -60,7 +60,7 @@ def get_progress():
         }
     else:
         cookies = [*request.cookies.keys()]
-        s = "".join(serializer.loads(x) for x in cookies)
+        s = [serializer.loads(x) for x in cookies if len(x) > 40]
         rockets = [[f"{n}{p}" in s for p in "AB"] for n in range(1, 11)]
         progress = {f"c{i}": pair for i, pair in enumerate(rockets, 1)}
         return {
