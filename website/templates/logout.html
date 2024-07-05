@@ -1,8 +1,6 @@
 {% extends "default.html" %}
 
-{% block title %}
-    Logout Confirmation
-{% endblock %}
+{% block title %} Logout Confirmation {% endblock %}
 
 {% block image %}
     {% if img.startswith('http') %}
@@ -12,21 +10,19 @@
     {% endif %}
 {% endblock %}
 
-{% block hovertext %}
-    {{ text|safe }}
-{% endblock %}
+{% block hovertext %} {{ text|safe }} {% endblock %}
 
 {% block main %}
-    <section id="announcement">
-        <div class="imgcontainer">
-            <img src="{{ url_for('static', filename='images/index/bye.png') }}" alt="Farewell Sad Image">
-        </div>
-        <div>
-            <p>
-                Are you sure you want to Logout?
-            </p>
-            <button onclick="location.href='/logout'">Yes</button>
-            <button onclick="location.href='/'">No</button>
-        </div>
-    </section>
+<section id="announcement">
+    <div class="imgcontainer">
+        <img src="{{ url_for('static', filename='images/index/bye.png') }}" alt="Farewell Sad Image">
+    </div>
+    <div>
+        <p>
+            Are you sure you want to Logout?
+        </p>
+        <button onclick="location.href='/logout'">Yes</button>
+        <button onclick="location.href='/'">No</button>
+    </div>
+</section>
 {% endblock %}

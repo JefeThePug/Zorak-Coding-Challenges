@@ -19,7 +19,7 @@ from urllib.parse import urlencode
 load_dotenv()
 
 app = Flask(__name__)
-app.config["TEMPLATES_AUTO_RELOAD"] = True #DEBUG Environment ONLY
+app.config["TEMPLATES_AUTO_RELOAD"] = True  # DEBUG Environment ONLY
 app.secret_key = os.getenv("SECRET_KEY")
 serializer = URLSafeTimedSerializer(app.secret_key, salt="cookie")
 
@@ -48,6 +48,7 @@ def set_progress(num, n):
     else:
         return serializer.dumps(f"{num}{'AB'[n]}")
 
+
 def get_progress():
     if "user_data" in session:
         progress = prog.find_one({"id": session["user_data"]["id"]})
@@ -71,13 +72,16 @@ def get_progress():
             "rockets": rockets,
         }
 
+
 @app.template_global()
 def obfuscate(value):
     return obfs.find_one({"num": value})["obs"]
 
+
 @app.template_global()
 def obscure_post(value):
     return roles.find_one({"name": "to"})[f"{value}"]
+
 
 @app.route("/")
 def index():
@@ -90,10 +94,12 @@ def index():
         num=NUM,
     )
 
+
 @app.route("/pre-login")
 def pre_login():
     user = get_progress()
     return render_template(user["login"], img=user["img"], text="")
+
 
 @app.route("/login")
 def login():
@@ -104,6 +110,7 @@ def login():
         "scope": "identify guilds.members.read guilds.join",
     }
     return redirect(f"https://discord.com/api/oauth2/authorize?{urlencode(params)}")
+
 
 @app.route("/callback")
 def callback():
@@ -161,6 +168,7 @@ def callback():
 
     return redirect(url_for("index"))
 
+
 @app.route("/challenge/<num>", methods=["GET", "POST"])
 def get_challenge(num):
     num = f"{obfs.find_one({'obs': num})['num']}"
@@ -174,13 +182,15 @@ def get_challenge(num):
             if guess:
                 if guess.replace("_", " ").upper().strip() == solutions[f"part{n + 1}"]:
                     cookie = set_progress(num, n)
-                    resp = make_response(redirect(url_for("get_challenge", num=obfuscate(int(num)))))
+                    resp = make_response(
+                        redirect(url_for("get_challenge", num=obfuscate(int(num))))
+                    )
                     if cookie:
                         resp.set_cookie(cookie, f"{num}{'AB'[n]}")
                     return resp
                 else:
                     error = "Incorrect. Please try again."
-                
+
     user = get_progress()
     progress = user["progress"][f"c{num}"]
     data_raw = dict(data.find_one({"id": "html"}))
@@ -188,7 +198,7 @@ def get_challenge(num):
         a, b, _ = data_raw[num].values()
     except KeyError:
         return redirect(url_for("index"))
-    
+
     params = {
         "img": user["img"],
         "text": user["text"],
@@ -203,12 +213,13 @@ def get_challenge(num):
     }
     return render_template("challenge.html", **params)
 
+
 @app.route("/access", methods=["POST"])
 def access():
     bot_token = os.environ.get("BOT_TOKEN")
     if not bot_token:
         return "Error: Bot token not found", 500
-    
+
     num = roles.find_one({"name": "from"})[f"{request.form.get('num')}"]
 
     guild_id = 1251181792111755391
@@ -246,10 +257,9 @@ def access():
         if response.status_code != 204:
             error_message = response.text
             return f"Error: Failed to assign role: {error_message}", 400
-        
+
     user = get_progress()
     egg = data.find_one({"id": "html"})[num]["EE"]
-
 
     return render_template(
         "linkcomplete.html",
@@ -258,6 +268,7 @@ def access():
         num=num,
         egg=egg,
     )
+
 
 @app.route("/help")
 def help():

@@ -1,51 +1,43 @@
-{% extends "challenge_main.html" %}
+{% extends "challenge_main.html" %} 
 
-{% block title %}
-    Challenge {{ num }}
-{% endblock %}
+{% block title %} Challenge {{ num }} {% endblock %} 
 
-{% block image %}
-    {% if img.startswith('http') %}
-        {{ img }}
-    {% else %}
-        {{ url_for('static', filename=img) }}
-    {% endif %}
-{% endblock %}
+{% block image %} 
+    {% if img.startswith('http') %} 
+        {{ img }} 
+    {% else %} 
+        {{ url_for('static', filename=img) }} 
+    {% endif %} 
+{% endblock %} 
 
-{% block hovertext %}
-    {{ text|safe }}
-{% endblock %}
+{% block hovertext %} {{ text|safe }} {% endblock %} 
 
-{% block subtitle1 %}
-    Part One: <br> {{ a["title"] }}
-{% endblock %}
-{% block section1 %}
-    {{ a["content"]|safe }}
-{% endblock %}
-{% block intro1 %}
-    {{ a["instructions"] }}
-{% endblock %}
-{% block input1 %}
-    {{ a["input"]|safe }}
-{% endblock %}
-{% block solution1 %}
-    {{ sol1|safe }}
-{% endblock %}
+{% block subtitle1 %} 
+    Part One:
+    <br>
+    {{ a["title"] }} 
+{% endblock %} 
 
-{% if parttwo %}
-    {% block subtitle2 %}
-        Part Two: <br> {{ b["title"] }}
-    {% endblock %}
-    {% block section2 %}
-        {{ b["content"]|safe }}
-    {% endblock %}
-    {% block intro2 %}
-        {{ b["instructions"] }}
-    {% endblock %}
-    {% block input2 %}
-        {{ b["input"]|safe }}
-    {% endblock %}
-    {% block solution2 %}
-        {{ sol2|safe }}
-    {% endblock %}
+{% block section1 %} {{ a["content"]|safe }} {% endblock %} 
+
+{% block intro1 %} {{ a["instructions"] }} {% endblock %} 
+
+{% block input1 %} {{ a["input"]|safe }} {% endblock %} 
+
+{% block solution1 %} {{sol1|safe }} {% endblock %} 
+
+{% if parttwo %} 
+    {% block subtitle2 %} 
+        Part Two:
+        <br>
+        {{ b["title"] }}
+    {% endblock %} 
+        
+    {% block section2 %} {{ b["content"]|safe }} {% endblock %}
+
+    {% block intro2 %} {{ b["instructions"] }} {% endblock %}
+
+    {% block input2 %} {{ b["input"]|safe }} {% endblock %}
+    
+    {% block solution2 %} {{sol2|safe }} {% endblock %} 
 {% endif %}

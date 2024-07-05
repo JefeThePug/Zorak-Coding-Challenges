@@ -1,7 +1,9 @@
 {% extends "default.html" %}
 
-{% block title %}
-    Practical Python<br>Zorak's Coding Challenges
+{% block title %} 
+    Practical Python
+    <br>
+    Zorak's Coding Challenges 
 {% endblock %}
 
 {% block image %}
@@ -12,53 +14,53 @@
     {% endif %}
 {% endblock %}
 
-{% block hovertext %}
-    {{ text|safe }}
-{% endblock %}
+{% block hovertext %} {{ text|safe }} {% endblock %}
 
 {% block main %}
-    <section id="logo">
-        <div class="imgcontainer">
-            <img src="{{ url_for('static', filename='images/index/logo.png') }}" alt="Illustration of Xarlos and Zorak">
-        </div>
-        <div>
-            <p>Hi! I'm Xarlos. It's like Carlos, but from Space.</p>
-            <p>
-            I desperately need you to join me on an 
-            important mission aboard the STS Space Ghost and use 
-            your Python skills to help us defeat the evil alien, Zorak.
-            </p>
-            <p>Quick! There's no time! We have to move <span class="b">now</span>!</p>
-        </div>
-    </section>
-
-    <section id="challenges">
-        <ul>
-            {% for week in range(1, num + 1) %}
-                <li>
-                    <a href="/challenge/{{ obfuscate(week) }}">Week {{ week }}</a>
-                    {% if rockets[week - 1][0] %}
-                        <span class="material-symbols-outlined icon on" alt="finished part 1">rocket</span>
-                    {% else %}
-                        <span class="material-symbols-outlined icon off" alt="part 1">rocket</span>
-                    {% endif %}
-                    {% if rockets[week - 1][1] %}
-                        <span class="material-symbols-outlined icon on" alt="finished part 2">rocket_launch</span>
-                    {% else %}
-                        <span class="material-symbols-outlined icon off" alt="part 2">rocket_launch</span>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
-        {% if num < 10 %}
-            More Challenges Coming Soon...
-        {% endif %}
-    </section>
-    <div id="help" class="right">
-            <a href="/help">
-                <span class="material-symbols-outlined icon" alt="Help">
-                    help
-                </span>
-            </a>
-        </div>
+<section id="logo">
+    <div class="imgcontainer">
+        <img src="{{ url_for('static', filename='images/index/logo.png') }}" alt="Illustration of Xarlos and Zorak">
+    </div>
+    <div>
+        <p>Hi! I'm Xarlos. It's like Carlos, but from Space.</p>
+        <p>
+            I desperately need you to join me on an important mission aboard the
+                     STS Space Ghost and use your Python skills to help us defeat
+                    the evil alien, Zorak.
+        </p>
+        <p>
+            Quick! There's no time! We have to move
+            <span class="b">now</span>!
+        </p>
+    </div>
+</section>
+<section id="challenges">
+    <ul>
+        {% for week in range(1, num + 1) %}
+        <li>
+            <a href="/challenge/{{ obfuscate(week) }}">Week {{ week }}</a>
+            {% if rockets[week - 1][0] %}
+            <span class="material-symbols-outlined icon on" alt="finished part 1">rocket</span>
+            {% else %}
+            <span class="material-symbols-outlined icon off" alt="part 1">rocket</span>
+            {% endif %}
+            {% if rockets[week - 1][1] %}
+            <span class="material-symbols-outlined icon on" alt="finished part 2">rocket_launch</span>
+            {% else %}
+            <span class="material-symbols-outlined icon off" alt="part 2">rocket_launch</span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% if num < 10 %}
+    More Challenges Coming Soon...
+    {% endif %}
+</section>
+<div id="help" class="right">
+    <a href="/help">
+        <span class="material-symbols-outlined icon" alt="Help">
+            help
+        </span>
+    </a>
+</div>
 {% endblock %}

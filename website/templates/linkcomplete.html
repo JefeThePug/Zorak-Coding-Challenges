@@ -1,8 +1,6 @@
 {% extends "defaultplus.html" %}
 
-{% block title %}
-    Access Granted
-{% endblock %}
+{% block title %} Access Granted {% endblock %}
 
 {% block image %}
     {% if img.startswith('http') %}
@@ -12,37 +10,35 @@
     {% endif %}
 {% endblock %}
 
-{% block hovertext %}
-    {{ text|safe }}
-{% endblock %}
+{% block hovertext %} {{ text|safe }} {% endblock %}
 
 {% block main %}
-    <section id="announcement">
-        <div class="imgcontainer">
-            <img src="{{ url_for('static', filename='images/index/goodjob.png') }}" alt="Good Job Image">
-        </div>
-        <div>
-            <p>
-                Well done! You solved both parts of Challenge {{ num }} and have gained access to 
-                Week {{ num }}'s discussion channel. 
-            </p>
-            <p>
-                Feel free to share your code and discuss what lead you to the solutions
-                for both Part 1 and Part 2 there. 
-            </p>
-            <p>
-                <a class="extbutton" href="discord://discordapp.com/channels/900302240559018015/953576255435997234">
-                    Visit the channel now
-                </a> 
-                <span>or</span> 
-                <button onclick="location.href='/'">
-                    Go back to solve more challenges
-                </button>
-            </p>
-            <p class="sm egghouse">
-                <span class="material-symbols-outlined icon egg" alt="easter egg">egg</span>
-                <span class="egg">{{ egg|safe }}</span>
-            </p>
-        </div>
-    </section>
+<section id="announcement">
+    <div class="imgcontainer">
+        <img src="{{ url_for('static', filename='images/index/goodjob.png') }}" alt="Good Job Image">
+    </div>
+    <div>
+        <p>
+            Well done! You solved both parts of Challenge {{ num }} and have gained access to 
+                Week {{ num }}'s discussion channel.
+        </p>
+        <p>
+            Feel free to share your code and discuss what lead you to the solutions
+                for both Part 1 and Part 2 there.
+        </p>
+        <p>
+            <a class="extbutton" href="discord://discordapp.com/channels/900302240559018015/953576255435997234">
+                Visit the channel now
+            </a>
+            <span>or</span>
+            <button onclick="location.href='/'">
+                Go back to solve more challenges
+            </button>
+        </p>
+        <p class="sm egghouse">
+            <span class="material-symbols-outlined icon egg" alt="easter egg">egg</span>
+            <span class="egg">{{ egg|safe }}</span>
+        </p>
+    </div>
+</section>
 {% endblock %}
