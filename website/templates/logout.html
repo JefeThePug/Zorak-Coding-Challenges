@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block image %}
-    {{ img }}
+    {% if img.startswith('http') %}
+        {{ img }}
+    {% else %}
+        {{ url_for('static', filename=img) }}
+    {% endif %}
 {% endblock %}
 
 {% block hovertext %}

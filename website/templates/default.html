@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <a href="#main-content" class="skip-link">Skip to Main content</a>
     <header>
         <h1>{% block title %}{% endblock %}</h1>
         <a href="/pre-login">
@@ -17,9 +18,10 @@
             <span class="hover-text">{% block hovertext %}{% endblock %}</span>
         </a>
     </header>
-
-    {% block main %}
-    {% endblock %}
+    <main id="main-content">
+        {% block main %}
+        {% endblock %}
+    </main>
 
 </body>
 

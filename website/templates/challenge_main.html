@@ -9,7 +9,8 @@
 </head>
 
 <body>
-    <a class="float" href="/">&lt;</a>
+    <a href="#main-content" class="skip-link">Skip to Main content</a>
+    <a href="/" class="float">&lt;</a>
     {% if error %}
         <dialog id="incorrect">
             <p>{{ error }}</p>
@@ -30,67 +31,69 @@
         </a>
     </header>
 
-    <section id="partone">
-        <div class="header">
-            <h2>{% block subtitle1 %}{% endblock %}</h2>
-        </div>
-
-        {% block section1 %}
-        {% endblock %}
-
-        <h4 class="main">
-            {% block intro1 %}{% endblock %}
-        </h4>
-        <a id="a"></a>
-        <div class="input">
-            {% block input1 %}
-            {% endblock %}
-        </div>
-
-        <div class="shimmer">
-            <form action="#a" method="post">
-                <div class="form-box">
-                    {% block solution1 %}
-                    {% endblock %}
-                </div>
-            </form>
-        </div>
-    </section>
-
-    {% if parttwo %}
-        <section id="parttwo">
+    <main id="main-content">
+        <section id="partone">
             <div class="header">
-                <h2>{% block subtitle2 %}{% endblock %}</h2>
+                <h2>{% block subtitle1 %}{% endblock %}</h2>
             </div>
 
-            {% block section2 %}
+            {% block section1 %}
             {% endblock %}
 
-            <p class="main">
-                {% block intro2 %}{% endblock %}
-            </p>
-            <a id="b"></a>
+            <h4 class="main">
+                {% block intro1 %}{% endblock %}
+            </h4>
+            <a id="a"></a>
             <div class="input">
-                {% block input2 %}
+                {% block input1 %}
                 {% endblock %}
             </div>
 
             <div class="shimmer">
-                <form action="#b" method="post">
+                <form action="#a" method="post">
                     <div class="form-box">
-                        {% block solution2 %}
+                        {% block solution1 %}
                         {% endblock %}
                     </div>
                 </form>
             </div>
-        {% if done %}
-            <form class="form-box" action="/access" method="post">
-                <input type="hidden" name="num" value="{{ obscure_post(num) }}">
-                <button>Access Discussion Channel</button>
-            </form>
-        {% endif %}
         </section>
-    {% endif %}
+
+        {% if parttwo %}
+            <section id="parttwo">
+                <div class="header">
+                    <h2>{% block subtitle2 %}{% endblock %}</h2>
+                </div>
+
+                {% block section2 %}
+                {% endblock %}
+
+                <p class="main">
+                    {% block intro2 %}{% endblock %}
+                </p>
+                <a id="b"></a>
+                <div class="input">
+                    {% block input2 %}
+                    {% endblock %}
+                </div>
+
+                <div class="shimmer">
+                    <form action="#b" method="post">
+                        <div class="form-box">
+                            {% block solution2 %}
+                            {% endblock %}
+                        </div>
+                    </form>
+                </div>
+            {% if done %}
+                <form class="form-box" action="/access" method="post">
+                    <input type="hidden" name="num" value="{{ obscure_post(num) }}">
+                    <button>Access Discussion Channel</button>
+                </form>
+            {% endif %}
+            </section>
+        {% endif %}
+    </main>
 </body>
 
 </html>

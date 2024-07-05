@@ -68,6 +68,18 @@ a.float {
     &::after {content: "";}
     &:hover::after {content: " BACK";}
 }
+.skip-link {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    background-color: #fff;
+    padding: 10px;
+    &:focus {
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+  }
 
 /* Text Adjustments */
 .b {
