@@ -15,7 +15,21 @@
 {% block main %}
 <section id="announcement">
     <div class="imgcontainer">
-        <img src="{{ url_for('static', filename='images/index/goodjob.png') }}" alt="Good Job Image">
+        <img 
+            id="gif" 
+            src="{{ url_for('static', filename='images/{:0>2}/{}.gif'.format(num, num)) }}" 
+            alt="Gif visualization"
+            class="fill"
+        />
+        <span id="replay-btn" class="material-symbols-outlined">replay</span>
+        <script>
+            const gif = document.getElementById('gif');
+            const replayBtn = document.getElementById('replay-btn');
+          
+            replayBtn.addEventListener('click', () => {
+              gif.src = gif.src;
+            });
+        </script>
     </div>
     <div>
         <p>

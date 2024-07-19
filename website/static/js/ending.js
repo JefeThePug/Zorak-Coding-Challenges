@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const dialog = document.getElementById("ending");
-  const gif = document.getElementById("gif");
+  const gif = document.getElementById("popupgif");
 
   dialog.showModal();
 
