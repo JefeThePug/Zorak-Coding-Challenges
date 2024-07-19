@@ -10,6 +10,7 @@ from flask import (
     request,
     session,
     make_response,
+    send_from_directory,
 )
 from itsdangerous import URLSafeTimedSerializer
 from flask_pymongo import PyMongo
@@ -281,6 +282,14 @@ def logout():
     session.pop("token", None)
     session.pop("user_data", None)
     return redirect(url_for("index"))
+
+
+@app.route('/418')
+def route_418():
+    response = make_response(send_from_directory("static/images/index", "hmm.png"))
+    response.headers["Easter-Egg"] = "Well done, you!"
+    response.status_code = 418
+    return response
 
 
 if __name__ == "__main__":
