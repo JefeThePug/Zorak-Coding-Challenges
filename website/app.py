@@ -9,6 +9,7 @@ from flask import (
     url_for,
     request,
     session,
+    abort,
     make_response,
     send_from_directory,
 )
@@ -285,12 +286,15 @@ def logout():
 
 
 @app.route('/418')
-def route_418():
+def trigger_418():
+    abort(404)
+
+@app.errorhandler(404)
+def teapot(e):
     response = make_response(send_from_directory("static/images/index", "hmm.png"))
-    response.headers["Easter-Egg"] = "Well done, you!"
+    response.headers["Easter-Egg"] = "ADULT SWIM"
     response.status_code = 418
     return response
-
 
 if __name__ == "__main__":
     app.run(debug=True)
