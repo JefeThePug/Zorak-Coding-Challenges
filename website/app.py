@@ -33,12 +33,11 @@ prog = db["progress"]
 sols = db["solutions"]
 roles = db["roles"]
 data = db["data"]
+rel = db["release"]
 
 DISCORD_CLIENT_ID = os.getenv("CLIENT_ID")
 DISCORD_CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 DISCORD_REDIRECT_URI = "http://127.0.0.1:5000/callback"
-
-NUM = db["release"].find_one({"name": "release"})["num"]
 
 
 def set_progress(num, n):
@@ -88,12 +87,13 @@ def obscure_post(value):
 @app.route("/")
 def index():
     user = get_progress()
+    num = rel.find_one({"name": "release"})["num"]
     return render_template(
         "index.html",
         img=user["img"],
         text=user["text"],
         rockets=user["rockets"],
-        num=NUM,
+        num=num,
     )
 
 
@@ -285,9 +285,30 @@ def logout():
     return redirect(url_for("index"))
 
 
+@app.route("/set_week/<num>")
+def set_week(num):
+    if num == "+":
+        num = rel.find_one({"name": "release"})["num"] + 1
+    try:
+        num = int(num)
+        if num not in range(11):
+            raise ValueError
+    except ValueError:
+        return {"error": f"{num} is an unrecognized release."}, 400
+    if "user_data" in session:
+        if session["user_data"]["id"] in rel.find_one({"name": "release"})["permitted"]:
+            result = rel.update_one({"name": "release"}, {"$set": {"num": num}})
+            if result.matched_count != 0 and result.modified_count != 0:
+                return {"success": f"Release set to {num} successfully."}, 200
+            elif result.modified_count == 0:
+                return {"warning": f"Release is already {num}. No Change Made."}, 200
+    return {"error": "No authorization"}, 401
+
+
 @app.route('/418')
 def trigger_418():
     abort(404)
+
 
 @app.errorhandler(404)
 def teapot(e):
