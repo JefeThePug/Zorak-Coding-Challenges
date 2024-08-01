@@ -133,8 +133,10 @@ a.float {
 .attach {
   margin-top: -10px;
   text-align: right;
-  width: 100%;
+  position: relative;
+  right: 0;
 }
+
 
 /* Table Containers */
 .flex-container {
@@ -198,6 +200,7 @@ tbody :nth-child(even) {
 /* Code Blocks */
 .code {
   background-color: var(--b-code);
+  border: none;
   color: var(--t-code);
   display: block;
   font-family: "Courier New", Courier, monospace;
@@ -205,12 +208,19 @@ tbody :nth-child(even) {
   font-weight: bold;
   margin-bottom: 10px;
   margin-top: 5px;
+  max-height: 100px;
   max-width: 400px;
-  overflow: auto;
+  overflow: hidden;
   padding: 5px 10px;
+  text-overflow: ellipsis;
   width: fit-content;
-  word-wrap: break-word;
+  word-wrap:break-word;
 }
+.code.attach {
+  margin-top: -10px;
+  text-align: left;
+}
+
 .part {
   display: inline-flex;
   margin: 2px;
@@ -241,8 +251,7 @@ input {
 }
 
 div.input {
-  min-width: 30%;
-  width: fit-content;
+  width: 400px;
 }
 div.right {
   margin: 20px;
@@ -340,6 +349,13 @@ button.bigtext {
 img {
   max-height: 400px;
   width: 60%;
+}
+img.puzzle {
+  margin-bottom: 10px;
+  max-height: 100%;
+  width: 400px;
+  min-height: 50px;
+  object-fit: fill;
 }
 img.fill {
   height: 80%;

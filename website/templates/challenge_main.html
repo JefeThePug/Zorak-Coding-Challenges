@@ -36,7 +36,36 @@
                 {% block section1 %} {% endblock %}
                 <h4 class="main">{% block intro1 %}{% endblock %}</h4>
                 <a id="a"></a>
-                <div class="input">{% block input1 %}{% endblock %}</div>
+                <div class="input">
+                    <a href="{{ input_url1 }}" class="input" download>
+                        {% if input_url1.endswith('.png') %}
+                        <img class="puzzle" id="code-block-1" src="{{ input_url1 }}">
+                        {% else %}
+                        <pre class="code main" id="code-block-1"></pre>
+                        <script>
+                            fetch('{{ input_url1 }}')
+                                .then(response => response.text())
+                                .then(text => {
+                                    const element = document.getElementById('code-block-1');
+                                    element.innerText = text;
+                                    setTimeout(() => {
+                                    if (element.offsetHeight > parseFloat(getComputedStyle(element).maxHeight)) {
+                                        element.parentNode.insertBefore(
+                                        Object.assign(document.createElement('pre'), {
+                                            className: 'code main attach b',
+                                            innerHTML: '...',
+                                        }),
+                                        element.nextSibling
+                                        );
+                                    }
+                                    }, 0);
+                                })
+                                .catch(error => console.error('Error fetching the content:', error));
+                        </script>
+                        {% endif %}
+                        <p class="main ssm attach">[ click to get input ]</p>
+                    </a>
+                </div>
                 <div class="shimmer">
                     <form action="#a" method="post">
                         <div class="form-box">{% block solution1 %}{% endblock %}</div>
@@ -51,7 +80,40 @@
                 {% block section2 %}{% endblock %}
                 <p class="main">{% block intro2 %}{% endblock %}</p>
                 <a id="b"></a>
-                <div class="input">{% block input2 %}{% endblock %}</div>
+                <div class="input">
+
+
+                    <a href="{{ input_url2 }}" class="input" download>
+                        {% if input_url2.endswith('.png') %}
+                        <img class="puzzle" id="code-block-2" src="{{ input_url2 }}">
+                        {% else %}
+                        <pre class="code main" id="code-block-2"></pre>
+                        <script>
+                            fetch('{{ input_url2 }}')
+                                .then(response => response.text())
+                                .then(text => {
+                                    const element = document.getElementById('code-block-2');
+                                    element.innerText = text;
+                                    setTimeout(() => {
+                                    if (element.offsetHeight > parseFloat(getComputedStyle(element).maxHeight)) {
+                                        element.parentNode.insertBefore(
+                                        Object.assign(document.createElement('pre'), {
+                                            className: 'code main attach b',
+                                            innerHTML: '...',
+                                        }),
+                                        element.nextSibling
+                                        );
+                                    }
+                                    }, 0);
+                                })
+                                .catch(error => console.error('Error fetching the content:', error));
+                        </script>
+                        {% endif %}
+                        <p class="main ssm attach">[ click to get input ]</p>
+                    </a>
+
+
+                </div>
                 <div class="shimmer">
                     <form action="#b" method="post">
                         <div class="form-box">{% block solution2 %}{% endblock %}</div>
