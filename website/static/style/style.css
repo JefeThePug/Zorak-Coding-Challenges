@@ -221,6 +221,9 @@ tbody :nth-child(even) {
   margin-top: -10px;
   text-align: left;
 }
+.code.free {
+  max-height: none;
+}
 
 .part {
   display: inline-flex;
