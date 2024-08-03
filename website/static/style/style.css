@@ -191,6 +191,9 @@ caption {
   font-style: italic;
   text-shadow: 0 0 0.1em #25b525;
 }
+caption.shift {
+  color: var(--t-link);
+}
 table {
   border-collapse: collapse;
 }

@@ -1019,11 +1019,1008 @@
             </h2>
         </div>
         <!--content start-->
-        <p>...</p>
+        <p>
+            "Stop, stop, stop, stop!" You see the supervisor running
+            at full speed out of her office, frantically waving her
+            arms. When she reaches you at the robotic arm, she pauses
+            to catch her breath and says
+        </p>
+        <p class="shadow pad">
+            She's forgotten to tell you the
+            <span class="b i">most important step</span>!
+            <span class="b i">Each time the robot arm receives a
+            Take command</span>, after taking the correct number of
+            capsules from the dispenser, you must <span class="b i">
+            push the "shift" button</span>. This button activates a
+            <a href="https://en.wikipedia.org/wiki/Conveyor_belt">
+            conveyor belt</a> under all the dispensers, <span class="b i">
+            shifting their contents one space to the left</span>. The
+            contents of dispenser 12 move to dispenser 11, the contents
+            of dispenser 1 move to dispenser 0, and so on. The contents
+            that were in dispenser 0 are displaced all the way to the end,
+            ending up in dispenser 39. The shift happens internally, and
+            the <span class="b i">robotic arm's position is not affected
+            by this change</span>. If the arm's position is 19, it remains
+            19 despite the contents of dispenser 19 changing. The conveyor
+            belt shift occurs only after Take commands; commands for Right,
+            Left, or Drop do not trigger the shift.
+        </p>
+        <h4>
+            For example (with a shorter 5-dispenser system):
+        </h4>
+        <p>
+            If your instructions are
+            <span class="code free">
+                3<br>
+                L1,T3,R1,D1,L3,T2,R4,D4,L2,T1,L2,D1<br>
+                A,O,S<br>
+                H,P<br>
+                R,F,B,T<br>
+                <br>
+                C
+            </span>
+        </p>
+        <div class="flex-container mono sm">
+            <div class="container-item">
+                <table>
+                    <caption>START</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P3">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td class="select">3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅣</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅢</td>
+                        <td></td>
+                        <td>🅑</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅞</td>
+                        <td>🅟</td>
+                        <td>🅕</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅐</td>
+                        <td>🅗</td>
+                        <td>🅡</td>
+                        <td></td>
+                        <td>🅒</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: L1</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P2">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td class="select">2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅣</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅢</td>
+                        <td></td>
+                        <td>🅑</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅞</td>
+                        <td>🅟</td>
+                        <td>🅕</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅐</td>
+                        <td>🅗</td>
+                        <td>🅡</td>
+                        <td></td>
+                        <td>🅒</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: T3</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P2">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td class="select">2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅢</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅞</td>
+                        <td>🅟</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅐</td>
+                        <td>🅗</td>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅑</td>
+                        <td>🅕</td>
+                        <td>🅡</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption class="shift">SHIFT</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P2">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td class="select">2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                      </tr>
+                      <tr>
+                        <td>🅟</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅞</td>
+                      </tr>
+                      <tr>
+                        <td>🅗</td>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                        <td>🅐</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅑</td>
+                        <td>🅕</td>
+                        <td>🅡</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: R1</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P3">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td class="select">3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                      </tr>
+                      <tr>
+                        <td>🅟</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅞</td>
+                      </tr>
+                      <tr>
+                        <td>🅗</td>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                        <td>🅐</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅑</td>
+                        <td>🅕</td>
+                        <td>🅡</td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: D1</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P3">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td class="select">3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                      </tr>
+                      <tr>
+                        <td>🅟</td>
+                        <td></td>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅞</td>
+                      </tr>
+                      <tr>
+                        <td>🅗</td>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                        <td>🅐</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅑</td>
+                        <td>🅕</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: L3</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P0">
+                      <tr>
+                        <td class="select">0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                      </tr>
+                      <tr>
+                        <td>🅟</td>
+                        <td></td>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅞</td>
+                      </tr>
+                      <tr>
+                        <td>🅗</td>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                        <td>🅐</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅑</td>
+                        <td>🅕</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: T2</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P0">
+                      <tr>
+                        <td class="select">0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅞</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                        <td>🅐</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅟</td>
+                        <td>🅗</td>
+                        <td>🅑</td>
+                        <td>🅕</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption class="shift">SHIFT</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P0">
+                      <tr>
+                        <td class="select">0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅞</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                        <td>🅐</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅟</td>
+                        <td>🅗</td>
+                        <td>🅑</td>
+                        <td>🅕</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: R4</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P4">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td class="select">4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅞</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                        <td>🅐</td>
+                        <td></td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅟</td>
+                        <td>🅗</td>
+                        <td>🅑</td>
+                        <td>🅕</td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: D4</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P4">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td class="select">4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅟</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                        <td>🅗</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅞</td>
+                        <td>🅑</td>
+                      </tr>
+                      <tr>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                        <td>🅐</td>
+                        <td>🅕</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: L2</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P2">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td class="select">2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅟</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                        <td>🅗</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅞</td>
+                        <td>🅑</td>
+                      </tr>
+                      <tr>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅒</td>
+                        <td>🅐</td>
+                        <td>🅕</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: T1</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P2">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td class="select">2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅟</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                        <td>🅗</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅞</td>
+                        <td>🅑</td>
+                      </tr>
+                      <tr>
+                        <td>🅣</td>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅐</td>
+                        <td>🅕</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅒</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption class="shift">SHIFT</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P2">
+                      <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td class="select">2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅟</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                        <td>🅗</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅞</td>
+                        <td>🅑</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅐</td>
+                        <td>🅕</td>
+                        <td>🅣</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅒</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: L2</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P0">
+                      <tr>
+                        <td class="select">0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅟</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                        <td>🅗</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅞</td>
+                        <td>🅑</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td>🅡</td>
+                        <td>🅐</td>
+                        <td>🅕</td>
+                        <td>🅣</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td>🅒</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+            <div class="container-item">
+                <table>
+                    <caption>Command: D1</caption>
+                    <thead>
+                      <tr>
+                        <th colspan="5">Dispensers:</th>
+                      </tr>
+                    </thead>
+                    <tbody class="P0">
+                      <tr>
+                        <td class="select">0</td>
+                        <td>1</td>
+                        <td>2</td>
+                        <td>3</td>
+                        <td>4</td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td>🅟</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅢</td>
+                        <td>🅗</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td>🅞</td>
+                        <td>🅑</td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>🅒</td>
+                        <td>🅡</td>
+                        <td>🅐</td>
+                        <td>🅕</td>
+                        <td>🅣</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="5">C-Shaped Tube:</th>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+            </div>
+        </div>
+        <p>
+            Then, pressing the release button will dispense one capsule from
+            each dispenser, in order, giving you the capsules:
+            <span class="code part">🅒🅡🅐🅕🅣</span>.
+        </p>
+        <p>
+            The supervisor pushes a big red reset button, which empties the
+            robot arm and dispensers and fills the dispensers back up again
+            with their predetermined order. "Now you can start again", she
+            says, and hands you a new instruction sheet.
+        </p>
         <!--content end-->
         <p class="main">
             <!--instructions start-->
-            do...:
+            Your instructions are:
             <!--instructions end-->
         </p>
         <div class="input">
@@ -1053,12 +2050,11 @@
                 <p class="main ssm attach">[ click to get input ]</p>
             </a>
         </div>
-        
         <div class="shimmer">
             <form>
                 <div class="form-box">
                     <!--form start-->
-                    <label class="main">What is ...?<br></label>
+                    <label class="main">Write the characters of the released capsules in order.<br></label>
                     <input type="text" id="answer2" placeholder="...">
                     <button>Submit</button>
                     <!--form end-->
