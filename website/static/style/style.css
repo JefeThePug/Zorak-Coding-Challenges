@@ -11,6 +11,17 @@
   --b-focus2: #000;
   --b-focus3: #222;
 }
+@font-face {
+  font-family: 'dejavu_sans_monobook';
+  src: url('DejaVuSansMono-webfont.eot');
+  src: url('DejaVuSansMono-webfont.eot?#iefix') format('embedded-opentype'),
+       url('DejaVuSansMono-webfont.woff2') format('woff2'),
+       url('DejaVuSansMono-webfont.woff') format('woff'),
+       url('DejaVuSansMono-webfont.ttf') format('truetype'),
+       url('DejaVuSansMono-webfont.svg#dejavu_sans_monobook') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
 
 body {
   background-color: var(--b-main);
@@ -100,6 +111,9 @@ a.float {
 .i {
   font-style: italic;
 }
+.u {
+  text-decoration: underline;
+}
 .sm {
   font-size: small;
 }
@@ -144,6 +158,9 @@ a.float {
   flex-wrap: wrap;
   align-items: center;
 }
+.container-item {
+  margin: 5px;
+}
 .column {
   padding: 10px;
   &:first-child {
@@ -166,6 +183,14 @@ a.float {
 }
 
 /* Table */
+caption {
+  border: 1px dashed var(--t-main);
+  border-bottom: none;
+  color: var(--t-focus);
+  font-weight: bold;
+  font-style: italic;
+  text-shadow: 0 0 0.1em #25b525;
+}
 table {
   border-collapse: collapse;
 }
@@ -177,16 +202,30 @@ tr {
   padding: 5px;
   text-align: center;
 }
+tfoot tr > th {
+  background-color: var(--b-focus3);
+}
 td {
   border-left-style: solid;
   border-right-style: solid;
+}
+td.select {
+  background-color: var(--t-link) !important;
+  color: var(--b-focus2)
+}
+.mono tbody > tr, .mono tfoot > tr {
+  height: 34px;
+  max-height: 34px;
+}
+.mono tr > td {
+  width: 15px;
 }
 th {
   background-color: var(--b-focus1);
   border-bottom-style: solid;
   border-left-style: dashed;
   border-right-style: dashed;
-  font-size: x-small;
+  font-size: x-small ;
 }
 tr:last-child {
   border-bottom-style: solid;
@@ -197,6 +236,36 @@ tbody :nth-child(odd) {
 tbody :nth-child(even) {
   background-color: var(--b-focus2);
 }
+tbody.P0 {
+  :nth-child(2n+1) {background-color: var(--b-focus2);}
+  :nth-child(1) {
+    background-color: var(--b-focus1);
+  }
+} 
+tbody.P1 {
+  :nth-child(2n+1) {background-color: var(--b-focus2);}
+  :nth-child(2) {
+    background-color: var(--b-focus1);
+  }
+} 
+tbody.P2 {
+  :nth-child(2n+1) {background-color: var(--b-focus2);}
+  :nth-child(3) {
+    background-color: var(--b-focus1);
+  }
+}
+tbody.P3 {
+  :nth-child(2n+1) {background-color: var(--b-focus2);}
+  :nth-child(4) {
+    background-color: var(--b-focus1);
+  }
+}
+tbody.P4 {
+  :nth-child(2n+1) {background-color: var(--b-focus2);}
+  :nth-child(5) {
+    background-color: var(--b-focus1);
+  }
+} 
 
 /* Code Blocks */
 .code {
@@ -204,7 +273,7 @@ tbody :nth-child(even) {
   border: none;
   color: var(--t-code);
   display: block;
-  font-family: "Courier New", Courier, monospace;
+  font-family: "DejaVu Sans Mono", monospace;
   font-size: large;
   font-weight: bold;
   margin-bottom: 10px;
@@ -224,12 +293,14 @@ tbody :nth-child(even) {
 .code.free {
   max-height: none;
 }
-
 .part {
   display: inline-flex;
   margin: 2px;
   max-width: 100%;
   padding: 2px;
+}
+.mono {
+  font-family: "DejaVu Sans Mono", monospace !important;
 }
 
 /* Main Question */
