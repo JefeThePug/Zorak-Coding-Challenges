@@ -295,6 +295,10 @@ tbody.P4 {
 }
 .code.free {
   max-height: none;
+  max-width: none;
+}
+.code.sm {
+  font-size: small;
 }
 .part {
   display: inline-flex;
@@ -448,6 +452,9 @@ img.fill {
 }
 .smallpic {
   width: 150px;
+}
+.midpic {
+  width: 285px;
 }
 #navbar-img {
   border: 3px solid var(--b-main);

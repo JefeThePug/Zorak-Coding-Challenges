@@ -35,7 +35,7 @@
         
     {% block section2 %} {{ b["content"]|safe }} {% endblock %}
 
-    {% block intro2 %} {{ b["instructions"] }} {% endblock %}
+    {% block intro2 %} {{ b["instructions"]|safe }} {% endblock %}
 
     {% set input_url2 = url_for('static', filename="puzzle_input/" ~ num.zfill(2) ~ "/input2." ~ b.input) %}
     

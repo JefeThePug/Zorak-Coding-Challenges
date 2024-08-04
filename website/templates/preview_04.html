@@ -14,7 +14,7 @@
     <header>
         <h1>Challenge 
             <!--NUMBER-->
-            0
+            4
             <!--HERE-->
         </h1>
     </header>
@@ -24,24 +24,173 @@
         <div class="header">
             <h2>Part One: <br>
                 <!--title start-->
-                TBD
+                The Center of Flavor
                 <!--title end-->
             </h2>
         </div>
         <!--content start-->
-        <p>...</p>
+        <p>
+            It's a new day on the STS Space Ghost, and today you're headed to the
+            <a herf="https://en.wikipedia.org/wiki/Galley_(kitchen)">galley</a>.
+            That's perfect, because you could use a snack…
+        </p>
+        <p>
+            You meet the ship's head chef, who is deep in thought about the menu.
+            Just as you're about to mention that you could really go for a cheeseburger,
+            he begins speaking to you, explaining what's on his mind.
+        </p>
+        <p>
+            It turns out, the <span class="b i">only food</span> that the crew eats aboard
+            the ship is <span class="b i">Galactic
+            <a href="https://en.wikipedia.org/wiki/Algae">Algae</a> Blooms</span>;
+            a thought which slightly turns your stomach, but you hide your disgust well.
+        </p>
+        <p>
+            There are <span class="b i">five species</span> of Galactic Algae Blooms:
+            <span class="b i">Sweet, Bitter, Umami, Salty, and Sour</span>. The depth of
+            flavor of each of these species varies from bloom to bloom, each having its own
+            scores for both <span class="b i">flavor complexity, persistence of taste, and
+            intensity</span>. A skilled chef can take these individual flavor profiles and
+            create dishes that resemble many non-algae-based dishes the crew are familiar
+            with from home.
+        </p>
+        <p>The process is as follows:</p>
+        <div class="shadow pad">
+            <ol>
+                <li>
+                    <span class="b i">Gather algae from each of the required species</span>:
+                </li>
+                <ul>
+                    <li>
+                        You have to select three individual algae blooms (your puzzle
+                        input) and obtain each of their flavor profiles.
+                    </li>
+                    <li>
+                        Flavor complexity is labeled X, so the three algae blooms
+                        you would use of a certain species have x1, x2, and x3.
+                    </li>
+                    <li>
+                        Persistence of taste is labeled Y; y1, y2, and y3.
+                    </li>
+                    <li>
+                        Intensity is cleverly labeled m for "Mmm". Each algae bloom
+                        has its own individual intensity; m1, m2, and m3.
+                    </li>
+                    <li>
+                        Each line of your input represents a species of Galactic Algae Bloom.
+                        <span class="b i">Individual algae are separated by spaces</span>.
+                        For each individual algae bloom, the format is
+                        Intensity(Flavor&nbsp;Complexity,Persistence&nbsp;of&nbsp;taste)
+                        or <span class="b i">m(x,y)</span>.
+                    </li>
+                </ul>
+                <li>
+                    <span class="b i">Seek out the Center of Flavor for each species</span>:
+                </li>
+                <ul>
+                    <li>
+                        To determine the Center of Flavor of a species with three
+                        individual algae blooms, you use the common 
+                        <span class="b i">Center of Mass</span> (cm)
+                        equations.
+                    </li>
+                </ul>
+            </ol>
+            <div class="imgcontainer pad">
+                <img src="../static/images/04/CoMx_simple.png">
+            </div>
+            <div class="imgcontainer pad">
+                <img src="../static/images/04/CoMy_simple.png">
+            </div>
+            <ol>
+                <ul>
+                    <li>
+                        Finding the Center of Flavor at X and at Y will provide you with
+                        the Center of Flavor coordinates on the complexity-persistence
+                        graph. You will have a set of coordinates for each species used
+                        in the recipe.
+                    </li>
+                </ul>
+                <li>
+                    <span class="b i">Lookup the values in the ASCII Recipe Cards</span>:
+                </li>
+                <ul>
+                    <li>
+                        Translating the 
+                        <span class="b i">numerical value</span> of each coordinate
+                        <span class="b i">to its ASCII</span>
+                        value will provide you with two letters per species of Galactic
+                        Algae Blooms. One letter for X and one letter for Y.
+                    </li>
+                </ul>
+                <li>
+                    <span class="b i">Complete the recipe</span>:
+                </li>
+                <ul>
+                    <li>
+                        Concatenating the letters for all the X coordinates in order, a
+                        space, and all the letters for the Y coordinates in order, will
+                        spell out the recipe item.
+                    </li>
+                </ul>
+            </ol>
+        </div>
+        <h4>
+            For example:
+        </h4>
+        <p>
+            If the algae you gather from three species of Galactic Algae Blooms is
+            <span class="code free">
+                6(71,74) 6(70,73) 3(68,76)<br>
+                12(74,65) 8(73,63) 4(70,69)<br>
+                8(75,80) 4(72,71) 18(69,77)
+            </span>
+        </p>
+        <p>
+            To get the Center of Mass at X for the first species, you would put the numbers
+            into the equation:<br>
+            for the numerator
+            <span class="code part">(6*71) + (6*70) + (3*68) = 1050</span><br>
+            and the denominator
+            <span class="code part">6 + 6 + 3 = 15</span> giving you
+            <span class="code part">1050/15</span><br>
+            <span class="code part">70</span> for the X value.
+        </p>
+        <p>
+            To get the Center of Mass at Y for the first species, you would put the numbers
+            into the equation:<br>
+            for the numerator
+            <span class="code part">(6*74) + (6*73) + (3*76) = 1110</span>.<br>
+            The denominator remains the same as for X, 
+            <span class="code part">15</span> giving you
+            <span class="code part">1110/15</span><br>
+            <span class="code part">74</span> for the Y value.
+        </p>
+        <p>
+            Performing the same operations on all three species, we get X and Y values:
+            <span class="code part">(70, 74), (73, 65), and (71, 77)</span>
+        </p>
+        <p>
+            Converting these numbers to ASCII values, you get:
+            <span class="code part">(F, J), (I, A), and (G, M)</span>
+        </p>
+        <p>
+            Finally, concatenating all of the X values and Y values with a space between
+            them, you get:
+            <span class="code part">FIG JAM</span>
+        </p>
         <!--content end-->
         <p class="main">
             <!--instructions start-->
-            do...:
+            Here is your selected Galactic Algae Blooms:
             <!--instructions end-->
         </p>
         <div class="input">
-            <a href="../static/puzzle_input/01/input1.txt" class="input" download>
+            <a href="../static/puzzle_input/04/input1.txt" class="input" download>
                 <!-- <img class="puzzle" id="code-block-1" src="{{ input_url1 }}"> -->
                 <pre class="code main" id="code-block-1"></pre>
                 <script>
-                    fetch('../static/puzzle_input/01/input1.txt')
+                    fetch('../static/puzzle_input/04/input1.txt')
                         .then(response => response.text())
                         .then(text => {
                             const element = document.getElementById('code-block-1');
@@ -68,7 +217,7 @@
             <form>
                 <div class="form-box">
                     <!--form start-->
-                    <label class="main">What is ...?<br></label>
+                    <label class="main">What recipe will this make?<br></label>
                     <input type="text" id="answer2" placeholder="...">
                     <button>Submit</button>
                     <!--form end-->
@@ -87,26 +236,184 @@
 
     <section id="parttwo">
         <div class="header">
-            <h2>Part One: <br>
+            <h2>Part Two: <br>
                 <!--title start-->
-                TBD
+                Gone Fishin'
                 <!--title end-->
             </h2>
         </div>
         <!--content start-->
-        <p>...</p>
+        <p>
+            Now that you have a recipe in mind, it's time to gather the Galactic Algae
+            Blooms from deep space. You do this using a <span class="b i">deep space
+            net</span>. The chef shows you the control panel for the net, a big screen
+            displaying glowing blobs in a gradient of color. These blobs, you are told,
+            represent <span class="b i">clusters of Galactic Algae Blooms</span>.
+            Pressing the toggle button will alternate between displaying the algae
+            cluster blobs and <span class="b i">a
+            <a href="https://computersciencewiki.org/index.php/Two-dimensional_arrays">
+            grid</a> of numbers</span>, your puzzle input, representing how many algae
+            are at each point. 
+        </p>
+        <p>
+            The cost of casting this deep space net is very high, so you are informed you 
+            can <span class="b i">only cast once per day</span>. Fortunately, the algae 
+            blooms migrate around each cluster's <span class="b i">center of 
+            mass</span>, so casting the net directly into that location will 
+            <span class="b i">collect every algae bloom from that cluster</span>. Since 
+            the STS Space Ghost has a large crew, you should aim to collect as many algae 
+            blooms as possible.
+        </p>
+        <p>
+            In your previous equations for the Center of Mass, you had only 3 points to 
+            consider, but these clusters of algae blooms are much more numerous. 
+            Unfortunately, the previous equation will not work, but you notice that you can 
+            perform the summations in the numerator and the denominator of the equations 
+            with any number of points. <span class="b i">You can use these new equations</span>.
+        </p>
+        <div class="imgcontainer pad">
+            <a href="../static/images/04/CoMx_sum.png">
+                <img class="smallpic pad" src="../static/images/04/CoMx_sum.png">
+            </a>
+            <span class="spacer"></span>
+            <a href="../static/images/04/CoMy_sum.png">
+            <img class="smallpic pad" src="../static/images/04/CoMy_sum.png">
+            </a>
+        </div>
+        <p>
+            Type the <span class="b i">X and Y coordinates, separated by a comma</span>, 
+            into the machine to cast the net to the cluster with the greatest total mass.
+        </p>
+        <h4>
+            For example:
+        </h4>
+        <div class="flex-container">
+            <div class="container-item">
+                <p>This blob</p>
+                <img class="midpic" src="../static/images/04/example.png">
+            </div>
+            <div class="container-item">
+                <p>gives you the following number grid</p>
+                <span class="code free sm">
+                    0,0,0,0,1,1,0,0,0,0,1,1,0,0,0,0,0,0,0,3<br>
+                    0,0,0,0,5,6,3,0,0,1,2,2,0,0,0,0,0,0,2,7<br>
+                    0,0,0,2,8,9,9,6,4,5,4,2,0,0,0,0,0,1,5,8<br>
+                    0,0,0,1,8,9,9,9,9,8,6,2,0,0,0,0,0,3,4,5<br>
+                    0,0,0,0,4,8,9,8,9,8,6,2,0,0,0,0,1,3,2,0<br>
+                    0,0,0,0,0,2,3,3,5,7,6,2,0,0,0,0,1,2,0,0<br>
+                    0,0,0,0,0,0,0,0,2,4,5,2,0,0,0,0,1,1,0,0<br>
+                    0,0,0,0,0,0,0,0,0,1,3,1,0,0,0,0,1,2,0,0<br>
+                    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,3,2,0<br>
+                    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4,4,5<br>
+                    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,5,7<br>
+                    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,6<br>
+                    0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2<br>
+                    0,0,0,0,4,5,2,0,0,0,0,2,3,2,0,0,0,0,0,0<br>
+                    0,0,0,1,7,8,5,1,0,0,4,8,9,7,3,0,0,0,0,0<br>
+                    0,0,0,1,7,8,4,0,0,1,6,9,9,9,6,1,0,0,0,0<br>
+                    0,0,0,1,6,5,2,0,0,0,3,8,9,8,6,3,1,0,1,2<br>
+                    0,0,0,2,4,3,0,0,0,0,0,2,3,3,2,2,1,1,1,1<br>
+                    0,0,2,4,5,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0<br>
+                    1,2,4,6,5,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0<br>
+                </span>
+            </div>
+            <div class="container-item">
+                <p>
+                    You can see the clusters' values<br>
+                    easier by ignoring the 0s
+                </p>
+                <span class="code free sm">
+                    , , , ,1,1, , , , ,1,1, , , , , , , ,3<br>
+                    , , , ,5,6,3, , ,1,2,2, , , , , , ,2,7<br>
+                    , , ,2,8,9,9,6,4,5,4,2, , , , , ,1,5,8<br>
+                    , , ,1,8,9,9,9,9,8,6,2, , , , , ,3,4,5<br>
+                    , , , ,4,8,9,8,9,8,6,2, , , , ,1,3,2, <br>
+                    , , , , ,2,3,3,5,7,6,2, , , , ,1,2, , <br>
+                    , , , , , , , ,2,4,5,2, , , , ,1,1, , <br>
+                    , , , , , , , , ,1,3,1, , , , ,1,2, , <br>
+                    , , , , , , , , , , , , , , , ,1,3,2, <br>
+                    , , , , , , , , , , , , , , , , ,4,4,5<br>
+                    , , , , , , , , , , , , , , , , ,2,5,7<br>
+                    , , , , , , , , , , , , , , , , , ,2,6<br>
+                    , , , ,1,1, , , , , , , , , , , , , ,2<br>
+                    , , , ,4,5,2, , , , ,2,3,2, , , , , , <br>
+                    , , ,1,7,8,5,1, , ,4,8,9,7,3, , , , , <br>
+                    , , ,1,7,8,4, , ,1,6,9,9,9,6,1, , , , <br>
+                    , , ,1,6,5,2, , , ,3,8,9,8,6,3,1, ,1,2<br>
+                    , , ,2,4,3, , , , , ,2,3,3,2,2,1,1,1,1<br>
+                    , ,2,4,5,2, , , , , , , , , , , , , , <br>
+                   1,2,4,6,5,1, , , , , , , , , , , , , , <br>
+                </span>
+            </div>
+        </div>
+            <p>
+                Looking at the C-shaped cluster on the right, you can calculate
+                the <span class="b i">total mass</span> by adding all of the
+                individual masses in the cluster.
+                <span class="code part">
+                    &nbsp;3+2+7+1+5+8+3+4+5+1+3+2+1+2+1+1+1+2+1+3+2+4+4+5+2+5+7+2+6+2 = 95
+                </span>
+            </p>
+            <p>
+                Then for the numerator of the Center of Mass equation for X, you can
+                multiply every mass by its X position <span class="b i">(m*x)</span>
+                and sum the results.
+                <span class="code part">
+                    (3*19)+(2*18)+(7*19)+(1*17)+(5*18)+(8*19)+(3*17)+(4*18)+(5*19)+(1*16)+(3*17)+(2*18)+(1*16)+(2*17)+(1*16)+(1*17)+(1*16)+(2*17)+(1*16)+(3*17)+(2*18)+(4*17)+(4*18)+(5*19)+(2*17)+(5*18)+(7*19)+(2*18)+(6*19)+(2*19)<br>
+                    = 1722
+                </span>
+                Since you are looking for an integer position on the grid, you can use
+                integer division to get the Center of Mass' position at X. You take the
+                numerator you just calculated, and divide it by the total mass in the
+                denominator.<br>
+                <span class="code part">1722 // 95 = 18</span>
+            </p>
+            <p>
+                You do the same for the Y positions <span class="b i">(m*x)</span> for
+                the Center of Mass equation for Y.
+                <span class="code part">
+                    (3*0)+(2*1)+(7*1)+(1*2)+(5*2)+(8*2)+(3*3)+(4*3)+(5*3)+(1*4)+(3*4)+(2*4)+(1*5)+(2*5)+(1*6)+(1*6)+(1*7)+(2*7)+(1*8)+(3*8)+(2*8)+(4*9)+(4*9)+(5*9)+(2*10)+(5*10)+(7*10)+(2*11)+(6*11)+(2*12)<br>
+                    = 562
+                </span>
+                <span class="code part">562 // 95 = 5</span>, so the Center of Mass for
+                that cluster is at
+                <span class="code part">position (18,5) with a total mass of 95</span>.
+            </p>
+
+            <p>
+                Doing the same for all clusters, we get
+            </p>
+            <span class="code free">
+                CoM (7,3) total mass: 233,<br>
+                CoM (18,5) total mass: 95,<br>
+                CoM (4,15) total mass: 110,<br>
+                CoM (12,15) total mass: 136
+            </span>
+            <p>
+                Shown on the diagram with stars for each Center of Mass:
+            </p>
+            <img class="midpic" src="../static/images/04/example_results.png">
+            <p> 
+                You can see that 233 is the cluster with the greatest mass, so you
+                would input <span class="code part">7,3</span> into the coordinates
+                for the deep space net.
+            </p>
         <!--content end-->
         <p class="main">
             <!--instructions start-->
-            do...:
+            The deep space net's control panel displays your actual clusters:<br>
+            <a href="../static/images/04/figure.png">
+                <img class="midpic" src="../static/images/04/figure.png">
+            </a><br>
+            You press the toggle button and get the following number grid:
             <!--instructions end-->
         </p>
         <div class="input">
-            <a href="../static/puzzle_input/00000/input2.txt" class="input" download>
+            <a href="../static/puzzle_input/04/input2.txt" class="input" download>
                 <!-- <img class="puzzle" id="code-block-1" src="{{ input_url1 }}"> -->
                 <pre class="code main" id="code-block-2"></pre>
                 <script>
-                    fetch('../static/puzzle_input/00000/input2.txt')
+                    fetch('../static/puzzle_input/04/input2.txt')
                         .then(response => response.text())
                         .then(text => {
                             const element = document.getElementById('code-block-2');
@@ -133,7 +440,7 @@
             <form>
                 <div class="form-box">
                     <!--form start-->
-                    <label class="main">What is ...?<br></label>
+                    <label class="main">What are the coordinates you should type in?<br></label>
                     <input type="text" id="answer2" placeholder="...">
                     <button>Submit</button>
                     <!--form end-->
