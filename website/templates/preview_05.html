@@ -14,7 +14,7 @@
     <header>
         <h1>Challenge 
             <!--NUMBER-->
-            0
+            5
             <!--HERE-->
         </h1>
     </header>
@@ -24,24 +24,125 @@
         <div class="header">
             <h2>Part One: <br>
                 <!--title start-->
-                TBD
+                Qualification Exam
                 <!--title end-->
             </h2>
         </div>
         <!--content start-->
-        <p>...</p>
+        <p>
+            You performed so well in the galley that the crew in the
+            generator room requested your help today. They, too, are
+            dealing with expensive instruments where precision and
+            efficiency are paramount. Before you can get your hands
+            on these new machines, they would like to give you
+            <span class="b i">
+                a qualification exam</span>.
+        </p>
+        <p>
+            There is only one question on the exam, and it is a
+            <span class="b i">
+                text map of spaces and "#" characters
+            </span>
+            that resemble 
+            <span class="b i">
+                a cave of tunnels and chambers</span>.
+        </p>
+        <p>
+            The instructions are as follows:
+        </p>
+        <div class="shadow pad">
+            <ul>
+                <li>
+                    You have a water pump at the top-left entrance of
+                    the cave (position (0,0))
+                </li><br>
+                <li>
+                    You immediately begin to fill the cave with water
+                </li><br>
+                <li>
+                    How many square meters of the cave will be flooded?
+                </li>
+            </ul>
+        </div>
+        <p>
+             On the map, <span class="b i">each character or space
+            represents 1 square meter</span>. 
+            <ul>
+                <li>
+                    The <span class="b i">"#" characters represent
+                    cave walls</span> where water cannot pass through.
+                </li>
+                <li>
+                    For the purposes of this exercise,
+                    <span class="b i">
+                        water can flow either up, down, left, or right</span>,
+                    but not diagonally.
+                </li>
+            </ul>
+        </p>
+        <h4>
+            For example:
+        </h4>
+        <p>
+            If our map looks like this
+            <span class="code free">
+                &nbsp;&nbsp;&nbsp;####&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#########<br>
+                &nbsp;##&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                &nbsp;&nbsp;##&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                #&nbsp;##&nbsp;&nbsp;##&nbsp;&nbsp;#&nbsp;&nbsp;##<br>
+                #&nbsp;##&nbsp;&nbsp;####&nbsp;####<br>
+                #&nbsp;##&nbsp;&nbsp;##&nbsp;#&nbsp;##&nbsp;&nbsp;<br>
+                #&nbsp;##&nbsp;&nbsp;#&nbsp;&nbsp;#&nbsp;&nbsp;#&nbsp;&nbsp;<br>
+                &nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;##&nbsp;&nbsp;#&nbsp;&nbsp;##<br>
+                &nbsp;##&nbsp;&nbsp;&nbsp;&nbsp;##&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;<br>
+                &nbsp;###&nbsp;&nbsp;&nbsp;&nbsp;##&nbsp;&nbsp;###<br>
+                &nbsp;###&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                &nbsp;&nbsp;####&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;##&nbsp;&nbsp;<br>
+                ##&nbsp;&nbsp;&nbsp;#####&nbsp;&nbsp;##&nbsp;<br>
+                &nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;####&nbsp;&nbsp;#&nbsp;
+            </span>
+        </p>
+        <p>
+            Flowing only up, down, left, and right, water (shown as •) will flow
+            to the following places
+            <span class="code free">
+                •••####&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                #•••••#########<br>
+                &nbsp;##••••••#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                &nbsp;&nbsp;##••••••#&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                #&nbsp;##••##••#&nbsp;&nbsp;##<br>
+                #&nbsp;##••####&nbsp;####<br>
+                #&nbsp;##••##&nbsp;#&nbsp;##&nbsp;&nbsp;<br>
+                #&nbsp;##••#&nbsp;&nbsp;#&nbsp;&nbsp;#&nbsp;&nbsp;<br>
+                &nbsp;&nbsp;#•••##&nbsp;&nbsp;#&nbsp;&nbsp;##<br>
+                &nbsp;##••••##&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;<br>
+                &nbsp;###••••##&nbsp;&nbsp;###<br>
+                &nbsp;###••••••#&nbsp;&nbsp;&nbsp;&nbsp;<br>
+                &nbsp;&nbsp;####•••••##&nbsp;&nbsp;<br>
+                ##&nbsp;&nbsp;&nbsp;#####••##&nbsp;<br>
+                &nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;####••#&nbsp;
+            </span>
+        </p>
+        <p>
+            One water symbol (•) is 1 square meter, so counting these 
+            characters gives us <span class="code part">56</span>.
+        </p>
+        <p>
+            Time to take your exam.
+        </p>
         <!--content end-->
         <p class="main">
             <!--instructions start-->
-            do...:
+            Here is your map:
             <!--instructions end-->
         </p>
         <div class="input">
-            <a href="../static/puzzle_input/01/input1.txt" class="input" download>
+            <a href="../static/puzzle_input/05/input1.txt" class="input" download>
                 <!-- <img class="puzzle" id="code-block-1" src="{{ input_url1 }}"> -->
                 <pre class="code main" id="code-block-1"></pre>
                 <script>
-                    fetch('../static/puzzle_input/01/input1.txt')
+                    fetch('../static/puzzle_input/05/input1.txt')
                         .then(response => response.text())
                         .then(text => {
                             const element = document.getElementById('code-block-1');
@@ -68,7 +169,7 @@
             <form>
                 <div class="form-box">
                     <!--form start-->
-                    <label class="main">What is ...?<br></label>
+                    <label class="main">How many square meters of water will fill the cave?<br></label>
                     <input type="text" id="answer2" placeholder="...">
                     <button>Submit</button>
                     <!--form end-->
@@ -87,26 +188,159 @@
 
     <section id="parttwo">
         <div class="header">
-            <h2>Part One: <br>
+            <h2>Part Two: <br>
                 <!--title start-->
-                TBD
+                ...To the Stars
                 <!--title end-->
             </h2>
         </div>
         <!--content start-->
-        <p>...</p>
+        <p>
+            Having successfully passed the comprehension exam, you are admitted into
+            the Laser Room. You see a gigantic machine pointed out into space, with a
+            rather simple control panel featuring a monitor, two large buttons, and
+            dials for adjusting coordinates. The label on the machine reads
+            <a href="https://pillow.readthedocs.io/en/stable/">"P.I.L."</a>,
+            which stands for <span class="b i">
+            "<a href="https://en.wikipedia.org/wiki/Pulsar">Pulsar</a> Intercepting
+            Laser"</span>.
+        </p>
+        <p>
+            On the monitor, you see a map of pulsars that are within the laser's range.
+        </p>
+        <p>
+            You are briefed by the lead technician:
+        </p>
+        <div class="shadow pad">
+            <ul>
+                <li>
+                    The PIL <span class="b i">emits a frequency of light</span> in the
+                    direction of your provided coordinates, which hits the pulsar and
+                    causes it to <span class="b i">flood out</span> in four directions
+                    (North, South, East, and West) <span class="b i">until it reaches
+                    an edge</span>.
+                </li>
+                <li>
+                    This reaction, if it covers the entire surface of the pulsar, will
+                    radiate <span class="b i">200 gigajoules (GJ) of energy</span>,
+                    which is received by the PIL's sensors.
+                </li>
+                <li>
+                    Unfortunately, <span class="b i">a single pulse of the PIL costs 100
+                    GJ to run</span>, so the <span class="b i">net energy gained from
+                    completely filling a pulsar is 100 GJ</span>.
+                </li>
+                <li>
+                    If a pulsar is <span class="b i">completely filled more than once</span>,
+                    the PIL's sensors can intercept <span class="b i">1100 GJ</span> from
+                    it instead of 200 GJ. It does not matter if the pulsar is filled more
+                    than twice; it will only emit either 200 GJ for one fill or 1100 GJ
+                    for more than one.
+                </li>
+                <li>
+                    You should think of the pulsar map as <span class="b i">a 2D grid of
+                    pixels</span>. Each of your coordinates targets a pixel on the map.
+                    The reaction is interrupted by any edge, including both the outlines
+                    of other pulsars and the boundaries of the map.
+                </li>
+            </ul>
+        </div>
+        <p>
+            This process does not seem as efficient as it could be and you wonder if you
+            could increase your net gain per pulse. You open the metal cover on the side
+            of the laser labeled <span class="b i">"CALIBRATIONS"</span>, and inside you
+            see <span class="b i">a small mirror</span> angled out of the laser's range.
+            Moving that mirror into the laser's path will <span class="b i">double the
+            output of the laser by mirroring the x and y coordinates</span>!
+        </p>
+        <p class="hint-label ssm"> HINT (mouse-over to view):</p>
+        <p class="hint ssm">
+            PIL Library (pillow) comes with a built-in flood fill function, but 
+            try to use the flood fill function you made for Part One instead.
+            numpy.array() can easily take a PIL.Image object and turn it into
+            an array of RGB values representing each pixel. You can also use
+            the PIL.Image.fromarray() method to take a numpy array turn it back
+            into an image to view your results.
+        </p>
+        <h4>
+            Consider a smaller map, for example:
+        </h4>
+        <div class="flex-container">
+            <div class="container-item">
+                <a href="../static/images/05/test.png">
+                    <img class="smallpic" src="../static/images/05/test.png">
+                </a>
+            </div>
+            <div class="container-item pad">
+                with the coordinates<br>
+                <span class="code free">
+                    66,147<br>
+                    120,123<br>
+                    329,181<br>
+                    368,339
+                </span>
+            </div>
+        </div>
+        <p>
+            Mirroring these coordinates gives you the complete list of coordinates:<br>
+            <span class="code part">
+                66,147 147,66 120,123 123,120 329,181 181,329 368,339 339,368
+            </span><br>
+            which is 8 coordinates for the energy cost of 4!
+        </p>
+        <div class="flex-container">
+            <div class="column">
+                <img class="smallpic" src="../static/images/05/testresult1.png">
+            </div>
+            <div class="column">
+                <ul>
+                    <li>each coordinate representing a laser pulse is a red dot</li>
+                    <li>areas that are filled once by a pulse are colored yellow</li>
+                    <li>areas that are filled twice by a pulse are colored cyan</li>
+                    <span class="b i"><li>
+                        the 3 pulsars on the right are not completely filled
+                    </li></span>
+                    <ul>
+                        <li>the red circle shows un-filled areas of the pulsar</li>
+                        <li>other pulsars are cut off by the image's border</li>
+                    </ul>
+
+                </p>
+            </div>
+        </div>
+        <p>
+            Because the pulsars on the right are not completely filled, they do not
+            emit any energy. You have 1 once-filled pulsar emitting 200 GJ, and 1
+            twice-filled pulsar emitting 1100 GJ. On top of that you have the cost
+            of transmitting 4 laser pulses at 100 GJ each:<br>
+            <span class="code part">200 + 1100 - (100 * 4) = 900</span>
+        </p>
+        <p>
+            In this example, your net energy gained is 
+            <span class="code part">900</span> GJ.
+        </p>
+
         <!--content end-->
         <p class="main">
             <!--instructions start-->
-            do...:
+            Here is your map:
+        </p>
+        <div class="imgcontainer">
+            <a href="../static/images/05/starmap.png" class="input" download>
+                    <img class="puzzle" src="../static/images/05/starmap.png">
+                    <p class="main ssm attach">[ click to get input ]</p>
+            </a>
+        </div>
+        
+        <p class="main">And your coordinates:
             <!--instructions end-->
         </p>
         <div class="input">
-            <a href="../static/puzzle_input/00000/input2.txt" class="input" download>
+            <a href="../static/puzzle_input/05/input2.txt" class="input" download>
                 <!-- <img class="puzzle" id="code-block-1" src="{{ input_url1 }}"> -->
                 <pre class="code main" id="code-block-2"></pre>
                 <script>
-                    fetch('../static/puzzle_input/00000/input2.txt')
+                    fetch('../static/puzzle_input/05/input2.txt')
                         .then(response => response.text())
                         .then(text => {
                             const element = document.getElementById('code-block-2');
@@ -133,7 +367,7 @@
             <form>
                 <div class="form-box">
                     <!--form start-->
-                    <label class="main">What is ...?<br></label>
+                    <label class="main">What is the net energy (in GJ) gained?<br></label>
                     <input type="text" id="answer2" placeholder="...">
                     <button>Submit</button>
                     <!--form end-->
