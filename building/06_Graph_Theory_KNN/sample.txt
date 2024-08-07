@@ -1,0 +1,11 @@
+9,2 6,4 3,5
+10,7,Cosmic
+9,1,Solar
+7,2,Solar
+8,3,Cosmic
+10,2,Solar
+9,3,Solar
+1,5,Cosmic
+4,5,Cosmic
+9,4,Solar
+3,3,Solar

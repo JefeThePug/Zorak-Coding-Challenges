@@ -1,4 +1,4 @@
-Mass,Area,Thickness,Density,Radiation Output,Type
+16.4,20.11,0.699,8.07,0.0105
 19.8,15.3,0.981,5.11,0.0182,Nanocrystalline Diamond Thermal Spreader
 18.5,14.5,1.65,6.1,0.0531,Nanocrystalline Diamond Thermal Spreader
 18.0,16.5,1.23,5.05,0.0295,Zirconium Dioxide Ceramic Heat Sink
@@ -83,7 +83,7 @@ Mass,Area,Thickness,Density,Radiation Output,Type
 14.8,17.3,4.33,5.97,0.425,Boron Nitride Nanotube Composite
 16.1,17.0,2.86,9.8,0.165,Silicon Oxycarbide Shield Tile
 13.8,13.8,1.11,3.19,0.0238,Boron Nitride Nanotube Composite
-16.2,19.4,1.54,8.52,0.0481,Graphene-Coated Carbon Fiber Sheet
+16.2,19.4,1.54,8.52,0.0481,Zirconium Dioxide Ceramic Heat Sink
 17.6,18.8,2.45,9.88,0.123,Nanocrystalline Diamond Thermal Spreader
 16.4,20.1,0.874,2.59,0.0164,Graphene-Coated Carbon Fiber Sheet
 14.4,14.2,4.1,3.38,0.34,Boron Nitride Nanotube Composite

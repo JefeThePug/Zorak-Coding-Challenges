@@ -1,4 +1,4 @@
-Frequency,Wavelength,Type
+3,14 11,6 17,15 2,4 11,19
 12,7,Solar
 13,1,Cosmic
 7,7,Solar
