@@ -14,7 +14,7 @@
     <header>
         <h1>Challenge 
             <!--NUMBER-->
-            0
+            7
             <!--HERE-->
         </h1>
     </header>
@@ -24,24 +24,100 @@
         <div class="header">
             <h2>Part One: <br>
                 <!--title start-->
-                TBD
+                Pharma-geddon
                 <!--title end-->
             </h2>
         </div>
         <!--content start-->
-        <p>...</p>
+        <p>
+            After a few days of high-tension work in other areas of the ship, you put in a request
+            for a more laid-back task. Helping to organize the inventory in the
+            <a href="https://en.wikipedia.org/wiki/Sick_bay">Sick Bay</a> sounds like a great,
+            mindless task that you can relax by doing.
+        </p>
+        <p>
+            As seems to be your usual misfortune, you arrive to yet another tableau of stress and
+            confusion. The medical officer has just put in <span class="b i">an order for some
+            medical supplies</span>, but someone has lost the reference sheet for the inventory.
+            Without the <span class="b i">four-symbol code</span> for each item, you cannot
+            retrieve it from the <a href="https://en.wikipedia.org/wiki/Vending_machine">auto-vending
+            storage</a>.
+        </p>
+        <p>
+            The only files that are found are <span class="b i">an inventory, listing the name and
+            quantity of each supply</span>, and <span class="b i">a raw data file, your input puzzle,
+            that stores the entire 
+            <a href="https://docs.python.org/3/library/collections.html">
+                collections
+            </a>
+            of medical supplies</span>. As these items were entered into the ship's inventory in no
+            particular order, their four-symbol codes were 
+            <a href="https://en.wikipedia.org/wiki/Concatenation">concatenated</a> onto the raw data
+            file <span class="b i">with no separator</span>.
+        </p>
+        <p>
+            You are asked if you know of any 
+            <a href="https://docs.python.org/3/library/collections.html#collections.Counter">
+                Counter
+            </a>
+            that can process this raw data file and <span class="b i">tell you the number of appearances
+            of all the four-symbol codes</span>. Then you can cross-check it with the plain text inventory.
+        </p>
+        <p>
+            Using the raw data file, <span class="b i">find each four-symbol code that appears the number
+            of times corresponding to each item's quantity</span>. Print these codes<span class="b i">
+            next to each other without any spaces</span> to retrieve them from the storage.
+        </p>
+        <h4>
+            For example:
+        </h4>
+        <p>
+            If your raw data file looks like
+            <span class="code free">
+                **_#@$%&()[]#?!)()[]#?!)()[]()[]@$%&@$%&()[]()[]()[]()[]@$%&@$%&#?!)**_#**_#@$%&#?!)
+            </span>
+            We can see
+            <ul>
+                <li>8 occurrences of  <span class="code part">()[]</span></li>
+                <li>6 occurrences of <span class="code part">@$%&</span></li>
+                <li>4 occurrences of <span class="code part">#?!)</span></li>
+                <li>3 occurrences of <span class="code part">**_#</span></li>
+            </ul>
+        </p>
+        <p>
+            If the plain text inventory tells you there are 8 hypodermic needles and 4 plaster casts,
+            You can determine from your count that the four-symbol code for hypodermic needles is
+            <span class="code part">()[]</span> and the four-symbol code for plaster casts is
+            <span class="code part">#?!)</span>.
+        </p>
+        <p>
+            To get these items from the storage, you will input <span class="code part">()[]#?!)</span>.
+        </p>
+
         <!--content end-->
         <p class="main">
             <!--instructions start-->
-            do...:
+            The medical officer has requested bandages, healing serum, and antacids.
+        </p>
+        <p class="main">
+            Plain text inventory:
+            <span class="code free main">
+                • <span class="b i main">1081</span> packages of standard adhesive bandages
+                 packages of standard adhesive bandages<br>
+                • <span class="b i main">1055</span> bottles of "InstaHeal" combination
+                disinfectant and wound closure serum<br>
+                • <span class="b i main">965</span> blister packs of "Yucky Tummy No More"
+                chewable antacids
+            </span>
+            Raw data file:
             <!--instructions end-->
         </p>
         <div class="input">
-            <a href="../static/puzzle_input/01/input1.txt" class="input" download>
+            <a href="../static/puzzle_input/07/input1.txt" class="input" download>
                 <!-- <img class="puzzle" id="code-block-1" src="{{ input_url1 }}"> -->
                 <pre class="code main" id="code-block-1"></pre>
                 <script>
-                    fetch('../static/puzzle_input/01/input1.txt')
+                    fetch('../static/puzzle_input/07/input1.txt')
                         .then(response => response.text())
                         .then(text => {
                             const element = document.getElementById('code-block-1');
@@ -68,7 +144,7 @@
             <form>
                 <div class="form-box">
                     <!--form start-->
-                    <label class="main">What is ...?<br></label>
+                    <label class="main">What is the code to retrieve these three items?<br></label>
                     <input type="text" id="answer2" placeholder="...">
                     <button>Submit</button>
                     <!--form end-->
@@ -87,44 +163,118 @@
 
     <section id="parttwo">
         <div class="header">
-            <h2>Part One: <br>
+            <h2>Part Two: <br>
                 <!--title start-->
-                TBD
+                Have a Proper Gander
                 <!--title end-->
             </h2>
         </div>
         <!--content start-->
-        <p>...</p>
+        <p>
+            With that crisis averted, the rest of your day goes by pretty smoothly as you help your
+            shipmates reorganize the inventory. Suddenly, out of the corner of your eye, you
+            <span class="b i">spot a small colorful piece of paper</span>.
+        </p>
+        <div class="imgcontainer">
+            <img class="fill" src="../static/images/07/zorakpropoganda.png">
+        </div>
+        <p>
+            Picking it up, you immediately recognize it as <span class="b i">Dokarian
+            <a href="https://en.wikipedia.org/wiki/Propaganda">propaganda</a></span>
+            that someone aboard the ship must have sneaked in. Could there be a
+            <a href="https://en.wikipedia.org/wiki/Treason">traitor</a> amongst us?
+        </p>
+        <p>
+            Call it a <a href="https://en.wikipedia.org/wiki/Intuition">hunch</a>, but you notice
+            something very funny about the <span class="b i">background colors of the paper</span>.
+            Luckily, there is a <span class="b i">Propaganda Inspecting LumiCam (PIL)</span> app built
+            into your holographic tablet, designed to <span class="b i">scan images for color</span>.
+        </p>
+        <p>
+            To uncover the <span class="b i">hidden message</span>, you need to program it to act as a
+            <a href="https://docs.python.org/3/library/collections.html#collections.Counter">
+                Counter
+            </a>
+            for each pixel color you scan. You decide on a quick course of action.
+        </p>
+        <div class="shadow pad">
+            <ol>
+                <li>Scan the Image</li>
+                <ul>
+                    <li>
+                        Use your PIL app to scan the background colors from the image (your puzzle input)
+                    </li>
+                </ul>
+                <li>Count the Colors</li>
+                <ul>
+                    <li>
+                        The app should count each color pixel and provide you with a list of RGB tuples
+                        for the top three most frequent colors
+                    </li>
+                </ul>
+                <li>Convert Hex Values</li>
+                <ul>
+                    <li>
+                        Convert the RGB tuples to hex color values and then change all of the digits to
+                        their closest uppercase letter using the following mapping:<br>
+                        <span class="b i">0=O, 1=I, 2=Z, 3=E, 4=A, 5=S, 6=G, 7=T, 8=B, and 9=P</span>
+                    </li>
+                </ul>
+            </ol>
+        </div>
+        <p>
+            The resulting <span class="b i">six letter words from the top three hex color values</span>
+            will reveal the secret message hidden inside the propaganda paper.
+        </p>
+        <h4>
+            For example:
+        </h4>
+        <p>
+            Using the image
+        </p>
+        <div class="imgcontainer">
+            <img class="midpic" src="../static/images/07/sample.png">
+        </div>
+        <p>We get the following counts for pixel colors
+            <span class="code free">
+                (255, 255, 255): 2183<br>
+                (&nbsp;&nbsp;0, &nbsp;&nbsp;0, &nbsp;&nbsp;0): 1917<br>
+                (176, 209, 229): 10000<br>
+                (190, 173, 237): 10000<br>
+                (222, 202, 222): 10000
+            </span>
+        </p>
+        <div class="flex-container">
+            <div class="container-item pad">
+                Converting the top 3<br>colors to hex values
+                <span class="code free">
+                    #B0D1E5<br>
+                    #BEADED<br>
+                    #DECADE
+                </span>
+            </div>
+            <div class="container-item pad">
+                and changing the digits<br>to uppercase letters
+                <span class="code free">
+                    BODIES<br>
+                    BEADED<br>
+                    DECADE
+                </span>
+            </div>
+        </div>
+        <p>
+            The secret message becomes <span class="code part">BODIES BEADED DECADE</span>.
+        </p>
+        
         <!--content end-->
         <p class="main">
             <!--instructions start-->
-            do...:
+            Here is a section of just the background colors from the propaganda paper:
             <!--instructions end-->
         </p>
         <div class="input">
-            <a href="../static/puzzle_input/00000/input2.txt" class="input" download>
-                <!-- <img class="puzzle" id="code-block-1" src="{{ input_url1 }}"> -->
-                <pre class="code main" id="code-block-2"></pre>
-                <script>
-                    fetch('../static/puzzle_input/00000/input2.txt')
-                        .then(response => response.text())
-                        .then(text => {
-                            const element = document.getElementById('code-block-2');
-                            element.innerText = text;
-                            setTimeout(() => {
-                            if (element.offsetHeight > parseFloat(getComputedStyle(element).maxHeight)) {
-                                element.parentNode.insertBefore(
-                                Object.assign(document.createElement('pre'), {
-                                    className: 'code main attach b',
-                                    innerHTML: '...',
-                                }),
-                                element.nextSibling
-                                );
-                            }
-                            }, 0);
-                        })
-                        .catch(error => console.error('Error fetching the content:', error));
-                </script>
+            <a href="../static/puzzle_input/07/input2.png" class="input" download>
+                <img class="puzzle" id="code-block-1" src="../static/puzzle_input/07/input2.png">
                 <p class="main ssm attach">[ click to get input ]</p>
             </a>
         </div>
@@ -133,7 +283,7 @@
             <form>
                 <div class="form-box">
                     <!--form start-->
-                    <label class="main">What is ...?<br></label>
+                    <label class="main">What is the secret message?<br></label>
                     <input type="text" id="answer2" placeholder="...">
                     <button>Submit</button>
                     <!--form end-->
