@@ -38,6 +38,9 @@ section {
   max-width: 800px;
   padding: 20px;
 }
+hr {
+  border-color: var(--t-focus);
+}
 
 /* Headers */
 header {
@@ -113,6 +116,9 @@ a.float {
 }
 .u {
   text-decoration: underline;
+}
+.cross{
+  text-decoration: line-through;
 }
 .sm {
   font-size: small;
@@ -217,6 +223,9 @@ td.select {
   background-color: var(--t-link) !important;
   color: var(--b-focus2)
 }
+td.cross {
+  color:var(--b-focus3)
+}
 .mono tbody > tr, .mono tfoot > tr {
   height: 34px;
   max-height: 34px;
@@ -300,6 +309,9 @@ tbody.P4 {
 }
 .code.sm {
   font-size: small;
+}
+.code.part.main {
+  width: fit-content;
 }
 .part {
   display: inline-flex;
