@@ -120,6 +120,9 @@ a.float {
 .cross{
   text-decoration: line-through;
 }
+.lg {
+  font-size: larger;
+}
 .sm {
   font-size: small;
 }
@@ -278,7 +281,17 @@ tbody.P4 {
   :nth-child(5) {
     background-color: var(--b-focus1);
   }
-} 
+}
+.map tbody tr{
+  border: 1px solid var(--t-main );
+  :nth-child(1n) {background-color: var(--b-focus2)}
+}
+.map td {
+  width: 20px;
+}
+td.o {
+  background-color: var(--b-focus1) !important;
+}
 
 /* Code Blocks */
 .code {
