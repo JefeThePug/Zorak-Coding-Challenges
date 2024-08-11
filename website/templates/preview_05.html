@@ -22,145 +22,155 @@
     
     <section id="partone">
         <div class="header">
-            <h2>Part One: <br>
+            <h2>Part One:<br>
                 <!--title start-->
-                Qualification Exam
+                Pixel Perfect Panic
                 <!--title end-->
             </h2>
         </div>
         <!--content start-->
         <p>
             You performed so well in the galley that the crew in the
-            generator room requested your help today. They, too, are
-            dealing with expensive instruments where precision and
-            efficiency are paramount. Before you can get your hands
-            on these new machines, they would like to give you
-            <span class="b i">
-                a qualification exam</span>.
+            generator room has requested your help today. Their 
+            <span class="b i">Power Harvester machine</span>, which 
+            <span class="b i">gathers energy from nearby stars to fuel
+            the ship</span>, is functioning fine. However, they are having
+            <span class="b i">trouble reading the outputs</span> that
+            indicate how many gigajoules (GJ) of energy have been collected.
         </p>
         <p>
-            There is only one question on the exam, and it is a
-            <span class="b i">
-                text map of spaces and "#" characters
-            </span>
-            that resemble 
-            <span class="b i">
-                a cave of tunnels and chambers</span>.
+            Here's how the Power Harvester works:<br>After sending a 
+            <a href="https://en.wikipedia.org/wiki/Photon">photon</a>
+            collection beam toward a star, the energy is gathered and
+            stored in one of the power tanks in the generator room.
+            Although the Power Harvester is somewhat outdated, it has
+            been reliable over the years with minimal updates. 
+            <span class="b i">Instead of a digital display, this
+            antique machine 
+            <a href="https://en.wikipedia.org/wiki/Extrusion">extrudes</a>
+            a long, thin wire of singular 
+            <a href="https://en.wikipedia.org/wiki/Pixel">pixels</a></span>.
+            This wire is then <span class="b i">fed into the more modern 
+            P.I.L. System (Patterned Image Layout), which
+            reconstructs it into a square image</span>. The resulting image
+            displays the number of GJ harvested.
         </p>
         <p>
-            The instructions are as follows:
+            Despite its age, the Power Harvester is known for its good
+            old-fashioned reliability and continues to run smoothly.
+            However, <span class="b i">the P.I.L. System is failing</span>
+            and can no longer convert the wire into a viewable square image.
+            You need to <span class="b i">reprogram it to restore this
+            function</span>.
         </p>
-        <div class="shadow pad">
-            <ul>
-                <li>
-                    You have a water pump at the top-left entrance of
-                    the cave (position (0,0))
-                </li><br>
-                <li>
-                    You immediately begin to fill the cave with water
-                </li><br>
-                <li>
-                    How many square meters of the cave will be flooded?
-                </li>
-            </ul>
-        </div>
-        <p>
-             On the map, <span class="b i">each character or space
-            represents 1 square meter</span>. 
-            <ul>
-                <li>
-                    The <span class="b i">"#" characters represent
-                    cave walls</span> where water cannot pass through.
-                </li>
-                <li>
-                    For the purposes of this exercise,
-                    <span class="b i">
-                        water can flow either up, down, left, or right</span>,
-                    but not diagonally.
-                </li>
-            </ul>
-        </p>
+        <ul>
+            <li class="pad">
+                You can be certain that <span class="b i">the length of
+                wire extruded from the Power Harvester machine is a
+                <a href="https://en.wikipedia.org/wiki/Square_number">
+                perfect square</a></span>, which means that it can be
+                arranged into an image with <span class="b i">equal width
+                and height</span>.
+            </li>
+            <li>
+                To create the image, <span class="b i">start at point (0,0)
+                </span>and lay wire
+                <span class="b i">to the right until you reach the end of
+                the row</span>, indicated by the width of the desired square
+                image. Then, <span class="b i">move down a row</span> and
+                <span class="b i">lay the wire to the left</span>,
+                <a href="https://en.wikipedia.org/wiki/Zigzag">zigzagging</a>
+                from top to bottom and left to right until the entire wire is
+                used.
+            </li>
+        </ul>
         <h4>
             For example:
         </h4>
         <p>
-            If our map looks like this
-            <span class="code free">
-                &nbsp;&nbsp;&nbsp;####&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                #&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#########<br>
-                &nbsp;##&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                &nbsp;&nbsp;##&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                #&nbsp;##&nbsp;&nbsp;##&nbsp;&nbsp;#&nbsp;&nbsp;##<br>
-                #&nbsp;##&nbsp;&nbsp;####&nbsp;####<br>
-                #&nbsp;##&nbsp;&nbsp;##&nbsp;#&nbsp;##&nbsp;&nbsp;<br>
-                #&nbsp;##&nbsp;&nbsp;#&nbsp;&nbsp;#&nbsp;&nbsp;#&nbsp;&nbsp;<br>
-                &nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;##&nbsp;&nbsp;#&nbsp;&nbsp;##<br>
-                &nbsp;##&nbsp;&nbsp;&nbsp;&nbsp;##&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;<br>
-                &nbsp;###&nbsp;&nbsp;&nbsp;&nbsp;##&nbsp;&nbsp;###<br>
-                &nbsp;###&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                &nbsp;&nbsp;####&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;##&nbsp;&nbsp;<br>
-                ##&nbsp;&nbsp;&nbsp;#####&nbsp;&nbsp;##&nbsp;<br>
-                &nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;####&nbsp;&nbsp;#&nbsp;
-            </span>
+            The wire with pixels
         </p>
+        <div>
+            <table class="map">
+                <tr>
+                    <td style="background-color:darkgreen;">0</td>
+                    <td style="background-color:darkblue">1</td>
+                    <td style="background-color:purple">2</td>
+                    <td style="background-color:indigo">3</td>
+                    <td style="background-color:darkgreen;">4</td>
+                    <td style="background-color:darkblue;">5</td>
+                    <td style="background-color:purple;">6</td>
+                    <td style="background-color:indigo;">7</td>
+                    <td style="background-color:darkgreen;">8</td>
+                    <td style="background-color:darkblue;">9</td>
+                    <td style="background-color:purple;">10</td>
+                    <td style="background-color:indigo;">11</td>
+                    <td style="background-color:darkgreen;">12</td>
+                    <td style="background-color:darkblue;">13</td>
+                    <td style="background-color:purple;">14</td>
+                    <td style="background-color:indigo;">15</td>
+                </tr>
+            </table>
+        </div>
         <p>
-            Flowing only up, down, left, and right, water (shown as •) will flow
-            to the following places
-            <span class="code free">
-                •••####&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                #•••••#########<br>
-                &nbsp;##••••••#&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                &nbsp;&nbsp;##••••••#&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                #&nbsp;##••##••#&nbsp;&nbsp;##<br>
-                #&nbsp;##••####&nbsp;####<br>
-                #&nbsp;##••##&nbsp;#&nbsp;##&nbsp;&nbsp;<br>
-                #&nbsp;##••#&nbsp;&nbsp;#&nbsp;&nbsp;#&nbsp;&nbsp;<br>
-                &nbsp;&nbsp;#•••##&nbsp;&nbsp;#&nbsp;&nbsp;##<br>
-                &nbsp;##••••##&nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;<br>
-                &nbsp;###••••##&nbsp;&nbsp;###<br>
-                &nbsp;###••••••#&nbsp;&nbsp;&nbsp;&nbsp;<br>
-                &nbsp;&nbsp;####•••••##&nbsp;&nbsp;<br>
-                ##&nbsp;&nbsp;&nbsp;#####••##&nbsp;<br>
-                &nbsp;&nbsp;#&nbsp;&nbsp;&nbsp;&nbsp;####••#&nbsp;
-            </span>
+            would zigzag into the following formation
         </p>
+        <div class="flex-container">
+            <div class="container-item">
+                <table class="map">
+                    <tr>
+                        <td style="background-color:darkgreen;">0</td>
+                        <td style="background-color:darkblue">1</td>
+                        <td style="background-color:purple">2</td>
+                        <td style="background-color:indigo;">3</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:indigo;">7</td>
+                        <td style="background-color:purple">6</td>
+                        <td style="background-color:darkblue">5</td>
+                        <td style="background-color:darkgreen;">4</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:darkgreen;">8</td>
+                        <td style="background-color:darkblue">9</td>
+                        <td style="background-color:purple">10</td>
+                        <td style="background-color:indigo;">11</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:indigo;">15</td>
+                        <td style="background-color:purple">14</td>
+                        <td style="background-color:darkblue">13</td>
+                        <td style="background-color:darkgreen;">12</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="spacer"><span class="b lg">or </span></div>
+            <div class="container-item">
+                <img class="smallpic" src="../static/images/05/linea.png">
+            </div>
+        </div>
         <p>
-            One water symbol (•) is 1 square meter, so counting these 
-            characters gives us <span class="code part">56</span>.
+            A larger wire with more pixels might produce an image like
         </p>
+        <div class="imgcontainer">
+            <img style="height:50px;width:50px;" src="../static/images/05/sample.png">
+        </div>
         <p>
-            Time to take your exam.
+            making the amount of energy obtained by the Power Harvester
+            <span class="code part">79</span> GJ.
         </p>
+
+
+
         <!--content end-->
         <p class="main">
             <!--instructions start-->
-            Here is your map:
+            Here is your extruded wire:
             <!--instructions end-->
         </p>
         <div class="input">
-            <a href="../static/puzzle_input/05/input1.txt" class="input" download>
-                <!-- <img class="puzzle" id="code-block-1" src="{{ input_url1 }}"> -->
-                <pre class="code main" id="code-block-1"></pre>
-                <script>
-                    fetch('../static/puzzle_input/05/input1.txt')
-                        .then(response => response.text())
-                        .then(text => {
-                            const element = document.getElementById('code-block-1');
-                            element.innerText = text;
-                            setTimeout(() => {
-                            if (element.offsetHeight > parseFloat(getComputedStyle(element).maxHeight)) {
-                                element.parentNode.insertBefore(
-                                Object.assign(document.createElement('pre'), {
-                                    className: 'code main attach b',
-                                    innerHTML: '...',
-                                }),
-                                element.nextSibling
-                                );
-                            }
-                            }, 0);
-                        })
-                        .catch(error => console.error('Error fetching the content:', error));
-                </script>
+            <a href="../static/puzzle_input/05/input1.png" class="input" download>
+                <img class="puzzle" id="code-block-1" src="../static/puzzle_input/05/input1.png">
                 <p class="main ssm attach">[ click to get input ]</p>
             </a>
         </div>
@@ -169,7 +179,7 @@
             <form>
                 <div class="form-box">
                     <!--form start-->
-                    <label class="main">How many square meters of water will fill the cave?<br></label>
+                    <label class="main">How many GJ of energy have been harvested?<br></label>
                     <input type="text" id="answer2" placeholder="...">
                     <button>Submit</button>
                     <!--form end-->
@@ -188,177 +198,135 @@
 
     <section id="parttwo">
         <div class="header">
-            <h2>Part Two: <br>
+            <h2>Part Two:<br>
                 <!--title start-->
-                ...To the Stars
+                Diamond in the Data Rough
                 <!--title end-->
             </h2>
         </div>
         <!--content start-->
         <p>
-            Having successfully passed the comprehension exam, you are admitted into
-            the Laser Room. You see a gigantic machine pointed out into space, with a
-            rather simple control panel featuring a monitor, two large buttons, and
-            dials for adjusting coordinates. The label on the machine reads
-            <a href="https://pillow.readthedocs.io/en/stable/">"P.I.L."</a>,
-            which stands for <span class="b i">
-            "<a href="https://en.wikipedia.org/wiki/Pulsar">Pulsar</a> Intercepting
-            Laser"</span>.
+            In addition to harvesting gigajoules of power from the stars,
+            <span class="b i">the Power Harvester also collects diamond
+            gas</span> as a side effect.
         </p>
         <p>
-            On the monitor, you see a map of pulsars that are within the laser's range.
+            When compressed, this gas forms actual
+            <a href="https://en.wikipedia.org/wiki/Diamond">diamonds</a>,
+            which can be sold—likely another reason why this antique machine
+            remains so popular. The diamond gas is filtered into separate
+            containers, and the resulting diamonds help finance the missions
+            of the STS Space Ghost.
         </p>
         <p>
-            You are briefed by the lead technician:
+            Fortunately, the Power Harvester also <span class="b i">tracks
+            the amount of diamond gas collected in liters</span>, which is
+            <span class="b i">indicated within the extruded wire</span>.
+            Once again, the task of generating an image to display the
+            total liters of diamond gas falls to the P.I.L System, which is
+            still buggy. <span class="b i">You'll need to reprogram it to
+            convert the wire into a new formation to read the amount of
+            diamond gas</span>.
         </p>
-        <div class="shadow pad">
-            <ul>
-                <li>
-                    The PIL <span class="b i">emits a frequency of light</span> in the
-                    direction of your provided coordinates, which hits the pulsar and
-                    causes it to <span class="b i">flood out</span> in four directions
-                    (North, South, East, and West) <span class="b i">until it reaches
-                    an edge</span>.
-                </li>
-                <li>
-                    This reaction, if it covers the entire surface of the pulsar, will
-                    radiate <span class="b i">200 gigajoules (GJ) of energy</span>,
-                    which is received by the PIL's sensors.
-                </li>
-                <li>
-                    Unfortunately, <span class="b i">a single pulse of the PIL costs 100
-                    GJ to run</span>, so the <span class="b i">net energy gained from
-                    completely filling a pulsar is 100 GJ</span>.
-                </li>
-                <li>
-                    If a pulsar is <span class="b i">completely filled more than once</span>,
-                    the PIL's sensors can intercept <span class="b i">1100 GJ</span> from
-                    it instead of 200 GJ. It does not matter if the pulsar is filled more
-                    than twice; it will only emit either 200 GJ for one fill or 1100 GJ
-                    for more than one.
-                </li>
-                <li>
-                    You should think of the pulsar map as <span class="b i">a 2D grid of
-                    pixels</span>. Each of your coordinates targets a pixel on the map.
-                    The reaction is interrupted by any edge, including both the outlines
-                    of other pulsars and the boundaries of the map.
-                </li>
-            </ul>
+        <ul>
+            <li>
+                To create this new image formation, <span class="b i">use
+                the same wire</span>. Instead of zigzagging from left to
+                right and top to bottom, <span class="b i">zigzag diagonally
+                from the upper left corner (point (0,0)) to the bottom right
+                corner</span>. 
+            </li>
+            <li>
+                <span class="b i">Start at point (0,0)</span> and
+                <span class="b i">lay the wire 1 pixel right</span>, then
+                <span class="b i">move diagonally down-left</span>. After
+                completing one diagonal line down-left, <span class="b i">lay
+                the wire 1 pixel down</span> and <span class="b i">move
+                diagonally up-right</span>. This process continues until the
+                entire wire is used.
+            </li>
+            <li>
+                If the height is reached, the wire will move right instead
+                of down before moving up-right. If the width is reached, the
+                wire will move down instead of right before moving down-left.
+            </li>
+        </ul>
+        <h4>
+            For example:
+        </h4>
+        <p>
+            The same wire as before, with pixels
+        </p>
+        <div>
+            <table class="map">
+                <tr>
+                    <td style="background-color:darkgreen;">0</td>
+                    <td style="background-color:darkblue">1</td>
+                    <td style="background-color:purple">2</td>
+                    <td style="background-color:indigo">3</td>
+                    <td style="background-color:darkgreen;">4</td>
+                    <td style="background-color:darkblue;">5</td>
+                    <td style="background-color:purple;">6</td>
+                    <td style="background-color:indigo;">7</td>
+                    <td style="background-color:darkgreen;">8</td>
+                    <td style="background-color:darkblue;">9</td>
+                    <td style="background-color:purple;">10</td>
+                    <td style="background-color:indigo;">11</td>
+                    <td style="background-color:darkgreen;">12</td>
+                    <td style="background-color:darkblue;">13</td>
+                    <td style="background-color:purple;">14</td>
+                    <td style="background-color:indigo;">15</td>
+                </tr>
+            </table>
         </div>
         <p>
-            This process does not seem as efficient as it could be and you wonder if you
-            could increase your net gain per pulse. You open the metal cover on the side
-            of the laser labeled <span class="b i">"CALIBRATIONS"</span>, and inside you
-            see <span class="b i">a small mirror</span> angled out of the laser's range.
-            Moving that mirror into the laser's path will <span class="b i">double the
-            output of the laser by mirroring the x and y coordinates</span>!
+            would zigzag into the following formation
         </p>
-        <p class="hint-label ssm"> HINT (mouse-over to view):</p>
-        <p class="hint ssm">
-            PIL Library (pillow) comes with a built-in flood fill function, but 
-            try to use the flood fill function you made for Part One instead.
-            numpy.array() can easily take a PIL.Image object and turn it into
-            an array of RGB values representing each pixel. You can also use
-            the PIL.Image.fromarray() method to take a numpy array turn it back
-            into an image to view your results.
-        </p>
-        <h4>
-            Consider a smaller map, for example:
-        </h4>
         <div class="flex-container">
             <div class="container-item">
-                <a href="../static/images/05/test.png">
-                    <img class="smallpic" src="../static/images/05/test.png">
-                </a>
+                <table class="map">
+                    <tr>
+                        <td style="background-color:darkgreen;">0</td>
+                        <td style="background-color:darkblue">1</td>
+                        <td style="background-color:darkblue">5</td>
+                        <td style="background-color:purple;">6</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:purple;">2</td>
+                        <td style="background-color:darkgreen">4</td>
+                        <td style="background-color:indigo">7</td>
+                        <td style="background-color:darkgreen;">12</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:indigo;">3</td>
+                        <td style="background-color:darkgreen">8</td>
+                        <td style="background-color:indigo">11</td>
+                        <td style="background-color:darkblue;">13</td>
+                    </tr>
+                    <tr>
+                        <td style="background-color:darkblue;">9</td>
+                        <td style="background-color:purple">10</td>
+                        <td style="background-color:purple">14</td>
+                        <td style="background-color:indigo;">15</td>
+                    </tr>
+                </table>
             </div>
-            <div class="container-item pad">
-                with the coordinates<br>
-                <span class="code free">
-                    66,147<br>
-                    120,123<br>
-                    329,181<br>
-                    368,339
-                </span>
+            <div class="spacer"><span class="b lg">or </span></div>
+            <div class="container-item">
+                <img class="smallpic" src="../static/images/05/lineb.png">
             </div>
         </div>
-        <p>
-            Mirroring these coordinates gives you the complete list of coordinates:<br>
-            <span class="code part">
-                66,147 147,66 120,123 123,120 329,181 181,329 368,339 339,368
-            </span><br>
-            which is 8 coordinates for the energy cost of 4!
-        </p>
-        <div class="flex-container">
-            <div class="column">
-                <img class="smallpic" src="../static/images/05/testresult1.png">
-            </div>
-            <div class="column">
-                <ul>
-                    <li>each coordinate representing a laser pulse is a red dot</li>
-                    <li>areas that are filled once by a pulse are colored yellow</li>
-                    <li>areas that are filled twice by a pulse are colored cyan</li>
-                    <span class="b i"><li>
-                        the 3 pulsars on the right are not completely filled
-                    </li></span>
-                    <ul>
-                        <li>the red circle shows un-filled areas of the pulsar</li>
-                        <li>other pulsars are cut off by the image's border</li>
-                    </ul>
 
-                </p>
-            </div>
-        </div>
-        <p>
-            Because the pulsars on the right are not completely filled, they do not
-            emit any energy. You have 1 once-filled pulsar emitting 200 GJ, and 1
-            twice-filled pulsar emitting 1100 GJ. On top of that you have the cost
-            of transmitting 4 laser pulses at 100 GJ each:<br>
-            <span class="code part">200 + 1100 - (100 * 4) = 900</span>
-        </p>
-        <p>
-            In this example, your net energy gained is 
-            <span class="code part">900</span> GJ.
-        </p>
 
         <!--content end-->
         <p class="main">
             <!--instructions start-->
-            Here is your map:
-        </p>
-        <div class="imgcontainer">
-            <a href="../static/images/05/starmap.png" class="input" download>
-                    <img class="puzzle" src="../static/images/05/starmap.png">
-                    <p class="main ssm attach">[ click to get input ]</p>
-            </a>
-        </div>
-        
-        <p class="main">And your coordinates:
+            Your extruded wire (same as Part 1):
             <!--instructions end-->
         </p>
         <div class="input">
-            <a href="../static/puzzle_input/05/input2.txt" class="input" download>
-                <!-- <img class="puzzle" id="code-block-1" src="{{ input_url1 }}"> -->
-                <pre class="code main" id="code-block-2"></pre>
-                <script>
-                    fetch('../static/puzzle_input/05/input2.txt')
-                        .then(response => response.text())
-                        .then(text => {
-                            const element = document.getElementById('code-block-2');
-                            element.innerText = text;
-                            setTimeout(() => {
-                            if (element.offsetHeight > parseFloat(getComputedStyle(element).maxHeight)) {
-                                element.parentNode.insertBefore(
-                                Object.assign(document.createElement('pre'), {
-                                    className: 'code main attach b',
-                                    innerHTML: '...',
-                                }),
-                                element.nextSibling
-                                );
-                            }
-                            }, 0);
-                        })
-                        .catch(error => console.error('Error fetching the content:', error));
-                </script>
+            <a href="../static/puzzle_input/05/input2.png" class="input" download>
+                <img class="puzzle" id="code-block-1" src="../static/puzzle_input/05/input1.png">
                 <p class="main ssm attach">[ click to get input ]</p>
             </a>
         </div>
@@ -367,7 +335,7 @@
             <form>
                 <div class="form-box">
                     <!--form start-->
-                    <label class="main">What is the net energy (in GJ) gained?<br></label>
+                    <label class="main">How many liters of diamond gas were harvested?<br></label>
                     <input type="text" id="answer2" placeholder="...">
                     <button>Submit</button>
                     <!--form end-->
