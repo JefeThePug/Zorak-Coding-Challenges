@@ -20,7 +20,7 @@
 
 {% block section1 %} {{ a["content"]|safe }} {% endblock %} 
 
-{% block intro1 %} {{ a["instructions"] }} {% endblock %} 
+{% block intro1 %} {{ a["instructions"]|safe }} {% endblock %} 
 
 {% set input_url1 = url_for('static', filename="puzzle_input/" ~ num.zfill(2) ~ "/input1." ~ a.input) %}
 
