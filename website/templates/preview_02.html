@@ -30,10 +30,10 @@
         </div>
         <!--content start-->
         <p>
-            You awake, ready to start a new day. Your 
+            You awaken, ready to start a new day. Your 
             <a href="https://en.wikipedia.org/wiki/Holographic_display">
                 holographic tablet
-            </a>dings, displaying a message:
+            </a>issues a gentle notification sound and displays a message:
         </p>
         <p class="shadow pad">
             Rise and shine, Cadet! Due to your exemplary performance in the 
@@ -41,12 +41,13 @@
             Report there at 0800 hours.
         </p>
         <p>
-            When you arrive, the room is in chaos. The crew are grabbing at piles 
-            of loose paper, which completely cover the floor. The pages seem to 
-            be from an instruction manual of sorts. Someone sees you standing 
-            there and tells you to grab some paper and 
-            <span class="b i">sort them</span>, 
-            leaving before you can ask any questions. You grab a pile.
+            When you arrive, the room is in a state of chaos. The crew are
+            grabbing at piles of loose paper, which completely cover the floor.
+            The pages seem to be from an instruction manual of sorts. The
+            Commms Bay supervisor sees you standing there and tells you to start
+            grabbing papers and <span class="b i">sorting them</span>, leaving
+            to sort their own before you can ask any questions. You grab a pile
+            and start reading.
         </p>
         <p>
             The sheets of printed paper do not have page numbers, but they all 
@@ -56,15 +57,16 @@
         Section Title, Chapter Number, Subchapter Letter, Section Number
         </p>
         <p>
-            Your puzzle input in a CSV file with the each page's header on 
-            individual lines. You decide to sort the pages like any book — 
-            first by chapter, then by subchapter, then by section. Each 
-            category sorted in ascending order. <span class="i">Chapter
-            number and section number should be sorted as integers, not
+            You start to write down the headers when you realize that your list
+            looks like a CSV file with each page's header on individual lines.
+            You must sort the pages like any book—<span class="b i">first by
+            chapter, then by subchapter, then by section</span>. Each index
+            field should be sorted in ascending order. <span class="i">Chapter
+            number and section number should be sorted as numbers, not
             strings</span>.
         </p>
         <p>
-            When everyone is done sorting their piles, you assume you will 
+            When everyone is done sorting their piles, you notice you will 
             have to work together to combine all your piles into one, so you 
             decide to create a 
             <a href="https://en.wikipedia.org/wiki/Mnemonic">
@@ -185,17 +187,18 @@
             to work. The stress of this new assignment, caused by the chaos 
             of the paper storm, has left you feeling overwhelmed. It seems 
             like the Electric Control Room might not be the place for you. 
-            You should put in a 
+            You want to put in a 
             <span class="b i">
                 Change of Assignment request 
             </span>
-            with the Operations Manager, but you've left your holographic 
-            tablet in your bunk. That's okay, because aboard the ship, all 
-            devices have the capability of communicating with the Operations 
+            with the Operations Manager, but you remember you've left your
+            holographic tablet in your bunk and can’t go back without
+            permission. That's okay, because aboard the ship, all devices
+            have the capability of communicating with the Operations 
             Manager, provided there's a screen to display the reply.
         </p>
         <p>
-            Luckily for you, you're stood in front of the
+            Luckily for you, you're standing in front of the
             <span class="b i">
                 "Binary&nbsp;Represented&nbsp;All&#8209;Inclusive&nbsp;Lettering&nbsp;LED"
             </span>
@@ -225,7 +228,7 @@
                     followed by sorted lowercase letters, a&#8209;z.
                 </li>
                 <li>
-                    For each column, the binary string fills the column form
+                    For each column, the binary string fills the column from
                     top to bottom, assigning the individual lights in that 
                     column <span class="b i">ON for 1</span> or 
                     <span class="b i">OFF for 0</span>. 
@@ -255,36 +258,47 @@
             </div>
         </div>
         <p>
-            Someone must have bumped the BrailLED amidst all the confusion this 
-            morning, because the inputs are not coming in sorted. You will have 
-            to sort the inputs first before letting the LED display show you your 
-            message in braille.
+            You send your message just fine using the keyboard, but from reading
+            the past messages, you think someone must have bumped into the BrailLED
+            and damaged it amidst all the confusion this morning. The inputs seem to
+            be coming in unsorted. You will have to sort the inputs first before
+            letting the LED display show you your message in braille.
+        </p>
+        <p>
+            Eventually, you find a sorting algorithm that makes sense: Sort each set
+            by letter, with uppercase letters before lowercase.
         </p>
         <h4>
             For example (with a shorter 6-column display):
         </h4>
-        <div class="imgcontainer">
-            <p>If the transmission you receive is
-                <span class="code free">
-                    000110,c<br>
-                    000010,a<br>
-                    111100,C<br>
-                    111101,A<br>
-                    100011,b<br>
-                    100110,B
-                </span>
-            </p>
-        </div>
-        <div class="imgcontainer">
-            You would sort it&nbsp;&nbsp;
-            <span class="code free">
-                111101,A<br>
-                100110,B<br>
-                111100,C<br>
-                000010,a<br>
-                100011,b<br>
-                000110,c
-            </span>
+        <div class="flex-container">
+            <div class="column">
+                <p>
+                    If the transmission<br>you receive is:
+                    <span class="code free">
+                        000110,c<br>
+                        000010,a<br>
+                        111100,C<br>
+                        111101,A<br>
+                        100011,b<br>
+                        100110,B
+                    </span>
+                </p>
+            </div>
+            <div class="spacer"></div>
+            <div class="column">
+                <p>
+                    You would sort it:&nbsp;&nbsp;
+                    <span class="code free">
+                        111101,A<br>
+                        100110,B<br>
+                        111100,C<br>
+                        000010,a<br>
+                        100011,b<br>
+                        000110,c
+                    </span>
+                </p>
+            </div>
         </div>
         <p>
             Column A is, from top to bottom, 
