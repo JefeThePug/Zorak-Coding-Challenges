@@ -479,6 +479,9 @@ img.fill {
   justify-content: center;
   width: calc(100% - 20px);
 }
+.imgcontainer.wrap {
+  flex-wrap: wrap;
+}
 .smallpic {
   width: 150px;
 }
