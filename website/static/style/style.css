@@ -229,6 +229,14 @@ td.select {
 td.cross {
   color:var(--b-focus3)
 }
+td.r {
+  color: red;
+  font-weight: bold;
+  text-shadow: 0 0 0.1em rgb(255, 45, 45);
+}
+td.o {
+  background-color: var(--b-focus1) !important;
+}
 .mono tbody > tr, .mono tfoot > tr {
   height: 34px;
   max-height: 34px;
@@ -289,9 +297,8 @@ tbody.P4 {
 .map td {
   width: 20px;
 }
-td.o {
-  background-color: var(--b-focus1) !important;
-}
+
+
 
 /* Code Blocks */
 .code {
