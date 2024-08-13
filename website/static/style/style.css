@@ -129,6 +129,10 @@ a.float {
 .ssm {
   font-size: x-small;
 }
+.falselink {
+  color: var(--t-link);
+  text-shadow: none;
+}
 .hint-label {
   margin-bottom: 0;
 }
@@ -190,6 +194,12 @@ a.float {
   height: 100px;
   margin-top: 10px;
   width: 50%;
+}
+#help {
+  margin: 0;
+  margin-bottom: -20px;
+  max-width: 850px;
+  width: 100%;
 }
 
 /* Table */

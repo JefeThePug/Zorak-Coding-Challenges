@@ -17,6 +17,13 @@
 {% block hovertext %} {{ text|safe }} {% endblock %}
 
 {% block main %}
+<div id="help" class="right">
+    <a href="/help">
+        <span class="material-symbols-outlined icon" alt="Help">
+            help
+        </span>
+    </a>
+</div>
 <section id="logo">
     <div class="imgcontainer">
         <img src="{{ url_for('static', filename='images/index/logo.png') }}" alt="Illustration of Xarlos and Zorak">
@@ -64,11 +71,4 @@
     More Challenges Coming Soon...
     {% endif %}
 </section>
-<div id="help" class="right">
-    <a href="/help">
-        <span class="material-symbols-outlined icon" alt="Help">
-            help
-        </span>
-    </a>
-</div>
 {% endblock %}
