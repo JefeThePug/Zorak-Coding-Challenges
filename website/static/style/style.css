@@ -237,7 +237,7 @@ td.select {
   color: var(--b-focus2)
 }
 td.cross {
-  color:var(--b-focus3)
+  color: #396a39;
 }
 td.r {
   color: red;
