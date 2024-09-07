@@ -313,7 +313,7 @@ def update():
         return {"error": "No authorization"}, 401
     
     if request.method == "GET":
-        return render_template("update.html", img=user["img"], text=user["text"])
+        return render_template("update.html", img=user["img"], text=user["text"], selected=0)
     else:
         week = request.form.get('selection')
         if not week:
@@ -324,11 +324,14 @@ def update():
             a, b, _ = data_raw[week].values()
         except KeyError:
             return redirect(url_for("update"))
+        
+        print(type(week), file=sys.stderr)
 
         params = {
             "img": user["img"],
             "text": user["text"],
             "num": week,
+            "selected": week,
             "a": a,
             "b": b,
         }
@@ -351,7 +354,7 @@ def updatedb():
     result = data.update_one({"id": "html"}, {"$set": {f"{n}.1": A, f"{n}.2": B}})
     if result.modified_count == 0:
         return {"message": "No changes made or document not found"}, 400
-    return render_template("update.html", img=user["img"], text=user["text"], success=n)
+    return render_template("update.html", img=user["img"], text=user["text"], success=n, selected=0)
 
 
 @app.route('/418')

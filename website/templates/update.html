@@ -20,17 +20,10 @@
         <form action="/update" method="POST">
             <label for="selector">Select an option:</label><br>
             <select name="selection" id="selector" onchange="this.form.submit()">
-                <option value=""> </option>
-                <option value="1">Week 1</option>
-                <option value="2">Week 2</option>
-                <option value="3">Week 3</option>
-                <option value="4">Week 4</option>
-                <option value="5">Week 5</option>
-                <option value="6">Week 6</option>
-                <option value="7">Week 7</option>
-                <option value="8">Week 8</option>
-                <option value="9">Week 9</option>
-                <option value="10">Week 10</option>
+                <option value=""></option>
+                {% for option in range(1, 11) %}
+                    <option value="{{ option }}" {% if option == selected|int %}selected{% endif %}>Week {{ option }}</option>
+                {% endfor %}
             </select>
         </form>
     </section>
@@ -39,32 +32,13 @@
     <section>
         <form action="/updatedb" method="POST">
             <input name="num" type="hidden" value="{{ num }}">
-            <h2>PART 1</h2>
-            <label for="title">Title:</label><br>
-            <textarea id="title" name="title_a" rows="1" cols="90">{{ a["title"] }}</textarea><br><br>
-            <label for="content">Content:</label><br>
-            <textarea id="content" name="content_a" rows="10" cols="90">{{ a["content"] }}</textarea><br><br>
-            <label for="instructions">Instructions:</label><br>
-            <textarea id="instructions" name="instructions_a" rows="5" cols="90">{{ a["instructions"] }}</textarea><br><br>
-            <label for="input">Input:</label><br>
-            <textarea id="input" name="input_a" rows="1" cols="90">{{ a["input"] }}</textarea><br><br>
-            <label for="form">Form:</label><br>
-            <textarea id="form" name="form_a" rows="5" cols="90">{{ a["form"] }}</textarea><br><br>
-            <label for="solution">Solution:</label><br>
-            <textarea id="solution" name="solution_a" rows="4" cols="90">{{ a["solution"] }}</textarea><br><br>
-            <h2>PART 2</h2>
-            <label for="title">Title:</label><br>
-            <textarea id="title" name="title_b" rows="1" cols="90">{{ b["title"] }}</textarea><br><br>
-            <label for="content">Content:</label><br>
-            <textarea id="content" name="content_b" rows="10" cols="90">{{ b["content"] }}</textarea><br><br>
-            <label for="instructions">Instructions:</label><br>
-            <textarea id="instructions" name="instructions_b" rows="5" cols="90">{{ b["instructions"] }}</textarea><br><br>
-            <label for="input">Input:</label><br>
-            <textarea id="input" name="input_b" rows="1" cols="90">{{ b["input"] }}</textarea><br><br>
-            <label for="form">Form:</label><br>
-            <textarea id="form" name="form_b" rows="5" cols="90">{{ b["form"] }}</textarea><br><br>
-            <label for="solution">Solution:</label><br>
-            <textarea id="solution" name="solution_b" rows="4" cols="90">{{ b["solution"] }}</textarea><br><br>
+            {% for part, p, data in [('1', 'a', a), ('2', 'b', b)] %}
+                <h2>Part {{ part }}</h2>
+                {% for field, size in [('title', 1), ('content', 10), ('instructions', 5), ('input', 1), ('form', 5), ('solution', 4)] %}
+                    <label for="{{ field }}">{{ field | capitalize }}:</label><br>
+                    <textarea id="{{ field }}" name="{{ field }}_{{ p }}" rows="{{ size }}" cols="90">{{ data[field] }}</textarea><br><br>
+                {% endfor %}
+            {% endfor %}
             <input type="submit" value="SAVE">
         </form>
     </section>
