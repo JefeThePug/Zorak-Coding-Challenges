@@ -54,6 +54,7 @@ def get_progress():
     if "user_data" in session:
         progress = prog.find_one({"id": session["user_data"]["id"]})
         return {
+            "id": session["user_data"]["id"],
             "img": session["user_data"]["img"],
             "text": "Logout",
             "login": "logout.html",
@@ -66,6 +67,7 @@ def get_progress():
         rockets = [[f"{n}{p}" in s for p in "AB"] for n in range(1, 11)]
         progress = {f"c{i}": pair for i, pair in enumerate(rockets, 1)}
         return {
+            "id": None,
             "img": "images/index/blank.png",
             "text": "Log-in<br>with Discord",
             "login": "login.html",
@@ -303,6 +305,53 @@ def set_week(num):
             elif result.modified_count == 0:
                 return {"warning": f"Release is already {num}. No Change Made."}, 200
     return {"error": "No authorization"}, 401
+
+@app.route("/update", methods=["GET", "POST"])
+def update():
+    user = get_progress()
+    if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
+        return {"error": "No authorization"}, 401
+    
+    if request.method == "GET":
+        return render_template("update.html", img=user["img"], text=user["text"])
+    else:
+        week = request.form.get('selection')
+        if not week:
+            return redirect(url_for('update'))
+        
+        data_raw = dict(data.find_one({"id": "html"}))
+        try:
+            a, b, _ = data_raw[week].values()
+        except KeyError:
+            return redirect(url_for("update"))
+
+        params = {
+            "img": user["img"],
+            "text": user["text"],
+            "num": week,
+            "a": a,
+            "b": b,
+        }
+        return render_template("update.html", **params)
+
+
+@app.route("/updatedb", methods=["POST"])
+def updatedb():
+    user = get_progress()
+    if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
+        return {"error": "No authorization"}, 401
+    A = {}
+    B = {}
+    for k, v in request.form.items():
+        if k.endswith("a"):
+            A[k[:-2]] = v
+        else:
+            B[k[:-2]] = v
+    n = request.form.get("num")
+    result = data.update_one({"id": "html"}, {"$set": {f"{n}.1": A, f"{n}.2": B}})
+    if result.modified_count == 0:
+        return {"message": "No changes made or document not found"}, 400
+    return render_template("update.html", img=user["img"], text=user["text"], success=n)
 
 
 @app.route('/418')
