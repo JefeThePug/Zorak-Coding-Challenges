@@ -14,9 +14,13 @@
 
 {% block main %}
     <section>
-        {% if success is defined %}
-        <p class="b i">Database for Week {{ success }} Successfully Updated!</p><br>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for _, message in messages %}
+        <p class="b i">{{ message }}</p>
+        {% endfor %}
         {% endif %}
+        {% endwith %}
         <form action="/update" method="POST">
             <label for="selector">Select an option:</label><br>
             <select name="selection" id="selector" onchange="this.form.submit()">

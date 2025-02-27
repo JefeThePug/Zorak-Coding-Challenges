@@ -350,19 +350,25 @@ def update_db():
     user = get_progress()
     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
         return {"error": "No authorization"}, 401
-    A = {}
-    B = {}
+    a = {}
+    b = {}
     for k, v in request.form.items():
         if k.endswith("a"):
-            A[k[:-2]] = v
+            a[k[:-2]] = v
         else:
-            B[k[:-2]] = v
+            b[k[:-2]] = v
     n = request.form.get("num")
-    result = data.update_one({"id": "html"}, {"$set": {f"{n}.1": A, f"{n}.2": B}})
-    if result.modified_count == 0:
-        return {"message": "No changes made or document not found"}, 400
-    return render_template("update.html", img=user["img"], text=user["text"], success=n, selected=0)
+    try:
+        result = data.update_one({"id": "html"}, {"$set": {f"{n}.1": a, f"{n}.2": b}})
+    except Exception as e:
+        result = None
+        flash(f"Update failed: {str(e)}", "error")
 
+    if result and result.modified_count == 0:
+        flash(f"No changes made.", "success")
+    else:
+        flash(f"Database for Week {n} Successfully Updated!", "success")
+    return redirect(url_for("update"))
 
 @app.route("/admin", methods=["GET"])
 def admin():
@@ -391,32 +397,52 @@ def admin():
 def update_admin():
     user = get_progress()
     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
-        return {"error": "No authorization"}, 401
+        return {"error": f"No authorization: {user['id']}"}, 401
 
-    guild = request.form.get("guild")
-    channels = [request.form.get(f"c{i}") for i in range(1, 11)]
+    guild = request.form.get("guild").strip()
+    channels = [request.form.get(f"c{i}").strip() for i in range(1, 11)]
+    permitted = [perm for perm in request.form.get("perms").splitlines() if perm]
     try:
-        release = min(10, max(1, int(request.form.get("release"))))
-    except:
-        return {"error": "invalid release number (must be a number 1 through 10)"}, 401
-    permitted = request.form.get("perms").split("\n")
+        release = min(10, max(1, int(request.form.get("release").strip())))
+    except ValueError:
+        flash("Invalid release number (must be a number 1 through 10)", "error")
+        return redirect(url_for("admin"))
 
-    roles.update_one({"name": "guild"}, {"$set": {"id": guild}})
-    roles.update_one({"name": "channel"}, {"$set": {str(i): c for i, c in enumerate(channels, 1)}})
-    rel.update_one({"name": "release"}, {"$set": {"num": release}})
-    rel.update_one({"name": "release"}, {"$set": {"permitted": permitted}})
 
-    params = {
-        "img": user["img"],
-        "text": user["text"],
-        "guild": guild,
-        "channels": channels,
-        "release": release,
-        "perms": permitted,
-        "success": True
-    }
+    db_session = roles.database.client.start_session()
+    try:
+        results = {}
+        with db_session.start_transaction():
+            results["A"] = rel.update_one(
+                {"name": "release"},
+                {"$set": {"num": release}},
+                session=db_session,
+            )
+            results["B"] = rel.update_one(
+                {"name": "release"},
+                {"$set": {"permitted": permitted}},
+                session=db_session,
+            )
+            results["C"] = roles.update_one(
+                {"name": "guild"},
+                {"$set": {"id": guild}},
+                session=db_session,
+            )
+            results["D"] = roles.update_one(
+                {"name": "channel"},
+                {"$set": {str(xi): channel for xi, channel in enumerate(channels, 1)}},
+                session=db_session,
+            )
+        if sum(result.modified_count for result in results.values()) == 0:
+            flash("No changes made", "success")
+        else:
+            flash("Admin settings updated successfully", "success")
+    except Exception as e:
+        db_session.abort_transaction()
+        flash(f"Update failed: {str(e)}", "error")
+    finally:
+        db_session.end_session()
 
-    flash("Admin settings updated successfully", "success")
     return redirect(url_for("admin"))
 
 
