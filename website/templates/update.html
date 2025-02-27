@@ -30,7 +30,7 @@
 
     {% if a is defined %}
     <section>
-        <form action="/updatedb" method="POST">
+        <form action="/update-db" method="POST">
             <input name="num" type="hidden" value="{{ num }}">
             {% for part, p, data in [('1', 'a', a), ('2', 'b', b)] %}
                 <h2>Part {{ part }}</h2>

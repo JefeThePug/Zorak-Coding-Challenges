@@ -12,6 +12,7 @@ from flask import (
     request,
     session,
     abort,
+    flash,
     make_response,
     send_from_directory,
 )
@@ -294,7 +295,7 @@ def logout():
     return redirect(url_for("index"))
 
 
-@app.route("/set_week/<num>", methods=["PATCH"])
+@app.route("/set_week/<num>", methods=["POST"])
 def set_week(num):
     if num == "+":
         num = rel.find_one({"name": "release"})["num"] + 1
@@ -333,8 +334,6 @@ def update():
         except KeyError:
             return redirect(url_for("update"))
 
-        print(type(week), file=sys.stderr)
-
         params = {
             "img": user["img"],
             "text": user["text"],
@@ -346,10 +345,9 @@ def update():
         return render_template("update.html", **params)
 
 
-@app.route("/updatedb", methods=["POST"])
-def updatedb():
+@app.route("/update-db", methods=["POST"])
+def update_db():
     user = get_progress()
-    print(user["id"], rel.find_one({"name": "release"})["permitted"], file=sys.stderr)
     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
         return {"error": "No authorization"}, 401
     A = {}
@@ -364,6 +362,62 @@ def updatedb():
     if result.modified_count == 0:
         return {"message": "No changes made or document not found"}, 400
     return render_template("update.html", img=user["img"], text=user["text"], success=n, selected=0)
+
+
+@app.route("/admin", methods=["GET"])
+def admin():
+    user = get_progress()
+    permitted = rel.find_one({"name": "release"})["permitted"]
+    if (user["id"] or "bad") not in permitted:
+        return {"error": "No authorization"}, 401
+
+    release = rel.find_one({"name": "release"})["num"]
+    guild = roles.find_one({"name": "guild"})["id"]
+    document = roles.find_one({"name": "channel"})
+    channels = [document[str(i)] for i in range(1, 11)]
+
+    params = {
+        "img": user["img"],
+        "text": user["text"],
+        "guild": guild,
+        "channels": channels,
+        "release": release,
+        "perms": permitted,
+    }
+    return render_template("admin.html", **params)
+
+
+@app.route("/update-admin", methods=["POST"])
+def update_admin():
+    user = get_progress()
+    if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
+        return {"error": "No authorization"}, 401
+
+    guild = request.form.get("guild")
+    channels = [request.form.get(f"c{i}") for i in range(1, 11)]
+    try:
+        release = min(10, max(1, int(request.form.get("release"))))
+    except:
+        return {"error": "invalid release number (must be a number 1 through 10)"}, 401
+    permitted = request.form.get("perms").split("\n")
+
+    roles.update_one({"name": "guild"}, {"$set": {"id": guild}})
+    roles.update_one({"name": "channel"}, {"$set": {str(i): c for i, c in enumerate(channels, 1)}})
+    rel.update_one({"name": "release"}, {"$set": {"num": release}})
+    rel.update_one({"name": "release"}, {"$set": {"permitted": permitted}})
+
+    params = {
+        "img": user["img"],
+        "text": user["text"],
+        "guild": guild,
+        "channels": channels,
+        "release": release,
+        "perms": permitted,
+        "success": True
+    }
+
+    flash("Admin settings updated successfully", "success")
+    return redirect(url_for("admin"))
 
 
 @app.route('/418')
