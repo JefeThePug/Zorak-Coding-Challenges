@@ -19,19 +19,6 @@
     <body>
         <canvas id="confetti-canvas" height="100%" width="100%"></canvas>
         <a href="#main-content" class="skip-link">Skip to Main content</a>
-        {% if num == "10" %}
-        <dialog id="ending" class="end">
-            <img
-                id="popupgif"
-                class="fill"
-                src="{{ url_for('static', filename='images/10/10.gif') }}"
-            />
-        </dialog>
-        <script>
-            var endingGifUrl =
-            "{{ url_for('static', filename='images/end/ending.gif') }}";
-        </script>
-        {% endif %}
         <header>
             <h1>{% block title %}{% endblock %}</h1>
             <a href="/pre-login">
