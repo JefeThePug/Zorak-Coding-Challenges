@@ -227,7 +227,7 @@ def access():
 
     num = roles.find_one({"name": "from"})[f"{request.form.get('num')}"]
 
-    guild_id = 1251181792111755391
+    guild_id = roles.find_one({"name": "guild"})[id]
     user_id = session["user_data"]["id"]
     channel_id = roles.find_one({"name": "channel"})[num]
     verified_role = "1343857328700657695"
@@ -448,13 +448,15 @@ def update_admin():
 
 @app.route('/418')
 def trigger_418():
+    print("trigger hit", file=sys.stderr)
     abort(404)
 
 
 @app.errorhandler(404)
 def teapot(e):
+    print("teapot hit", file=sys.stderr)
     response = make_response(send_from_directory("static/images/index", "hmm.png"))
-    response.headers["Easter-Egg"] = "ADULT SWIM"
+    response.headers["Easter-Egg"] = "TO BE CONTINUED"
     response.status_code = 418
     return response
 
