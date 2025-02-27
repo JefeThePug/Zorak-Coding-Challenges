@@ -1,7 +1,9 @@
 import os
 import sys
-import requests
+from urllib.parse import urlencode
 
+import requests
+from dotenv import load_dotenv
 from flask import (
     Flask,
     redirect,
@@ -13,10 +15,8 @@ from flask import (
     make_response,
     send_from_directory,
 )
-from itsdangerous import URLSafeTimedSerializer
 from flask_pymongo import PyMongo
-from dotenv import load_dotenv
-from urllib.parse import urlencode
+from itsdangerous import URLSafeTimedSerializer
 
 load_dotenv()
 
@@ -228,39 +228,46 @@ def access():
 
     guild_id = 1251181792111755391
     user_id = session["user_data"]["id"]
-    role_id = roles.find_one({"name": "roles"})[num]
-    headers = {"Authorization": f"Bot {bot_token}", "Content-Type": "application/json"}
+    channel_id = roles.find_one({"name": "channel"})[num]
+    verified_role = "1343857328700657695"
 
-    response = requests.get(
-        f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}",
-        headers=headers,
-    )
+    headers = {"Authorization": f"Bot {bot_token}", "Content-Type": "application/json"}
+    url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
+    response = requests.get(url, headers=headers)
     if response.status_code == 404:  # User is not a member of the guild
         payload = {"access_token": session["token"]}
+        url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
         try:
-            response = requests.put(
-                f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}",
-                headers=headers,
-                json=payload,
-            )
+            response = requests.put(url, headers=headers, json=payload)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             print(f"Error: {e}", file=sys.stderr)
-            error_message = response.text
-            return f"Error: Failed to assign role: {error_message}", 400
+            return f"Error: Failed to assign role: {response.text}", 400
+        else:
+            url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}/roles/{verified_role}"
+            try:
+                response = requests.put(url, headers=headers)
+                response.raise_for_status()
+            except requests.exceptions.RequestException as e:
+                return f"Error: {e}", 400
+            else:
+                if response.status_code != 204:
+                    return f"Error: Failed to assign role: {response.text}", 400
 
-    try:
-        response = requests.put(
-            f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}/roles/{role_id}",
-            headers=headers,
-        )
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        return f"Error: {e}", 400
-    else:
-        if response.status_code != 204:
-            error_message = response.text
-            return f"Error: Failed to assign role: {error_message}", 400
+    content = f"<@{user_id}> solved week {num}! If you'd like, please share how you arrived at the correct answer!"
+    url = f"https://discord.com/api/v9/channels/{channel_id}/thread-members/{user_id}"
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        url = f"https://discord.com/api/v9/channels/{channel_id}/messages"
+        try:
+            response = requests.post(url, headers=headers, json={"content": content})
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            return f"Error: {e}", 400
+        else:
+            if response.status_code != 200:
+                return f"Error: Failed to send message: {response.text}", 400
 
     user = get_progress()
     egg = data.find_one({"id": "html"})[num]["EE"]
@@ -287,7 +294,7 @@ def logout():
     return redirect(url_for("index"))
 
 
-@app.route("/set_week/<num>")
+@app.route("/set_week/<num>", methods=["PATCH"])
 def set_week(num):
     if num == "+":
         num = rel.find_one({"name": "release"})["num"] + 1
@@ -306,25 +313,26 @@ def set_week(num):
                 return {"warning": f"Release is already {num}. No Change Made."}, 200
     return {"error": "No authorization"}, 401
 
+
 @app.route("/update", methods=["GET", "POST"])
 def update():
     user = get_progress()
     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
         return {"error": "No authorization"}, 401
-    
+
     if request.method == "GET":
         return render_template("update.html", img=user["img"], text=user["text"], selected=0)
     else:
         week = request.form.get('selection')
         if not week:
             return redirect(url_for('update'))
-        
+
         data_raw = dict(data.find_one({"id": "html"}))
         try:
             a, b, _ = data_raw[week].values()
         except KeyError:
             return redirect(url_for("update"))
-        
+
         print(type(week), file=sys.stderr)
 
         params = {
@@ -341,6 +349,7 @@ def update():
 @app.route("/updatedb", methods=["POST"])
 def updatedb():
     user = get_progress()
+    print(user["id"], rel.find_one({"name": "release"})["permitted"], file=sys.stderr)
     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
         return {"error": "No authorization"}, 401
     A = {}
@@ -368,6 +377,7 @@ def teapot(e):
     response.headers["Easter-Egg"] = "ADULT SWIM"
     response.status_code = 418
     return response
+
 
 if __name__ == "__main__":
     app.run(debug=True)
