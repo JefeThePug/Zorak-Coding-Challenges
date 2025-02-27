@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
-  var duration = 6 * 1000;
-  var animationEnd = Date.now() + duration;
-  var defaults = {
+  const duration = 6 * 1000;
+  let animationEnd = Date.now() + duration;
+  const defaults = {
     startVelocity: 30,
     spread: 360,
     ticks: 60,
@@ -12,14 +12,14 @@ document.addEventListener("DOMContentLoaded", function () {
     return Math.random() * (max - min) + min;
   }
 
-  var interval = setInterval(function () {
-    var timeLeft = animationEnd - Date.now();
+  let interval = setInterval(function () {
+    let timeLeft = animationEnd - Date.now();
 
     if (timeLeft <= 0) {
       return clearInterval(interval);
     }
 
-    var particleCount = 50 * (timeLeft / duration);
+    let particleCount = 50 * (timeLeft / duration);
     confetti({
       ...defaults,
       particleCount,
