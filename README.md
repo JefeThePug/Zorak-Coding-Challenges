@@ -1,6 +1,6 @@
-# Zorak's Coding Challenge
+# Coding Challenge Adventure
 
-Zorak's Coding Challenge is a series of 10 coding challenges, each with two parts, designed in the style of Advent of Code. This project is hosted on a Flask web application with a MongoDB database and is intended for members of the Practical Python Discord server. Completing both parts of each challenge grants access to a special discussion channel where participants can share their approaches and solutions.
+Coding Challenge Adventure is a series of 10 coding challenges, each with two parts, inspired by Advent of Code. This project is hosted on a Flask web application with a MongoDB database and is intended for members of the Practical Python Discord server. Completing both parts of each challenge grants access to a special discussion channel (Private Thread) where participants can share their approaches and solutions.
 
 **This project is currently a work in progress.**
 
@@ -11,6 +11,7 @@ Zorak's Coding Challenge is a series of 10 coding challenges, each with two part
 - **Progress Tracking**: The application tracks user progress, enabling them to see which challenges they have completed.
 - **Obfuscation**: Challenge identifiers are obfuscated to add an extra layer of engagement and mystery.
 - **Dynamic Content**: The challenges and their solutions are stored in a MongoDB database, allowing for easy updates and modifications.
+- **Admin Dashboards**: Administrative API endpoints to allow CRUD operations to be performed on the database via a GUI in the browser. 
 
 ## Getting Started
 
