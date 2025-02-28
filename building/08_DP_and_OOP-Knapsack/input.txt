@@ -2,7 +2,7 @@ country,bean,roast,width,rating
 Georgia,Excelsa,Vienna Roast,50,40
 Solomon Islands,Liberica,French Roast,102,92
 Saint Barthélemy,Excelsa,Extra Dark Roast,132,132
-Iceland,Excelsa,Breakfast Roast,11,1
+Finland,Excelsa,Breakfast Roast,11,1
 Malta,Excelsa,Extra Dark Roast,109,98
 Antigua and Barbuda,Arabica,Cinnamon Roast,119,100
 Eritrea,Arabica,Vienna Roast,20,10
@@ -15,13 +15,13 @@ Poland,MundoNovo,Blonde Roast,80,69
 Barbados,Arabica,Blonde Roast,105,95
 Northern Mariana Islands,MundoNovo,Vienna Roast,178,165
 Niger,Excelsa,Light Roast,52,42
-Papua New Guinea,Robusta,Blonde Roast,105,95
-China,MundoNovo,Extra Dark Roast,136,137
+Colombia,Robusta,Blonde Roast,105,95
+Kyrgyzstan,MundoNovo,Extra Dark Roast,136,137
 Bulgaria,Liberica,Cinnamon Roast,53,42
 Ecuador,Robusta,Extra Dark Roast,64,53
 China,Liberica,Extra Dark Roast,90,97
 Guernsey,Liberica,Cinnamon Roast,43,32
-Panama,Typica,Light Roast,124,136
+Indonesia,Typica,Light Roast,124,136
 South Sudan,Liberica,Vienna Roast,58,48
 Grenada,Liberica,Light Roast,89,81
 San Marino,Typica,Medium Roast,75,65
@@ -30,10 +30,10 @@ Cook Islands,Excelsa,Blonde Roast,105,94
 Kazakhstan,Arabica,Light Roast,109,99
 Chile,Liberica,Dark Roast,154,194
 Guatemala,Arabica,Extra Dark Roast,32,22
-Peru,Excelsa,Dark Roast,53,43
+Japan,Excelsa,Dark Roast,53,43
 Armenia,Typica,Extra Dark Roast,57,66
 Monaco,Typica,Cinnamon Roast,67,57
-Japan,Typica,Blonde Roast,78,67
+Peru,Typica,Blonde Roast,78,67
 Georgia,Liberica,Blonde Roast,103,126
 Cook Islands,Arabica,Medium Roast,57,47
 Norfolk Island,Liberica,Vienna Roast,70,60
@@ -43,10 +43,10 @@ Armenia,Robusta,Cinnamon Roast,100,90
 Iceland,Typica,Medium Roast,125,160
 Marshall Islands,MundoNovo,French Roast,37,27
 French Polynesia,Liberica,Breakfast Roast,106,96
-Kyrgyzstan,Typica,French Roast,110,123
+Jordan,Typica,French Roast,110,123
 United Arab Emirates,Excelsa,Breakfast Roast,38,28
 Equatorial Guinea,Liberica,Medium Roast,56,46
-Colombia,Liberica,Cinnamon Roast,77,74
+Papua New Guinea,Liberica,Cinnamon Roast,77,74
 Honduras,Robusta,French Roast,15,5
 Marshall Islands,Liberica,Vienna Roast,105,94
 Czech Republic,Arabica,Cinnamon Roast,119,101
@@ -58,7 +58,7 @@ Kazakhstan,Typica,French Roast,19,9
 Afghanistan,Excelsa,Medium Roast,28,11
 Somalia,Typica,Dark Roast,34,24
 Åland Islands,Excelsa,Breakfast Roast,104,94
-Indonesia,Arabica,Vienna Roast,105,119
+China,Arabica,Vienna Roast,105,119
 Barbados,Typica,Cinnamon Roast,34,23
 Micronesia,Excelsa,Medium Roast,39,28
 Madagascar,Liberica,Cinnamon Roast,62,54
@@ -85,16 +85,16 @@ Bahrain,Robusta,Breakfast Roast,106,95
 Mongolia,Liberica,Vienna Roast,109,117
 Namibia,MundoNovo,Medium Roast,48,38
 Iran,Arabica,Medium Roast,94,84
-Jordan,Excelsa,Dark Roast,106,122
+Yemen,Excelsa,Dark Roast,106,122
 Laos,Liberica,Blonde Roast,25,15
 Paraguay,Typica,Light Roast,77,66
 Japan,Excelsa,Dark Roast,84,82
-Finland,Robusta,Vienna Roast,13,20
+Armenia,Robusta,Vienna Roast,13,20
 Mexico,Liberica,Blonde Roast,80,68
 Ireland,Excelsa,Blonde Roast,88,74
 Macedonia,Liberica,Vienna Roast,35,25
 Bosnia and Herzegovina,Liberica,Dark Roast,67,56
-Yemen,Robusta,Vienna Roast,67,83
+Angola,Robusta,Vienna Roast,67,83
 Anguilla,Robusta,Vienna Roast,10,1
 Guam,Typica,Vienna Roast,78,68
 Serbia,Robusta,Medium Roast,86,68
