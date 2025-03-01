@@ -227,7 +227,7 @@ def access():
 
     num = roles.find_one({"name": "from"})[f"{request.form.get('num')}"]
 
-    guild_id = roles.find_one({"name": "guild"})[id]
+    guild_id = roles.find_one({"name": "guild"})["id"]
     user_id = session["user_data"]["id"]
     channel_id = roles.find_one({"name": "channel"})[num]
     verified_role = "1343857328700657695"
