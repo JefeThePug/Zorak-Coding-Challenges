@@ -15,7 +15,9 @@
 </head>
 
 <body>
+{% if num=='10' %}
 <canvas id="confetti-canvas" height="100%" width="100%"></canvas>
+{% endif %}
 <a href="#main-content" class="skip-link">Skip to Main content</a>
 <header>
     <h1>{% block title %}{% endblock %}</h1>
