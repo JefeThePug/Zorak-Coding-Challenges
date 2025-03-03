@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class DiscordID(db.Model):
     __tablename__ = 'discord_ids'
 
@@ -9,11 +10,13 @@ class DiscordID(db.Model):
     name: str = db.Column(db.String(10), nullable=False)
     discord_id: str = db.Column(db.String(20), nullable=False, unique=True)
 
+
 class MainEntry(db.Model):
     __tablename__ = 'main_entries'
 
     id: int = db.Column(db.Integer, primary_key=True)
     ee: str = db.Column(db.Text)
+
 
 class SubEntry(db.Model):
     __tablename__ = 'sub_entries'
@@ -29,12 +32,14 @@ class SubEntry(db.Model):
     solution: str = db.Column(db.Text)
     main_entry: MainEntry = db.relationship('MainEntry', backref='sub_entries')
 
+
 class Obfuscation(db.Model):
     __tablename__ = 'obfuscation'
 
     id: int = db.Column(db.Integer, primary_key=True)
     obfuscated_key: str = db.Column(db.String(255))
     html_key: str = db.Column(db.String(255))
+
 
 class Progress(db.Model):
     __tablename__ = 'progress'
@@ -53,9 +58,24 @@ class Progress(db.Model):
     c10: list[bool] = db.Column(db.ARRAY(db.Boolean))
     name: str = db.Column(db.String(255))
 
+
 class Solution(db.Model):
     __tablename__ = 'solutions'
 
     id: int = db.Column(db.Integer, primary_key=True)
     part1: str = db.Column(db.Text)
     part2: str = db.Column(db.Text)
+
+
+class Permissions(db.Model):
+    __tablename__ = 'permissions'
+
+    id: int = db.Column(db.Integer, primary_key=True)
+    user_id: str = db.Column(db.String(20))
+
+
+class Release(db.Model):
+    __tablename__ = 'release'
+
+    id: int = db.Column(db.Integer, primary_key=True)
+    release: int = db.Column(db.Integer)

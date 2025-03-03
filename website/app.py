@@ -141,7 +141,7 @@ def index() -> str:
         str: Rendered index.html template.
     """
     user = get_progress()
-    num = rel.find_one({"name": "release"})["num"]
+    num = data_cache
     return render_template(
         "index.html",
         img=user["img"],
