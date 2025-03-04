@@ -108,7 +108,7 @@ def get_progress() -> dict[str, str | None | list | dict[str, bool]]:
 
 
 @app.template_global()
-def obfuscate(value: str) -> str:
+def obfuscate(value: str | int) -> str | int:
     """Obfuscate a value using the obfuscation database.
 
     Args:
@@ -120,7 +120,7 @@ def obfuscate(value: str) -> str:
 
 
 @app.template_global()
-def obscure_post(value: str) -> str:
+def obscure_post(value: str | int) -> str:
     """Obscures week number using Data Cache (from database)
 
     Args:
@@ -128,6 +128,8 @@ def obscure_post(value: str) -> str:
     Returns:
         str: The obfuscated number to pass to the HTML.
     """
+    if isinstance(value, str):
+        value = int(value)
     return data_cache.obfuscations[value]
 
 
@@ -236,59 +238,59 @@ def callback() -> Response | tuple[str, int]:
     return redirect(url_for("index"))
 
 
-# @app.route("/challenge/<num>", methods=["GET", "POST"])
-# def get_challenge(num) -> str | Response:
-#     """Render the challenge page for a specific challenge week number.
-#
-#     Args:
-#         num (str): The challenge number.
-#     Returns:
-#         str: Rendered challenge.html template or error message.
-#         Response: redirect to the challenge page on correct guess.
-#     """
-#
-#     num = f"{obfs.find_one({'obs': num})['num']}"
-#     error = None
-#
-#     if request.method == "POST":
-#         guesses = [request.form.get(f"answer{i}", None) for i in (1, 2)]
-#         solutions = sols.find_one({"num": num})
-#         for n, guess in enumerate(guesses):
-#             if guess:
-#                 if guess.replace("_", " ").upper().strip() == solutions[f"part{n + 1}"]:
-#                     cookie = set_progress(num, n)
-#                     resp = make_response(
-#                         redirect(url_for("get_challenge", num=obfuscate(int(num))))
-#                     )
-#                     if cookie:
-#                         resp.set_cookie(cookie, f"{num}{'AB'[n]}")
-#                     return resp
-#                 else:
-#                     error = "Incorrect. Please try again."
-#
-#     user = get_progress()
-#     progress = user["progress"][f"c{num}"]
-#     data_raw = dict(data.find_one({"id": "html"}))
-#     try:
-#         a, b, _ = data_raw[num].values()
-#     except KeyError:
-#         return redirect(url_for("index"))
-#
-#     params = {
-#         "img": user["img"],
-#         "text": user["text"],
-#         "num": num,
-#         "a": a,
-#         "b": b,
-#         "sol1": a["solution"] if progress[0] else a["form"],
-#         "sol2": b["solution"] if progress[1] else b["form"],
-#         "parttwo": progress[0],
-#         "done": progress[1] and "user_data" in session,
-#         "error": error,
-#     }
-#     return render_template("challenge.html", **params)
-#
-#
+@app.route("/challenge/<num>", methods=["GET", "POST"])
+def get_challenge(num) -> str | Response:
+    """Render the challenge page for a specific challenge week number.
+
+    Args:
+        num (str): The challenge number.
+    Returns:
+        str: Rendered challenge.html template or error message.
+        Response: redirect to the challenge page on correct guess.
+    """
+    print(f"before {num=}", file=sys.stderr)
+    num = data_cache.html_nums[num]
+    print(f"after {num=}", file=sys.stderr)
+    error = None
+
+    if request.method == "POST":
+        guesses = [request.form.get(f"answer{i}", None) for i in (1, 2)]
+        solutions = data_cache.solutions[num]
+        for n, guess in enumerate(guesses):
+            if guess:
+                if guess.replace("_", " ").upper().strip() == solutions[f"part{n + 1}"]:
+                    cookie = set_progress(num, n)
+                    resp = make_response(
+                        redirect(url_for("get_challenge", num=obfuscate(num)))
+                    )
+                    if cookie:
+                        resp.set_cookie(cookie, f"{num}{'AB'[n]}")
+                    return resp
+                else:
+                    error = "Incorrect. Please try again."
+
+    user = get_progress()
+    progress = user["progress"][f"c{num}"]
+    try:
+        a, b, _ = data_cache.html[num].values()
+    except KeyError:
+        return redirect(url_for("index"))
+
+    params = {
+        "img": user["img"],
+        "text": user["text"],
+        "num": f"{num}",
+        "a": a,
+        "b": b,
+        "sol1": a["solution"] if progress[0] else a["form"],
+        "sol2": b["solution"] if progress[1] else b["form"],
+        "parttwo": progress[0],
+        "done": progress[1] and "user_data" in session,
+        "error": error,
+    }
+    return render_template("challenge.html", **params)
+
+
 # @app.route("/access", methods=["POST"])
 # def access() -> str | tuple[str, int]:
 #     """Grant access to a user and assign roles in Discord.
@@ -356,17 +358,17 @@ def callback() -> Response | tuple[str, int]:
 #         num=num,
 #         egg=egg,
 #     )
-#
-#
-# @app.route("/help")
-# def help() -> str:
-#     """Render the help page.
-#
-#     Returns:
-#         str: Rendered howto.html template with user information.
-#     """
-#     user = get_progress()
-#     return render_template("howto.html", img=user["img"], text=user["text"])
+
+
+@app.route("/help")
+def help() -> str:
+    """Render the help page.
+
+    Returns:
+        str: Rendered howto.html template with user information.
+    """
+    user = get_progress()
+    return render_template("howto.html", img=user["img"], text=user["text"])
 
 
 @app.route("/logout")
