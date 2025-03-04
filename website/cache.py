@@ -46,11 +46,13 @@ class DataCache:
                         "form": sub_entry.form,
                         "solution": sub_entry.solution
                     }
+                self.html[main_entry.id]["ee"] = main_entry.ee
             obfuscations = Obfuscation.query.with_entities(Obfuscation.id, Obfuscation.obfuscated_key).all()
             self.obfuscations = {i: o for i, o in obfuscations}
             self.obfuscations |= {o: i for i, o in obfuscations}
             html_nums = Obfuscation.query.with_entities(Obfuscation.id, Obfuscation.html_key).all()
             self.html_nums = {i: o for i, o in html_nums}
+            self.html_nums |= {o: i for i, o in html_nums}
             solutions = Solution.query.with_entities(Solution.id, Solution.part1, Solution.part2).all()
             self.solutions = {i: {"part1": a, "part2": b} for i, a, b in solutions}
             permissions = Permissions.query.with_entities(Permissions.user_id).all()
