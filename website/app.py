@@ -248,9 +248,7 @@ def get_challenge(num) -> str | Response:
         str: Rendered challenge.html template or error message.
         Response: redirect to the challenge page on correct guess.
     """
-    print(f"before {num=}", file=sys.stderr)
     num = data_cache.html_nums[num]
-    print(f"after {num=}", file=sys.stderr)
     error = None
 
     if request.method == "POST":
@@ -291,73 +289,73 @@ def get_challenge(num) -> str | Response:
     return render_template("challenge.html", **params)
 
 
-# @app.route("/access", methods=["POST"])
-# def access() -> str | tuple[str, int]:
-#     """Grant access to a user and assign roles in Discord.
-#
-#     Returns:
-#         str: Rendered linkcomplete.html template or error message.
-#         tuple[str, int]: Error message with HTTP status code.
-#     """
-#     bot_token = os.environ.get("BOT_TOKEN")
-#     if not bot_token:
-#         return "Error: Bot token not found", 500
-#
-#     num = roles.find_one({"name": "from"})[f"{request.form.get('num')}"]
-#
-#     guild_id = roles.find_one({"name": "guild"})["id"]
-#     user_id = session["user_data"]["id"]
-#     channel_id = roles.find_one({"name": "channel"})[num]
-#     verified_role = "1343857328700657695"
-#
-#     headers = {"Authorization": f"Bot {bot_token}", "Content-Type": "application/json"}
-#     url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
-#     response = requests.get(url, headers=headers)
-#     if response.status_code == 404:  # User is not a member of the guild
-#         payload = {"access_token": session["token"]}
-#         url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
-#         try:
-#             response = requests.put(url, headers=headers, json=payload)
-#             response.raise_for_status()
-#         except requests.exceptions.RequestException as e:
-#             print(f"Error: {e}", file=sys.stderr)
-#             return f"Error: Failed to assign role: {response.text}", 400
-#         else:
-#             url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}/roles/{verified_role}"
-#             try:
-#                 response = requests.put(url, headers=headers)
-#                 response.raise_for_status()
-#             except requests.exceptions.RequestException as e:
-#                 return f"Error: {e}", 400
-#             else:
-#                 if response.status_code != 204:
-#                     return f"Error: Failed to assign role: {response.text}", 400
-#
-#     content = f"<@{user_id}> solved week {num}! If you'd like, please share how you arrived at the correct answer!"
-#     url = f"https://discord.com/api/v9/channels/{channel_id}/thread-members/{user_id}"
-#     response = requests.get(url, headers=headers)
-#
-#     if response.status_code != 200:
-#         url = f"https://discord.com/api/v9/channels/{channel_id}/messages"
-#         try:
-#             response = requests.post(url, headers=headers, json={"content": content})
-#             response.raise_for_status()
-#         except requests.exceptions.RequestException as e:
-#             return f"Error: {e}", 400
-#         else:
-#             if response.status_code != 200:
-#                 return f"Error: Failed to send message: {response.text}", 400
-#
-#     user = get_progress()
-#     egg = data.find_one({"id": "html"})[num]["EE"]
-#
-#     return render_template(
-#         "linkcomplete.html",
-#         img=user["img"],
-#         text="",
-#         num=num,
-#         egg=egg,
-#     )
+@app.route("/access", methods=["POST"])
+def access() -> str | tuple[str, int]:
+    """Grant access to a user and assign roles in Discord.
+
+    Returns:
+        str: Rendered linkcomplete.html template or error message.
+        tuple[str, int]: Error message with HTTP status code.
+    """
+    bot_token = os.environ.get("BOT_TOKEN")
+    if not bot_token:
+        return "Error: Bot token not found", 500
+
+    num = data_cache.obfuscations[f"{request.form.get('num')}"]
+
+    guild_id = data_cache.discord_ids["guild"]
+    user_id = session["user_data"]["id"]
+    channel_id = data_cache.discord_ids[f"{num}"]
+    verified_role = "1343857328700657695"
+
+    headers = {"Authorization": f"Bot {bot_token}", "Content-Type": "application/json"}
+    url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
+    response = requests.get(url, headers=headers)
+    if response.status_code == 404:  # User is not a member of the guild
+        payload = {"access_token": session["token"]}
+        url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
+        try:
+            response = requests.put(url, headers=headers, json=payload)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            print(f"Error: {e}", file=sys.stderr)
+            return f"Error: Failed to assign role: {response.text}", 400
+        else:
+            url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}/roles/{verified_role}"
+            try:
+                response = requests.put(url, headers=headers)
+                response.raise_for_status()
+            except requests.exceptions.RequestException as e:
+                return f"Error: {e}", 400
+            else:
+                if response.status_code != 204:
+                    return f"Error: Failed to assign role: {response.text}", 400
+
+    content = f"<@{user_id}> solved week {num}! If you'd like, please share how you arrived at the correct answer!"
+    url = f"https://discord.com/api/v9/channels/{channel_id}/thread-members/{user_id}"
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
+        url = f"https://discord.com/api/v9/channels/{channel_id}/messages"
+        try:
+            response = requests.post(url, headers=headers, json={"content": content})
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            return f"Error: {e}", 400
+        else:
+            if response.status_code != 200:
+                return f"Error: Failed to send message: {response.text}", 400
+
+    user = get_progress()
+    egg = data_cache.html[num]["ee"]
+
+    return render_template(
+        "linkcomplete.html",
+        img=user["img"],
+        text="",
+        num=num,
+        egg=egg,
+    )
 
 
 @app.route("/help")

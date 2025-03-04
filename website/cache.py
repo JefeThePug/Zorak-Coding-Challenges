@@ -67,7 +67,6 @@ class DataCache:
                 return False
             self.progress = progress.__dict__.copy()
             self.progress.pop('_sa_instance_state', None)
-            print(self.progress, file=sys.stderr)
         return True
 
     def update_progress(self, challenge_num: int, index: int) -> bool:
