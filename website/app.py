@@ -43,6 +43,7 @@ serializer = URLSafeTimedSerializer(app.secret_key, salt="cookie")
 # roles = db["roles"]
 # data = db["data"]
 # rel = db["release"]
+# -------------------------------------------------
 
 # Configure SQLAlchemy database URI and settings
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
@@ -67,10 +68,7 @@ def set_progress(challenge_num: int, progress: int) -> str | None:
     """
     if "user_data" in session:
         # Change database and update Data Cache
-        prog.update_one(
-            {"id": session["user_data"]["id"]},
-            {"$set": {f"c{challenge_num}.{progress}": True}},
-        )
+        data_cache.update_progress(challenge_num, progress)
     else:
         # Alter Browser Cookies
         return serializer.dumps(f"{challenge_num}{'AB'[progress]}")
@@ -84,14 +82,14 @@ def get_progress() -> dict[str, str | None | list | dict[str, bool]]:
     """
     if "user_data" in session:
         # Retrieve information from Flask session and Data Cache
-        progress = prog.find_one({"id": session["user_data"]["id"]})
+        data_cache.load_progress(session["user_data"]["id"])
         return {
             "id": session["user_data"]["id"],
             "img": session["user_data"]["img"],
             "text": "Logout",
             "login": "logout.html",
-            "progress": progress,
-            "rockets": [progress[f"c{i}"] for i in range(1, 11)],
+            "progress": data_cache.progress,
+            "rockets": [data_cache.progress[f"c{i}"] for i in range(1, 11)],
         }
     else:
         # Retrieve information from Browser Cookies
@@ -118,7 +116,7 @@ def obfuscate(value: str) -> str:
     Returns:
         str: The obfuscated value.
     """
-    return obfs.find_one({"num": value})["obs"]
+    return data_cache.html_nums[value]
 
 
 @app.template_global()
@@ -130,7 +128,7 @@ def obscure_post(value: str) -> str:
     Returns:
         str: The obfuscated number to pass to the HTML.
     """
-    return roles.find_one({"name": "to"})[f"{value}"]
+    return data_cache.obfuscations[value]
 
 
 @app.route("/")
@@ -141,13 +139,13 @@ def index() -> str:
         str: Rendered index.html template.
     """
     user = get_progress()
-    num = data_cache
+    release = data_cache.release
     return render_template(
         "index.html",
         img=user["img"],
         text=user["text"],
         rockets=user["rockets"],
-        num=num,
+        num=release,
     )
 
 
@@ -230,146 +228,145 @@ def callback() -> Response | tuple[str, int]:
     session["user_data"]["img"] = avatar_url
 
     # Add to database if not present
-    if prog.find_one({"id": session["user_data"]["id"]}) is None:
-        new_doc = {f"c{i}": [False, False] for i in range(1, 11)}
-        new_doc["id"] = session["user_data"]["id"]
-        new_doc["name"] = session["user_data"]["username"]
-        prog.insert_one(new_doc)
-
+    data_cache.load_progress(session["user_data"]["id"])
+    if not data_cache.progress:
+        added = data_cache.add_user(session["user_data"]["id"], session["user_data"]["username"])
+        if not added:
+            return redirect(url_for("logout"))
     return redirect(url_for("index"))
 
 
-@app.route("/challenge/<num>", methods=["GET", "POST"])
-def get_challenge(num) -> str | Response:
-    """Render the challenge page for a specific challenge week number.
-
-    Args:
-        num (str): The challenge number.
-    Returns:
-        str: Rendered challenge.html template or error message.
-        Response: redirect to the challenge page on correct guess.
-    """
-
-    num = f"{obfs.find_one({'obs': num})['num']}"
-    error = None
-
-    if request.method == "POST":
-        guesses = [request.form.get(f"answer{i}", None) for i in (1, 2)]
-        solutions = sols.find_one({"num": num})
-        for n, guess in enumerate(guesses):
-            if guess:
-                if guess.replace("_", " ").upper().strip() == solutions[f"part{n + 1}"]:
-                    cookie = set_progress(num, n)
-                    resp = make_response(
-                        redirect(url_for("get_challenge", num=obfuscate(int(num))))
-                    )
-                    if cookie:
-                        resp.set_cookie(cookie, f"{num}{'AB'[n]}")
-                    return resp
-                else:
-                    error = "Incorrect. Please try again."
-
-    user = get_progress()
-    progress = user["progress"][f"c{num}"]
-    data_raw = dict(data.find_one({"id": "html"}))
-    try:
-        a, b, _ = data_raw[num].values()
-    except KeyError:
-        return redirect(url_for("index"))
-
-    params = {
-        "img": user["img"],
-        "text": user["text"],
-        "num": num,
-        "a": a,
-        "b": b,
-        "sol1": a["solution"] if progress[0] else a["form"],
-        "sol2": b["solution"] if progress[1] else b["form"],
-        "parttwo": progress[0],
-        "done": progress[1] and "user_data" in session,
-        "error": error,
-    }
-    return render_template("challenge.html", **params)
-
-
-@app.route("/access", methods=["POST"])
-def access() -> str | tuple[str, int]:
-    """Grant access to a user and assign roles in Discord.
-
-    Returns:
-        str: Rendered linkcomplete.html template or error message.
-        tuple[str, int]: Error message with HTTP status code.
-    """
-    bot_token = os.environ.get("BOT_TOKEN")
-    if not bot_token:
-        return "Error: Bot token not found", 500
-
-    num = roles.find_one({"name": "from"})[f"{request.form.get('num')}"]
-
-    guild_id = roles.find_one({"name": "guild"})["id"]
-    user_id = session["user_data"]["id"]
-    channel_id = roles.find_one({"name": "channel"})[num]
-    verified_role = "1343857328700657695"
-
-    headers = {"Authorization": f"Bot {bot_token}", "Content-Type": "application/json"}
-    url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
-    response = requests.get(url, headers=headers)
-    if response.status_code == 404:  # User is not a member of the guild
-        payload = {"access_token": session["token"]}
-        url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
-        try:
-            response = requests.put(url, headers=headers, json=payload)
-            response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            print(f"Error: {e}", file=sys.stderr)
-            return f"Error: Failed to assign role: {response.text}", 400
-        else:
-            url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}/roles/{verified_role}"
-            try:
-                response = requests.put(url, headers=headers)
-                response.raise_for_status()
-            except requests.exceptions.RequestException as e:
-                return f"Error: {e}", 400
-            else:
-                if response.status_code != 204:
-                    return f"Error: Failed to assign role: {response.text}", 400
-
-    content = f"<@{user_id}> solved week {num}! If you'd like, please share how you arrived at the correct answer!"
-    url = f"https://discord.com/api/v9/channels/{channel_id}/thread-members/{user_id}"
-    response = requests.get(url, headers=headers)
-
-    if response.status_code != 200:
-        url = f"https://discord.com/api/v9/channels/{channel_id}/messages"
-        try:
-            response = requests.post(url, headers=headers, json={"content": content})
-            response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            return f"Error: {e}", 400
-        else:
-            if response.status_code != 200:
-                return f"Error: Failed to send message: {response.text}", 400
-
-    user = get_progress()
-    egg = data.find_one({"id": "html"})[num]["EE"]
-
-    return render_template(
-        "linkcomplete.html",
-        img=user["img"],
-        text="",
-        num=num,
-        egg=egg,
-    )
-
-
-@app.route("/help")
-def help() -> str:
-    """Render the help page.
-
-    Returns:
-        str: Rendered howto.html template with user information.
-    """
-    user = get_progress()
-    return render_template("howto.html", img=user["img"], text=user["text"])
+# @app.route("/challenge/<num>", methods=["GET", "POST"])
+# def get_challenge(num) -> str | Response:
+#     """Render the challenge page for a specific challenge week number.
+#
+#     Args:
+#         num (str): The challenge number.
+#     Returns:
+#         str: Rendered challenge.html template or error message.
+#         Response: redirect to the challenge page on correct guess.
+#     """
+#
+#     num = f"{obfs.find_one({'obs': num})['num']}"
+#     error = None
+#
+#     if request.method == "POST":
+#         guesses = [request.form.get(f"answer{i}", None) for i in (1, 2)]
+#         solutions = sols.find_one({"num": num})
+#         for n, guess in enumerate(guesses):
+#             if guess:
+#                 if guess.replace("_", " ").upper().strip() == solutions[f"part{n + 1}"]:
+#                     cookie = set_progress(num, n)
+#                     resp = make_response(
+#                         redirect(url_for("get_challenge", num=obfuscate(int(num))))
+#                     )
+#                     if cookie:
+#                         resp.set_cookie(cookie, f"{num}{'AB'[n]}")
+#                     return resp
+#                 else:
+#                     error = "Incorrect. Please try again."
+#
+#     user = get_progress()
+#     progress = user["progress"][f"c{num}"]
+#     data_raw = dict(data.find_one({"id": "html"}))
+#     try:
+#         a, b, _ = data_raw[num].values()
+#     except KeyError:
+#         return redirect(url_for("index"))
+#
+#     params = {
+#         "img": user["img"],
+#         "text": user["text"],
+#         "num": num,
+#         "a": a,
+#         "b": b,
+#         "sol1": a["solution"] if progress[0] else a["form"],
+#         "sol2": b["solution"] if progress[1] else b["form"],
+#         "parttwo": progress[0],
+#         "done": progress[1] and "user_data" in session,
+#         "error": error,
+#     }
+#     return render_template("challenge.html", **params)
+#
+#
+# @app.route("/access", methods=["POST"])
+# def access() -> str | tuple[str, int]:
+#     """Grant access to a user and assign roles in Discord.
+#
+#     Returns:
+#         str: Rendered linkcomplete.html template or error message.
+#         tuple[str, int]: Error message with HTTP status code.
+#     """
+#     bot_token = os.environ.get("BOT_TOKEN")
+#     if not bot_token:
+#         return "Error: Bot token not found", 500
+#
+#     num = roles.find_one({"name": "from"})[f"{request.form.get('num')}"]
+#
+#     guild_id = roles.find_one({"name": "guild"})["id"]
+#     user_id = session["user_data"]["id"]
+#     channel_id = roles.find_one({"name": "channel"})[num]
+#     verified_role = "1343857328700657695"
+#
+#     headers = {"Authorization": f"Bot {bot_token}", "Content-Type": "application/json"}
+#     url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
+#     response = requests.get(url, headers=headers)
+#     if response.status_code == 404:  # User is not a member of the guild
+#         payload = {"access_token": session["token"]}
+#         url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
+#         try:
+#             response = requests.put(url, headers=headers, json=payload)
+#             response.raise_for_status()
+#         except requests.exceptions.RequestException as e:
+#             print(f"Error: {e}", file=sys.stderr)
+#             return f"Error: Failed to assign role: {response.text}", 400
+#         else:
+#             url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}/roles/{verified_role}"
+#             try:
+#                 response = requests.put(url, headers=headers)
+#                 response.raise_for_status()
+#             except requests.exceptions.RequestException as e:
+#                 return f"Error: {e}", 400
+#             else:
+#                 if response.status_code != 204:
+#                     return f"Error: Failed to assign role: {response.text}", 400
+#
+#     content = f"<@{user_id}> solved week {num}! If you'd like, please share how you arrived at the correct answer!"
+#     url = f"https://discord.com/api/v9/channels/{channel_id}/thread-members/{user_id}"
+#     response = requests.get(url, headers=headers)
+#
+#     if response.status_code != 200:
+#         url = f"https://discord.com/api/v9/channels/{channel_id}/messages"
+#         try:
+#             response = requests.post(url, headers=headers, json={"content": content})
+#             response.raise_for_status()
+#         except requests.exceptions.RequestException as e:
+#             return f"Error: {e}", 400
+#         else:
+#             if response.status_code != 200:
+#                 return f"Error: Failed to send message: {response.text}", 400
+#
+#     user = get_progress()
+#     egg = data.find_one({"id": "html"})[num]["EE"]
+#
+#     return render_template(
+#         "linkcomplete.html",
+#         img=user["img"],
+#         text="",
+#         num=num,
+#         egg=egg,
+#     )
+#
+#
+# @app.route("/help")
+# def help() -> str:
+#     """Render the help page.
+#
+#     Returns:
+#         str: Rendered howto.html template with user information.
+#     """
+#     user = get_progress()
+#     return render_template("howto.html", img=user["img"], text=user["text"])
 
 
 @app.route("/logout")
@@ -381,163 +378,164 @@ def logout() -> Response:
     """
     session.pop("token", None)
     session.pop("user_data", None)
+    data_cache.progress = {}
     return redirect(url_for("index"))
 
 
-@app.route("/update", methods=["GET", "POST"])
-def update() -> str | Response | tuple[str, int]:
-    """Render the update page or process update requests.
-
-    Returns:
-        str: Rendered update.html template or error response.
-        Response: Refreshed endpoint if data missing
-        tuple[str, int]: Error message with HTTP status code.
-    """
-    user = get_progress()
-    if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
-        return "Error: No authorization", 400
-
-    if request.method == "GET":
-        return render_template("update.html", img=user["img"], text=user["text"], selected=0)
-    else:
-        week = request.form.get('selection')
-        if not week:
-            return redirect(url_for('update'))
-
-        data_raw = dict(data.find_one({"id": "html"}))
-        try:
-            a, b, _ = data_raw[week].values()
-        except KeyError:
-            return redirect(url_for("update"))
-
-        params = {
-            "img": user["img"],
-            "text": user["text"],
-            "num": week,
-            "selected": week,
-            "a": a,
-            "b": b,
-        }
-        return render_template("update.html", **params)
-
-
-@app.route("/update-db", methods=["POST"])
-def update_db() -> Response | tuple[str, int]:
-    """Update the database with new data from the form.
-
-    Returns:
-        Response: Redirect to the update page with flash messages.
-        tuple[str, int]: Error message with HTTP status code.
-    """
-    user = get_progress()
-    if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
-        return "Error: No authorization", 400
-    a = {}
-    b = {}
-    for k, v in request.form.items():
-        if k.endswith("a"):
-            a[k[:-2]] = v
-        else:
-            b[k[:-2]] = v
-    n = request.form.get("num")
-    try:
-        result = data.update_one({"id": "html"}, {"$set": {f"{n}.1": a, f"{n}.2": b}})
-    except Exception as e:
-        result = None
-        flash(f"Update failed: {str(e)}", "error")
-
-    if result and result.modified_count == 0:
-        flash(f"No changes made.", "success")
-    else:
-        flash(f"Database for Week {n} Successfully Updated!", "success")
-    return redirect(url_for("update"))
-
-
-@app.route("/admin", methods=["GET"])
-def admin() -> str | tuple[str, int]:
-    """Render the admin page with settings and permissions.
-
-    Returns:
-        Response: Rendered admin.html template or error response.
-        tuple[str, int]: Error message with HTTP status code.
-    """
-    user = get_progress()
-    permitted = rel.find_one({"name": "release"})["permitted"]
-    if (user["id"] or "bad") not in permitted:
-        return "Error: No authorization", 400
-
-    release = rel.find_one({"name": "release"})["num"]
-    guild = roles.find_one({"name": "guild"})["id"]
-    document = roles.find_one({"name": "channel"})
-    channels = [document[str(i)] for i in range(1, 11)]
-
-    params = {
-        "img": user["img"],
-        "text": user["text"],
-        "guild": guild,
-        "channels": channels,
-        "release": release,
-        "perms": permitted,
-    }
-    return render_template("admin.html", **params)
-
-
-@app.route("/update-admin", methods=["POST"])
-def update_admin() -> Response | tuple[str, int]:
-    """Update admin settings based on form input.
-
-    Returns:
-        Response: Redirect to the admin page with flash messages.
-        tuple[str, int]: Error message with HTTP status code.
-    """
-    user = get_progress()
-    if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
-        return "Error: No authorization {user['id']}", 400
-
-    guild = request.form.get("guild").strip()
-    channels = [request.form.get(f"c{i}").strip() for i in range(1, 11)]
-    permitted = [perm for perm in request.form.get("perms").splitlines() if perm]
-    try:
-        release = min(10, max(1, int(request.form.get("release").strip())))
-    except ValueError:
-        flash("Invalid release number (must be a number 1 through 10)", "error")
-        return redirect(url_for("admin"))
-
-    db_session = roles.database.client.start_session()
-    try:
-        results = {}
-        with db_session.start_transaction():
-            results["A"] = rel.update_one(
-                {"name": "release"},
-                {"$set": {"num": release}},
-                session=db_session,
-            )
-            results["B"] = rel.update_one(
-                {"name": "release"},
-                {"$set": {"permitted": permitted}},
-                session=db_session,
-            )
-            results["C"] = roles.update_one(
-                {"name": "guild"},
-                {"$set": {"id": guild}},
-                session=db_session,
-            )
-            results["D"] = roles.update_one(
-                {"name": "channel"},
-                {"$set": {str(xi): channel for xi, channel in enumerate(channels, 1)}},
-                session=db_session,
-            )
-        if sum(result.modified_count for result in results.values()) == 0:
-            flash("No changes made", "success")
-        else:
-            flash("Admin settings updated successfully", "success")
-    except Exception as e:
-        db_session.abort_transaction()
-        flash(f"Update failed: {str(e)}", "error")
-    finally:
-        db_session.end_session()
-
-    return redirect(url_for("admin"))
+# @app.route("/update", methods=["GET", "POST"])
+# def update() -> str | Response | tuple[str, int]:
+#     """Render the update page or process update requests.
+#
+#     Returns:
+#         str: Rendered update.html template or error response.
+#         Response: Refreshed endpoint if data missing
+#         tuple[str, int]: Error message with HTTP status code.
+#     """
+#     user = get_progress()
+#     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
+#         return "Error: No authorization", 400
+#
+#     if request.method == "GET":
+#         return render_template("update.html", img=user["img"], text=user["text"], selected=0)
+#     else:
+#         week = request.form.get('selection')
+#         if not week:
+#             return redirect(url_for('update'))
+#
+#         data_raw = dict(data.find_one({"id": "html"}))
+#         try:
+#             a, b, _ = data_raw[week].values()
+#         except KeyError:
+#             return redirect(url_for("update"))
+#
+#         params = {
+#             "img": user["img"],
+#             "text": user["text"],
+#             "num": week,
+#             "selected": week,
+#             "a": a,
+#             "b": b,
+#         }
+#         return render_template("update.html", **params)
+#
+#
+# @app.route("/update-db", methods=["POST"])
+# def update_db() -> Response | tuple[str, int]:
+#     """Update the database with new data from the form.
+#
+#     Returns:
+#         Response: Redirect to the update page with flash messages.
+#         tuple[str, int]: Error message with HTTP status code.
+#     """
+#     user = get_progress()
+#     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
+#         return "Error: No authorization", 400
+#     a = {}
+#     b = {}
+#     for k, v in request.form.items():
+#         if k.endswith("a"):
+#             a[k[:-2]] = v
+#         else:
+#             b[k[:-2]] = v
+#     n = request.form.get("num")
+#     try:
+#         result = data.update_one({"id": "html"}, {"$set": {f"{n}.1": a, f"{n}.2": b}})
+#     except Exception as e:
+#         result = None
+#         flash(f"Update failed: {str(e)}", "error")
+#
+#     if result and result.modified_count == 0:
+#         flash(f"No changes made.", "success")
+#     else:
+#         flash(f"Database for Week {n} Successfully Updated!", "success")
+#     return redirect(url_for("update"))
+#
+#
+# @app.route("/admin", methods=["GET"])
+# def admin() -> str | tuple[str, int]:
+#     """Render the admin page with settings and permissions.
+#
+#     Returns:
+#         Response: Rendered admin.html template or error response.
+#         tuple[str, int]: Error message with HTTP status code.
+#     """
+#     user = get_progress()
+#     permitted = rel.find_one({"name": "release"})["permitted"]
+#     if (user["id"] or "bad") not in permitted:
+#         return "Error: No authorization", 400
+#
+#     release = rel.find_one({"name": "release"})["num"]
+#     guild = roles.find_one({"name": "guild"})["id"]
+#     document = roles.find_one({"name": "channel"})
+#     channels = [document[str(i)] for i in range(1, 11)]
+#
+#     params = {
+#         "img": user["img"],
+#         "text": user["text"],
+#         "guild": guild,
+#         "channels": channels,
+#         "release": release,
+#         "perms": permitted,
+#     }
+#     return render_template("admin.html", **params)
+#
+#
+# @app.route("/update-admin", methods=["POST"])
+# def update_admin() -> Response | tuple[str, int]:
+#     """Update admin settings based on form input.
+#
+#     Returns:
+#         Response: Redirect to the admin page with flash messages.
+#         tuple[str, int]: Error message with HTTP status code.
+#     """
+#     user = get_progress()
+#     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
+#         return "Error: No authorization {user['id']}", 400
+#
+#     guild = request.form.get("guild").strip()
+#     channels = [request.form.get(f"c{i}").strip() for i in range(1, 11)]
+#     permitted = [perm for perm in request.form.get("perms").splitlines() if perm]
+#     try:
+#         release = min(10, max(1, int(request.form.get("release").strip())))
+#     except ValueError:
+#         flash("Invalid release number (must be a number 1 through 10)", "error")
+#         return redirect(url_for("admin"))
+#
+#     db_session = roles.database.client.start_session()
+#     try:
+#         results = {}
+#         with db_session.start_transaction():
+#             results["A"] = rel.update_one(
+#                 {"name": "release"},
+#                 {"$set": {"num": release}},
+#                 session=db_session,
+#             )
+#             results["B"] = rel.update_one(
+#                 {"name": "release"},
+#                 {"$set": {"permitted": permitted}},
+#                 session=db_session,
+#             )
+#             results["C"] = roles.update_one(
+#                 {"name": "guild"},
+#                 {"$set": {"id": guild}},
+#                 session=db_session,
+#             )
+#             results["D"] = roles.update_one(
+#                 {"name": "channel"},
+#                 {"$set": {str(xi): channel for xi, channel in enumerate(channels, 1)}},
+#                 session=db_session,
+#             )
+#         if sum(result.modified_count for result in results.values()) == 0:
+#             flash("No changes made", "success")
+#         else:
+#             flash("Admin settings updated successfully", "success")
+#     except Exception as e:
+#         db_session.abort_transaction()
+#         flash(f"Update failed: {str(e)}", "error")
+#     finally:
+#         db_session.end_session()
+#
+#     return redirect(url_for("admin"))
 
 
 @app.route('/418')

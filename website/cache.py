@@ -1,3 +1,5 @@
+import sys
+
 from flask import Flask
 
 from models import (
@@ -20,12 +22,11 @@ class DataCache:
         self.html = {}
         self.obfuscations = {}
         self.html_nums = {}
-        self.progresses = []
+        self.progress = {}
         self.solutions = {}
         self.permissions = []
         self.release = None
         self.load_constants()
-        self.load_progress()
 
     def load_constants(self) -> None:
         """Load all pseudo-constant data from the database into memory."""
@@ -47,7 +48,7 @@ class DataCache:
                     }
             obfuscations = Obfuscation.query.with_entities(Obfuscation.id, Obfuscation.obfuscated_key).all()
             self.obfuscations = {i: o for i, o in obfuscations}
-            self.obfuscations += {o: i for i, o in obfuscations}
+            self.obfuscations |= {o: i for i, o in obfuscations}
             html_nums = Obfuscation.query.with_entities(Obfuscation.id, Obfuscation.html_key).all()
             self.html_nums = {i: o for i, o in html_nums}
             solutions = Solution.query.with_entities(Solution.id, Solution.part1, Solution.part2).all()
@@ -56,25 +57,43 @@ class DataCache:
             self.permissions = [permission[0] for permission in permissions]
             self.release = Release.query.first().release
 
-    def load_progress(self) -> None:
+    def load_progress(self, user_id: str) -> bool:
         """Load all variable data from the database into memory."""
         with self.app.app_context():
-            self.progresses = Progress.query.all()
+            progress = Progress.query.filter_by(user_id=user_id).first()
+            if progress is None:
+                return False
+            self.progress = progress.__dict__.copy()
+            self.progress.pop('_sa_instance_state', None)
+            print(self.progress, file=sys.stderr)
+        return True
 
-    def get_discord_ids(self) -> list[DiscordID]:
-        """Return the cached DiscordIDs."""
-        return self.discord_ids
+    def update_progress(self, challenge_num: int, index: int) -> bool:
+        """Update individual user progress in the database and refresh the cache."""
+        user_id = self.progress["user_id"]
+        with self.app.app_context():
+            progress = Progress.query.filter_by(user_id=user_id).first()
+            if progress is None:
+                return False
+            challenge = getattr(progress, f"c{challenge_num}", None)
+            challenge[index] = True
+            db.session.commit()
+            self.load_progress()
+        return True
 
-    def update_discord_id(self, id: int, name: str, discord_id: str) -> None:
-        """Update a DiscordID in the database and refresh the cache."""
-        with self.app.app_context():  # Use the app context
-            discord_id_entry = DiscordID.query.get(id)
-            if discord_id_entry:
-                discord_id_entry.name = name
-                discord_id_entry.discord_id = discord_id
+    def add_user(self, user_id: str, name: str) -> bool:
+        """Insert a new progress record into the database."""
+        try:
+            with self.app.app_context():
+                new_progress = Progress(
+                    user_id=user_id,
+                    name=name,
+                    **{f"c{i}": [False, False] for i in range(1, 11)}
+                )
+                db.session.add(new_progress)
                 db.session.commit()
-                self.refresh_data()
-
-    def refresh_data(self) -> None:
-        """Refresh all cached data from the database."""
-        self.load_data()
+            return True
+        except Exception as e:
+            print(f"Error adding user: {e}")
+            db.session.rollback()
+            return False
