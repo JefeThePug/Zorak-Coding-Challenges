@@ -48,6 +48,8 @@ serializer = URLSafeTimedSerializer(app.secret_key, salt="cookie")
 # Configure SQLAlchemy database URI and settings
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = False
+
 
 # Initialize SQLAlchemy and the Data Cache with the Flask app
 db.init_app(app)
@@ -382,75 +384,66 @@ def logout() -> Response:
     return redirect(url_for("index"))
 
 
-# @app.route("/update", methods=["GET", "POST"])
-# def update() -> str | Response | tuple[str, int]:
-#     """Render the update page or process update requests.
-#
-#     Returns:
-#         str: Rendered update.html template or error response.
-#         Response: Refreshed endpoint if data missing
-#         tuple[str, int]: Error message with HTTP status code.
-#     """
-#     user = get_progress()
-#     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
-#         return "Error: No authorization", 400
-#
-#     if request.method == "GET":
-#         return render_template("update.html", img=user["img"], text=user["text"], selected=0)
-#     else:
-#         week = request.form.get('selection')
-#         if not week:
-#             return redirect(url_for('update'))
-#
-#         data_raw = dict(data.find_one({"id": "html"}))
-#         try:
-#             a, b, _ = data_raw[week].values()
-#         except KeyError:
-#             return redirect(url_for("update"))
-#
-#         params = {
-#             "img": user["img"],
-#             "text": user["text"],
-#             "num": week,
-#             "selected": week,
-#             "a": a,
-#             "b": b,
-#         }
-#         return render_template("update.html", **params)
-#
-#
-# @app.route("/update-db", methods=["POST"])
-# def update_db() -> Response | tuple[str, int]:
-#     """Update the database with new data from the form.
-#
-#     Returns:
-#         Response: Redirect to the update page with flash messages.
-#         tuple[str, int]: Error message with HTTP status code.
-#     """
-#     user = get_progress()
-#     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
-#         return "Error: No authorization", 400
-#     a = {}
-#     b = {}
-#     for k, v in request.form.items():
-#         if k.endswith("a"):
-#             a[k[:-2]] = v
-#         else:
-#             b[k[:-2]] = v
-#     n = request.form.get("num")
-#     try:
-#         result = data.update_one({"id": "html"}, {"$set": {f"{n}.1": a, f"{n}.2": b}})
-#     except Exception as e:
-#         result = None
-#         flash(f"Update failed: {str(e)}", "error")
-#
-#     if result and result.modified_count == 0:
-#         flash(f"No changes made.", "success")
-#     else:
-#         flash(f"Database for Week {n} Successfully Updated!", "success")
-#     return redirect(url_for("update"))
-#
-#
+@app.route("/update", methods=["GET", "POST"])
+def update() -> str | Response | tuple[str, int]:
+    """Render the update page or process update requests.
+
+    Returns:
+        str: Rendered update.html template or error response.
+        Response: Refreshed endpoint if data missing
+        tuple[str, int]: Error message with HTTP status code.
+    """
+    user = get_progress()
+    if (user["id"] or "bad") not in data_cache.permissions:
+        return "Error: No authorization", 400
+
+    if request.method == "GET":
+        return render_template("update.html", img=user["img"], text=user["text"], selected=0)
+    else:
+        if not (week := int(request.form.get('selection'))):
+            return redirect(url_for('update'))
+
+        try:
+            data = data_cache.html[week]
+            a, b = data[1], data[2]
+        except KeyError:
+            return redirect(url_for("update"))
+
+        params = {
+            "img": user["img"],
+            "text": user["text"],
+            "num": week,
+            "selected": week,
+            "a": a,
+            "b": b,
+        }
+        return render_template("update.html", **params)
+
+
+@app.route("/update-db", methods=["POST"])
+def update_db() -> Response | tuple[str, int]:
+    """Update the database with new data from the form.
+
+    Returns:
+        Response: Redirect to the update page with flash messages.
+        tuple[str, int]: Error message with HTTP status code.
+    """
+    user = get_progress()
+    if (user["id"] or "bad") not in data_cache.permissions:
+        return "Error: No authorization", 400
+    a = {}
+    b = {}
+    for k, v in request.form.items():
+        if k.endswith("a"):
+            a[k[:-2]] = v
+        else:
+            b[k[:-2]] = v
+    week_num = int(request.form.get("num"))
+
+    data_cache.update_html(week_num, a, b)
+    return redirect(url_for("update"))
+
+
 # @app.route("/admin", methods=["GET"])
 # def admin() -> str | tuple[str, int]:
 #     """Render the admin page with settings and permissions.

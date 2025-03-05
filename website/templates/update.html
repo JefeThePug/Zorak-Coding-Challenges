@@ -39,8 +39,8 @@
             {% for part, p, data in [('1', 'a', a), ('2', 'b', b)] %}
                 <h2>Part {{ part }}</h2>
                 {% for field, size in [('title', 1), ('content', 10), ('instructions', 5), ('input', 1), ('form', 5), ('solution', 4)] %}
-                    <label for="{{ field }}">{{ field | capitalize }}:</label><br>
-                    <textarea id="{{ field }}" name="{{ field }}_{{ p }}" rows="{{ size }}" cols="90">{{ data[field] }}</textarea><br><br>
+                    <label for="{{ field }}_{{ p }}">{{ field | capitalize }}:</label><br>
+                    <textarea id="{{ field }}_{{ p }}" name="{{ field }}_{{ p }}" rows="{{ size }}" cols="90">{{ data[field] }}</textarea><br><br>
                 {% endfor %}
             {% endfor %}
             <input type="submit" value="SAVE">
