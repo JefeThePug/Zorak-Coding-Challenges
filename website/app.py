@@ -405,7 +405,7 @@ def update() -> str | Response | tuple[str, int]:
 
         try:
             data = data_cache.html[week]
-            a, b = data[1], data[2]
+            a, b, ee = data[1], data[2], data["ee"]
         except KeyError:
             return redirect(url_for("update"))
 
@@ -416,6 +416,7 @@ def update() -> str | Response | tuple[str, int]:
             "selected": week,
             "a": a,
             "b": b,
+            "ee": ee,
         }
         return render_template("update.html", **params)
 
@@ -433,14 +434,17 @@ def update_db() -> Response | tuple[str, int]:
         return "Error: No authorization", 400
     a = {}
     b = {}
+    ee = ""
     for k, v in request.form.items():
-        if k.endswith("a"):
+        if k == "ee":
+            ee = v
+        elif k.endswith("a"):
             a[k[:-2]] = v
         else:
             b[k[:-2]] = v
     week_num = int(request.form.get("num"))
 
-    data_cache.update_html(week_num, a, b)
+    data_cache.update_html(week_num, a, b, ee)
     return redirect(url_for("update"))
 
 

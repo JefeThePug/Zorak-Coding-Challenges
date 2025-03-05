@@ -68,15 +68,16 @@ class DataCache:
         """Normalize line endings in a string to LF (\n)."""
         return s.replace('\r\n', '\n').replace('\r', '\n')
 
-    def update_html(self, week: int, a: dict[str, str], b: dict[str, str]) -> bool:
+    def update_html(self, week: int, a: dict[str, str], b: dict[str, str], ee: str) -> bool:
         """Update a SubEntry in the database with new data if changed"""
         part1 = self.count_changes(week, 1, a)
         part2 = self.count_changes(week, 2, b)
+        egg_change = int(ee != self.html[week]["ee"])
 
-        if part1 == 0 and part2 == 0:
+        if part1 == 0 and part2 == 0 and egg_change == 0:
             flash("No changes made.", "success")
 
-        elif part1 > 0 or part2 > 0:
+        elif part1 > 0 or part2 > 0 or egg_change > 0:
             data_fields = ["title", "content", "instructions", "input", "form", "solution"]
             db_fields = ["title", "content", "instructions", "input_type", "form", "solution"]
             try:
@@ -90,6 +91,9 @@ class DataCache:
                                     print("Before", getattr(sub_entry, db_field))
                                     setattr(sub_entry, db_field, fixed)
                                     print("After", getattr(sub_entry, db_field))
+                    if egg_change:
+                        entry = MainEntry.query.filter_by(id=week).first()
+                        entry.ee = ee
                     db.session.commit()
                 flash(f"Database for Week {week} Successfully Updated!", "success")
                 self.load_html()
