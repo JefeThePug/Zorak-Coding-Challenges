@@ -3,11 +3,11 @@
 {% block title %} Logout Confirmation {% endblock %}
 
 {% block image %}
-    {% if img.startswith('http') %}
-        {{ img }}
-    {% else %}
-        {{ url_for('static', filename=img) }}
-    {% endif %}
+{% if img.startswith('http') %}
+{{ img }}
+{% else %}
+{{ url_for('static', filename=img) }}
+{% endif %}
 {% endblock %}
 
 {% block hovertext %} {{ text|safe }} {% endblock %}
