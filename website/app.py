@@ -1,5 +1,4 @@
 import os
-import sys
 from urllib.parse import urlencode
 
 import requests
@@ -49,7 +48,6 @@ serializer = URLSafeTimedSerializer(app.secret_key, salt="cookie")
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = False
-
 
 # Initialize SQLAlchemy and the Data Cache with the Flask app
 db.init_app(app)
@@ -189,7 +187,7 @@ def callback() -> Response | tuple[str, int]:
         tuple[str, int]: Error message with HTTP status code 400.
     """
     if request.args.get("error"):
-        print(session, file=sys.stderr)
+        print(session)
         return redirect(url_for("index"))
 
     if not (code := request.args.get("code")):
@@ -320,7 +318,7 @@ def access() -> str | tuple[str, int]:
             response = requests.put(url, headers=headers, json=payload)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
-            print(f"Error: {e}", file=sys.stderr)
+            print(f"Error: {e}")
             return f"Error: Failed to assign role: {response.text}", 400
         else:
             url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}/roles/{verified_role}"
@@ -395,7 +393,7 @@ def update() -> str | Response | tuple[str, int]:
     """
     user = get_progress()
     if (user["id"] or "bad") not in data_cache.permissions:
-        return "Error: No authorization", 400
+        return f"Error: No authorization {user['id']}", 400
 
     if request.method == "GET":
         return render_template("update.html", img=user["img"], text=user["text"], selected=0)
@@ -431,7 +429,7 @@ def update_db() -> Response | tuple[str, int]:
     """
     user = get_progress()
     if (user["id"] or "bad") not in data_cache.permissions:
-        return "Error: No authorization", 400
+        return f"Error: No authorization {user['id']}", 400
     a = {}
     b = {}
     ee = ""
@@ -448,91 +446,58 @@ def update_db() -> Response | tuple[str, int]:
     return redirect(url_for("update"))
 
 
-# @app.route("/admin", methods=["GET"])
-# def admin() -> str | tuple[str, int]:
-#     """Render the admin page with settings and permissions.
-#
-#     Returns:
-#         Response: Rendered admin.html template or error response.
-#         tuple[str, int]: Error message with HTTP status code.
-#     """
-#     user = get_progress()
-#     permitted = rel.find_one({"name": "release"})["permitted"]
-#     if (user["id"] or "bad") not in permitted:
-#         return "Error: No authorization", 400
-#
-#     release = rel.find_one({"name": "release"})["num"]
-#     guild = roles.find_one({"name": "guild"})["id"]
-#     document = roles.find_one({"name": "channel"})
-#     channels = [document[str(i)] for i in range(1, 11)]
-#
-#     params = {
-#         "img": user["img"],
-#         "text": user["text"],
-#         "guild": guild,
-#         "channels": channels,
-#         "release": release,
-#         "perms": permitted,
-#     }
-#     return render_template("admin.html", **params)
-#
-#
-# @app.route("/update-admin", methods=["POST"])
-# def update_admin() -> Response | tuple[str, int]:
-#     """Update admin settings based on form input.
-#
-#     Returns:
-#         Response: Redirect to the admin page with flash messages.
-#         tuple[str, int]: Error message with HTTP status code.
-#     """
-#     user = get_progress()
-#     if (user["id"] or "bad") not in rel.find_one({"name": "release"})["permitted"]:
-#         return "Error: No authorization {user['id']}", 400
-#
-#     guild = request.form.get("guild").strip()
-#     channels = [request.form.get(f"c{i}").strip() for i in range(1, 11)]
-#     permitted = [perm for perm in request.form.get("perms").splitlines() if perm]
-#     try:
-#         release = min(10, max(1, int(request.form.get("release").strip())))
-#     except ValueError:
-#         flash("Invalid release number (must be a number 1 through 10)", "error")
-#         return redirect(url_for("admin"))
-#
-#     db_session = roles.database.client.start_session()
-#     try:
-#         results = {}
-#         with db_session.start_transaction():
-#             results["A"] = rel.update_one(
-#                 {"name": "release"},
-#                 {"$set": {"num": release}},
-#                 session=db_session,
-#             )
-#             results["B"] = rel.update_one(
-#                 {"name": "release"},
-#                 {"$set": {"permitted": permitted}},
-#                 session=db_session,
-#             )
-#             results["C"] = roles.update_one(
-#                 {"name": "guild"},
-#                 {"$set": {"id": guild}},
-#                 session=db_session,
-#             )
-#             results["D"] = roles.update_one(
-#                 {"name": "channel"},
-#                 {"$set": {str(xi): channel for xi, channel in enumerate(channels, 1)}},
-#                 session=db_session,
-#             )
-#         if sum(result.modified_count for result in results.values()) == 0:
-#             flash("No changes made", "success")
-#         else:
-#             flash("Admin settings updated successfully", "success")
-#     except Exception as e:
-#         db_session.abort_transaction()
-#         flash(f"Update failed: {str(e)}", "error")
-#     finally:
-#         db_session.end_session()
-#
-#     return redirect(url_for("admin"))
+@app.route("/admin", methods=["GET"])
+def admin() -> str | tuple[str, int]:
+    """Render the admin page with settings and permissions.
+
+    Returns:
+        Response: Rendered admin.html template or error response.
+        tuple[str, int]: Error message with HTTP status code.
+    """
+    user = get_progress()
+    permitted = data_cache.permissions
+    if (user["id"] or "bad") not in permitted:
+        return f"Error: No authorization {user['id']}", 400
+
+    release = data_cache.release
+    guild = data_cache.discord_ids["guild"]
+    channels = [data_cache.discord_ids[f"{i}"] for i in range(1, 11)]
+
+    params = {
+        "img": user["img"],
+        "text": user["text"],
+        "guild": guild,
+        "channels": channels,
+        "release": release,
+        "perms": permitted,
+    }
+    return render_template("admin.html", **params)
+
+
+@app.route("/update-admin", methods=["POST"])
+def update_admin() -> Response | tuple[str, int]:
+    """Update admin settings based on form input.
+
+    Returns:
+        Response: Redirect to the admin page with flash messages.
+        tuple[str, int]: Error message with HTTP status code.
+    """
+    user = get_progress()
+    if (user["id"] or "bad") not in data_cache.permissions:
+        return f"Error: No authorization {user['id']}", 400
+
+    channels = {f"{i}": request.form.get(f"c{i}").strip() for i in range(1, 11)}
+    channels["guild"] = request.form.get("guild").strip()
+    permitted = [perm for perm in request.form.get("perms").splitlines() if perm]
+    try:
+        release = min(10, max(1, int(request.form.get("release").strip())))
+    except ValueError:
+        flash("Invalid release number (must be a number 1 through 10)", "error")
+        return redirect(url_for("admin"))
+
+    data_cache.update_constants(channels, permitted, release)
+
+    return redirect(url_for("admin"))
 
 
 @app.route('/418')

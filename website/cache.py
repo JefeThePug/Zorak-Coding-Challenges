@@ -1,5 +1,3 @@
-import sys
-
 from flask import Flask, flash
 
 from models import (
@@ -32,8 +30,7 @@ class DataCache:
     def load_constants(self) -> None:
         """Load all pseudo-constant data from the database into memory."""
         with self.app.app_context():
-            discord_ids = DiscordID.query.with_entities(DiscordID.name, DiscordID.discord_id).all()
-            self.discord_ids = {name: i for name, i in discord_ids}
+            # Total Constants
             obfuscations = Obfuscation.query.with_entities(Obfuscation.id, Obfuscation.obfuscated_key).all()
             self.obfuscations = {i: o for i, o in obfuscations}
             self.obfuscations |= {o: i for i, o in obfuscations}
@@ -42,11 +39,63 @@ class DataCache:
             self.html_nums |= {o: i for i, o in html_nums}
             solutions = Solution.query.with_entities(Solution.id, Solution.part1, Solution.part2).all()
             self.solutions = {i: {"part1": a, "part2": b} for i, a, b in solutions}
+
+            # Admin-Managed Constants
+            discord_ids = DiscordID.query.with_entities(DiscordID.name, DiscordID.discord_id).all()
+            self.discord_ids = {name: i for name, i in discord_ids}
             permissions = Permissions.query.with_entities(Permissions.user_id).all()
             self.permissions = [permission[0] for permission in permissions]
             self.release = Release.query.first().release
 
-    def load_html(self):
+    def update_constants(self, channels: dict[str, str], permitted: list[str], release: int) -> bool:
+        """Update All Admin-Managed Constants"""
+        modified = False
+        with self.app.app_context():
+            try:
+                entries = DiscordID.query.all()
+
+                for entry in entries:
+                    if entry.discord_id != channels[entry.name]:
+                        modified = True
+                        entry.discord_id = channels[entry.name]
+                self.discord_ids = channels
+
+                existing_users = Permissions.query.with_entities(Permissions.user_id).all()
+                existing_user_ids = {user_id for (user_id,) in existing_users}
+                # Remove Users
+                users_to_delete = existing_user_ids.difference(permitted)
+                if users_to_delete:
+                    modified = True
+                    Permissions.query.filter(Permissions.user_id.in_(users_to_delete)).delete(synchronize_session=False)
+                users_to_add = set(permitted).difference(existing_user_ids)
+                # Add Users
+                for user_id in users_to_add:
+                    modified = True
+                    db.session.add(Permissions(user_id=user_id))
+                self.permissions = permitted
+
+                release_record = Release.query.first()
+                if release_record.release != release:
+                    modified = True
+                    release_record.release = release
+                    self.release = release
+
+                db.session.commit()
+
+                if modified:
+                    flash("Admin settings updated successfully", "success")
+                else:
+                    flash("No changes made", "success")
+
+            except Exception as e:
+                db.session.rollback()
+                flash(f"Update failed: {str(e)}", "error")
+                return False
+
+        return True
+
+    def load_html(self) -> None:
+        """Load html content from the database into memory."""
         with self.app.app_context():
             main_entries = MainEntry.query.all()
             for main_entry in main_entries:
@@ -83,14 +132,13 @@ class DataCache:
             try:
                 with self.app.app_context():
                     for part, data in enumerate((a, b), 1):
-                        if ("", part1, part2)[part] > 0:
-                            sub_entry = SubEntry.query.filter_by(main_entry_id=week, sub_entry_id=part).first()
-                            for data_field, db_field in zip(data_fields, db_fields):
-                                fixed = self.normalize(data[data_field])
-                                if fixed != self.html[week][part][data_field]:
-                                    print("Before", getattr(sub_entry, db_field))
-                                    setattr(sub_entry, db_field, fixed)
-                                    print("After", getattr(sub_entry, db_field))
+                        if ("", part1, part2)[part] == 0:
+                            continue
+                        sub_entry = SubEntry.query.filter_by(main_entry_id=week, sub_entry_id=part).first()
+                        for data_field, db_field in zip(data_fields, db_fields):
+                            fixed = self.normalize(data[data_field])
+                            if fixed != self.html[week][part][data_field]:
+                                setattr(sub_entry, db_field, fixed)
                     if egg_change:
                         entry = MainEntry.query.filter_by(id=week).first()
                         entry.ee = ee
@@ -107,19 +155,6 @@ class DataCache:
         """Update Part 1 or 2 of SubEntry in the database and return how many changes were made"""
         fields = ["title", "content", "instructions", "input", "form", "solution"]
         return sum(self.normalize(data[field]) != self.html[week][part][field] for field in fields)
-
-        # with self.app.app_context():
-        #     sub_entry = SubEntry.query.filter_by(main_entry_id=week, sub_entry_id=part).first()
-        #
-        #     data_fields = ["title", "content", "instructions", "input", "form", "solution"]
-        #     db_fields = ["title", "content", "instructions", "input_type", "form", "solution"]
-        #     for data_field, db_field in zip(data_fields, db_fields):
-        #         if (fixed := self.normalize(data[data_field])) != getattr(sub_entry, db_field):
-        #             setattr(sub_entry, db_field, fixed)
-        #             modifications += 1
-        #             # print(f"After modification: Part{part}:{db_field}:", db.session.dirty)
-        # print(f"{part}- Is sub_entry in session?", db.session.is_modified(sub_entry))
-        return modifications
 
     def load_progress(self, user_id: str) -> bool:
         """Load all variable data from the database into memory."""
@@ -141,7 +176,7 @@ class DataCache:
             challenge = getattr(progress, f"c{challenge_num}", None)
             challenge[index] = True
             db.session.commit()
-            self.load_progress()
+            self.load_progress(user_id)
         return True
 
     def add_user(self, user_id: str, name: str) -> bool:
