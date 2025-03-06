@@ -16,7 +16,6 @@ from flask import (
     make_response,
     send_from_directory,
 )
-# from flask_pymongo import PyMongo
 from itsdangerous import URLSafeTimedSerializer
 
 from cache import DataCache
@@ -30,19 +29,6 @@ app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True  # DEBUG Environment ONLY
 app.secret_key = os.getenv("SECRET_KEY")
 serializer = URLSafeTimedSerializer(app.secret_key, salt="cookie")
-
-# Older MongoDB Version
-# -------------------------------------------------
-# app.config["MONGO_URI"] = os.getenv("MONGO_URI")
-# mongo = PyMongo(app)
-# db = mongo.cx["ZorakCodingChallenge"]
-# obfs = db["html"]
-# prog = db["progress"]
-# sols = db["solutions"]
-# roles = db["roles"]
-# data = db["data"]
-# rel = db["release"]
-# -------------------------------------------------
 
 # Configure SQLAlchemy database URI and settings
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
