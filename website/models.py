@@ -10,7 +10,7 @@ class DiscordID(db.Model):
 
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
     name: Mapped[str] = mapped_column(db.String(10), nullable=False)
-    discord_id: Mapped[str] = mapped_column(db.String(20), nullable=False, unique=True)
+    discord_id: Mapped[str] = mapped_column(db.String(20), nullable=False)
 
 
 class MainEntry(db.Model):
