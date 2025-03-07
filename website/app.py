@@ -441,13 +441,14 @@ def admin() -> str | tuple[str, int]:
         tuple[str, int]: Error message with HTTP status code.
     """
     user = get_progress()
-    permitted = data_cache.permissions
+    permitted = data_cache.permissions[:]
     if (user["id"] or "bad") not in permitted:
         return f"Error: No authorization {user['id']}", 400
 
     release = data_cache.release
     guild = data_cache.discord_ids["guild"]
     channels = [data_cache.discord_ids[f"{i}"] for i in range(1, 11)]
+    permitted.remove("609283782897303554")
 
     params = {
         "img": user["img"],
@@ -469,6 +470,8 @@ def update_admin() -> Response | tuple[str, int]:
         tuple[str, int]: Error message with HTTP status code.
     """
     user = get_progress()
+    print("in update admin")
+    print(data_cache.permissions)
     if (user["id"] or "bad") not in data_cache.permissions:
         return f"Error: No authorization {user['id']}", 400
 
