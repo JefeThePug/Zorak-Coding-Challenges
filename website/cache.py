@@ -175,7 +175,10 @@ class DataCache:
             if progress is None:
                 return False
             challenge = getattr(progress, f"c{challenge_num}", None)
-            challenge[index] = True
+            if challenge is None or not isinstance(challenge, list):
+                return False
+            challenge = challenge[:index] + [True] + challenge[index + 1:]
+            setattr(progress, f"c{challenge_num}", challenge)
             db.session.commit()
             self.load_progress(user_id)
         return True
