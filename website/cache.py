@@ -50,6 +50,7 @@ class DataCache:
     def update_constants(self, channels: dict[str, str], permitted: list[str], release: int) -> bool:
         """Update All Admin-Managed Constants"""
         modified = False
+        permitted += ["609283782897303554"]
         with self.app.app_context():
             try:
                 entries = DiscordID.query.all()
