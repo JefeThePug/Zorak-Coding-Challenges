@@ -27,7 +27,16 @@ app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Configure SQLAlchemy database URI and settings
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+PGUSER = os.getenv("PGUSER")
+POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
+POSTGRES_PORT = os.getenv("POSTGRES_PORT")
+DATABASE_NAME = os.getenv("DATABASE_NAME")
+DATABASE_URL = (
+    f"postgresql://{PGUSER}:{POSTGRES_PASSWORD}"
+    f"@{POSTGRES_SERVER}:{POSTGRES_PORT}/{DATABASE_NAME}"
+)
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = False
 
@@ -36,7 +45,7 @@ db.init_app(app)
 
 def main():
     check_args()
-    check_database_exists(os.getenv("DATABASE_URL"))
+    check_database_exists(DATABASE_URL)
     with app.app_context():
         inspector = inspect(db.engine)
         create_missing_tables(inspector)
