@@ -1,0 +1,15 @@
+FROM python:3.12.8-slim-bullseye
+
+WORKDIR /website
+
+COPY /website /website
+
+RUN apt update && \
+    apt upgrade -y && \
+    chmod +x entrypoint.sh
+
+RUN --mount=type=cache,target=/root/.cache/pip pip install -r /website/requirements.txt
+
+
+EXPOSE 5000
+CMD ["./entrypoint.sh"]
