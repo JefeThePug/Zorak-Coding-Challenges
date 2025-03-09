@@ -1,0 +1,26 @@
+---
+services:
+  postgres:
+    container_name: db
+    build:
+      context: .
+      dockerfile: Dockerfile-db
+    env_file: .env
+    image: zorak-postgres:latest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    networks:
+      - zorak
+    restart: unless-stopped
+    volumes:
+      - ./db/postgres-data:/var/lib/postgresql/data  # Database data is stored here!
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # Script that fires on boot up of DB
+
+networks:
+  zorak:
+    driver: bridge
