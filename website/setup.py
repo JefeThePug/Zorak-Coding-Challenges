@@ -1,5 +1,4 @@
 import os
-import re
 import sys
 import time
 
@@ -27,13 +26,13 @@ app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Configure SQLAlchemy database URI and settings
-PGUSER = os.getenv("PGUSER")
+POSTGRES_USER = os.getenv("PGUSER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 DATABASE_URL = (
-    f"postgresql://{PGUSER}:{POSTGRES_PASSWORD}"
+    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
     f"@{POSTGRES_SERVER}:{POSTGRES_PORT}/{DATABASE_NAME}"
 )
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
@@ -61,22 +60,20 @@ def check_args():
 
 def check_database_exists(database_url):
     """Create database in PostgreSQL if it doesn't exist"""
-    pattern = r"postgresql://(?P<user>.*):(?P<pass>.*)@(?P<host>.*):(?P<port>.*)/(?P<dbname>.*)"
-    match = re.match(pattern, database_url).groupdict()
     connection = connect(
-        user=match["user"],
-        password=match["pass"],
-        host=match["host"],
-        port=match["port"],
+        user=POSTGRES_USER,
+        password=POSTGRES_PASSWORD,
+        host=POSTGRES_SERVER,
+        port=POSTGRES_PORT,
         dbname="postgres",
     )
     connection.autocommit = True
     cursor = connection.cursor()
 
-    cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = %s", (match["dbname"],))
+    cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = %s", (DATABASE_NAME,))
     if cursor.fetchone() is None:
-        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(match["dbname"])))
-        print(f"Database {match['dbname']} created.")
+        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(DATABASE_NAME)))
+        print(f"Database {DATABASE_NAME} created.")
     cursor.close()
     connection.close()
 
