@@ -1,6 +1,5 @@
 import os
 import sys
-import time
 
 from dotenv import load_dotenv
 from flask import Flask
@@ -19,14 +18,16 @@ from models import (
     Release,
 )
 
-load_dotenv()
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+path = os.path.join(parent_dir, '.env')
+load_dotenv(path)
 
 # Initialize Flask application
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Configure SQLAlchemy database URI and settings
-POSTGRES_USER = os.getenv("PGUSER")
+POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
@@ -35,6 +36,7 @@ DATABASE_URL = (
     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
     f"@{POSTGRES_SERVER}:{POSTGRES_PORT}/{DATABASE_NAME}"
 )
+
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = False
@@ -153,12 +155,21 @@ def fill_permanent_data(inspector):
 
         if "permissions" in table_names:
             if not db.session.query(Permissions).first():
+                # If the table is blank
                 permissions = [
                     Permissions(user_id="609283782897303554"),
                     Permissions(user_id=sys.argv[1].strip()),
                 ]
                 db.session.add_all(permissions)
                 print("Inserted initial admin permissions.")
+            else:
+                # Check if sys.argv[1] is already in the Permissions table
+                existing_permission = db.session.query(Permissions).filter_by(user_id=sys.argv[1].strip()).first()
+                if not existing_permission:
+                    db.session.add(Permissions(user_id=sys.argv[1].strip()))
+                    print(f"Inserted permission for user {sys.argv[1].strip()}.")
+                else:
+                    print(f"User {sys.argv[1].strip()} already has permissions.")
 
         if "obfuscation" in table_names:
             if not db.session.query(Obfuscation).first():
