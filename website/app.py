@@ -22,7 +22,9 @@ from cache import DataCache
 from models import db
 
 # Load environment variables from .env file
-load_dotenv()
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+path = os.path.join(parent_dir, '.env')
+load_dotenv(path)
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -31,13 +33,13 @@ app.secret_key = os.getenv("SECRET_KEY")
 serializer = URLSafeTimedSerializer(app.secret_key, salt="cookie")
 
 # Configure SQLAlchemy database URI and settings
-PGUSER = os.getenv("PGUSER")
+POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 DATABASE_URL = (
-    f"postgresql://{PGUSER}:{POSTGRES_PASSWORD}"
+    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
     f"@{POSTGRES_SERVER}:{POSTGRES_PORT}/{DATABASE_NAME}"
 )
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
