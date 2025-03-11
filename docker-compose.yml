@@ -1,0 +1,41 @@
+---
+services:
+  api:
+    container_name: api
+    build:
+      context: .
+      dockerfile: Dockerfile-api
+    env_file: .env
+    image: zorak-api:latest
+    ports:
+      - "5000:5000"
+    networks:
+      - zorak
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    container_name: db
+    build:
+      context: .
+      dockerfile: Dockerfile-db
+    env_file: .env
+    image: zorak-postgres:latest
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    networks:
+      - zorak
+    restart: unless-stopped
+    volumes:
+      - ./db/postgres-data:/var/lib/postgresql/data  # Database data is stored here!
+
+networks:
+  zorak:
+    driver: bridge
