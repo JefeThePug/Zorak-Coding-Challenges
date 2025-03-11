@@ -18,9 +18,22 @@ Coding Challenge Adventure
 
 {% block main %}
 <div id="help" class="right">
+    <a href="/leaderboard">
+        <span class="icon"> Champions </span>
+        <span class="material-symbols-outlined icon" alt="Champions">
+            social_leaderboard
+        </span>
+    </a>
     <a href="/help">
+        <span class="icon"> How-To </span>
         <span class="material-symbols-outlined icon" alt="Help">
             help
+        </span>
+    </a>
+    <a href="/pre-login">
+        <span class="icon"> {{ text | replace('<br>with Discord', '') }} </span>
+        <span class="material-symbols-outlined icon" alt="{{ text | replace('<br>with Discord', '') }}">
+            login
         </span>
     </a>
 </div>
