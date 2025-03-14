@@ -1,3 +1,4 @@
+import sys
 from flask import Flask, flash
 
 from models import (
@@ -37,17 +38,40 @@ class DataCache:
             html_nums = Obfuscation.query.with_entities(Obfuscation.id, Obfuscation.html_key).all()
             self.html_nums = {i: o for i, o in html_nums}
             self.html_nums |= {o: i for i, o in html_nums}
-            solutions = Solution.query.with_entities(Solution.id, Solution.part1, Solution.part2).all()
-            self.solutions = {i: {"part1": a, "part2": b} for i, a, b in solutions}
 
             # Admin-Managed Constants
             discord_ids = DiscordID.query.with_entities(DiscordID.name, DiscordID.discord_id).all()
             self.discord_ids = {name: i for name, i in discord_ids}
             permissions = Permissions.query.with_entities(Permissions.user_id).all()
             self.permissions = [permission[0] for permission in permissions]
+            solutions = Solution.query.with_entities(Solution.id, Solution.part1, Solution.part2).all()
+            self.solutions = {i: {"part1": a, "part2": b} for i, a, b in solutions}
             self.release = Release.query.first().release
 
-    def update_constants(self, channels: dict[str, str], permitted: list[str], release: int) -> bool:
+    def update_release(self, release: int) -> bool:
+        """Update Release Week"""
+        modified = False
+        with self.app.app_context():
+            try:
+                release_record = Release.query.first()
+                if release_record.release != release:
+                    modified = True
+                    release_record.release = release
+                    self.release = release
+
+                db.session.commit()
+
+                if modified:
+                    flash(f"Release Week updated successfully to {release}", "success")
+                else:
+                    flash("No changes made to Release Week", "success")
+            except Exception as e:
+                db.session.rollback()
+                flash(f"Update failed: {str(e)}", "error")
+                return False
+        return True
+
+    def update_constants(self, channels: dict[str, str], permitted: list[str]) -> bool:
         """Update All Admin-Managed Constants"""
         modified = False
         permitted += ["609283782897303554"]
@@ -74,12 +98,6 @@ class DataCache:
                     modified = True
                     db.session.add(Permissions(user_id=user_id))
                 self.permissions = permitted
-
-                release_record = Release.query.first()
-                if release_record.release != release:
-                    modified = True
-                    release_record.release = release
-                    self.release = release
 
                 db.session.commit()
 
@@ -158,7 +176,7 @@ class DataCache:
         return sum(self.normalize(data[field]) != self.html[week][part][field] for field in fields)
 
     def load_progress(self, user_id: str) -> bool:
-        """Load all variable data from the database into memory."""
+        """Load progress data for current user from the database into memory."""
         with self.app.app_context():
             progress = Progress.query.filter_by(user_id=user_id).first()
             if progress is None:
@@ -190,6 +208,7 @@ class DataCache:
                 new_progress = Progress(
                     user_id=user_id,
                     name=name,
+                    github="",
                     **{f"c{i}": [False, False] for i in range(1, 11)}
                 )
                 db.session.add(new_progress)
@@ -199,3 +218,73 @@ class DataCache:
             print(f"Error adding user: {e}")
             db.session.rollback()
             return False
+
+    def get_all_champions(self) -> list[dict[str, str]]:
+        """Get progress for all users that completed 10 challenges."""
+        try:
+            with self.app.app_context():
+                conditions = [getattr(Progress, f"c{i}") == [True, True] for i in range(1, 11)]
+                champions = Progress.query.filter(*conditions).all()
+                return [{"name": champ.name, "github": champ.github} for champ in champions]
+        except Exception as e:
+            print(f"Error fetching champions: {e}")
+            return []
+
+    def update_champions(self, champions: list[dict[str, str]]) -> bool:
+        """Update champions in database"""
+        modified = False
+        with self.app.app_context():
+            try:
+                progress = Progress.query.all()
+                if not progress:
+                    return False
+                for champion in champions:
+                    matching_progress = Progress.query.filter(Progress.name == champion["name"]).first()
+                    if matching_progress.github != champion["github"]:
+                        matching_progress.github = champion["github"]
+                        # db.session.add(matching_progress)
+                        modified = True
+
+                db.session.commit()
+
+                if modified:
+                    flash("Github Accounts updated successfully", "success")
+                else:
+                    flash("No changes made", "success")
+
+            except Exception as e:
+                print(f"Error adding user: {e}", file=sys.stderr)
+                db.session.rollback()
+                return False
+
+        return True
+
+    def update_solutions(self, solutions: dict[int, dict[str, str]]) -> bool:
+        """Update solutions in database"""
+        modified = False
+        with self.app.app_context():
+            try:
+                solution_table = Solution.query.all()
+                if not solution_table:
+                    return False
+                for i, parts in solutions.items():
+                    solution = Solution.query.filter(Solution.id == i).first()
+                    for part in ["part1", "part2"]:
+                        if getattr(solution, part) != parts[part]:
+                            setattr(solution, part, parts[part])
+                            self.solutions[i][part] = parts[part]
+                            modified = True
+
+                db.session.commit()
+
+                if modified:
+                    flash("Github Accounts updated successfully", "success")
+                else:
+                    flash("No changes made", "success")
+
+            except Exception as e:
+                print(f"Error adding user: {e}", file=sys.stderr)
+                db.session.rollback()
+                return False
+
+        return True

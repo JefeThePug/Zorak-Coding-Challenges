@@ -1,6 +1,6 @@
 {% extends "default.html" %}
 
-{% block title %} UPDATE DB {% endblock %}
+{% block title %} HTML Update Menu {% endblock %}
 
 {% block image %}
 {% if img.startswith('http') %}
@@ -13,6 +13,9 @@
 {% block hovertext %} {{ text|safe }} {% endblock %}
 
 {% block main %}
+
+<input type="button" value="ADMIN MAIN" onclick="window.location.href='/admin'">
+
 <section>
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -21,7 +24,7 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-    <form action="/update" method="POST">
+    <form action="/update-html" method="POST">
         <label for="selector">Select an option:</label><br>
         <select name="selection" id="selector" onchange="this.form.submit()">
             <option value=""></option>

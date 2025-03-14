@@ -13,6 +13,9 @@
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to Main content</a>
+{% if request.path != '/' %}
+<a href="/" class="float">&lt;</a>
+{% endif %}
 <header>
     <h1>{% block title %}{% endblock %}</h1>
     <a href="/pre-login">

@@ -13,6 +13,26 @@
 {% block hovertext %} {{ text|safe }} {% endblock %}
 
 {% block main %}
+
+<section>
+    <h2>Menus</h2>
+    <p>
+        Update Discord Guild and Channel IDs and User IDs for Admin<br>
+        <input type="button" value="DISCORD ADMIN" onclick="window.location.href='/edit-discord'">
+    </p>
+    <p>
+        Edit HTML for Challenges<br>
+        <input type="button" value="EDIT HTML" onclick="window.location.href='/update-html'">
+    </p>
+    <p>
+        Edit Challenge Solutions<br>
+        <input type="button" value="EDIT SOLUTIONS" onclick="window.location.href='/edit-solutions'">
+    </p>
+    <p>
+        Add or Remove GitHub Accounts for Champion Users<br>
+        <input type="button" value="EDIT CHAMPIONS" onclick="window.location.href='/edit-champions'">
+    </p>
+</section>
 <section>
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -21,23 +41,11 @@
     {% endfor %}
     {% endif %}
     {% endwith %}
-    <form action="/update-admin" method="POST">
-        <h2>Guild</h2>
-        <label for="guild">ID:</label><br>
-        <textarea id="guild" name="guild" rows="1" cols="90">{{ guild }}</textarea><br><br>
-        <h2>Channels</h2>
-        {% for n in range(1, 11) %}
-        <label for="c{{ n }}">Week {{ n }}:</label><br>
-        <textarea id="c{{ n }}" name="c{{ n }}" rows="1" cols="90">{{ channels[n - 1] if n - 1 < channels|length else '' }}</textarea><br>
-        {% endfor %}<br>
-        <h2>Release</h2>
+    <form action="/admin" method="POST">
+        <h2>Change Release</h2>
         <label for="release">Up to Week:</label><br>
         <textarea id="release" name="release" rows="1" cols="90">{{ release }}</textarea><br><br>
-        <h2>Permissions</h2>
-        <label for="perms">Users with Admin Permissions:</label><br>
-        <textarea id="perms" name="perms" rows="{{ perms|length + 2 }}" cols="90">{{ perms|join("\n") }}</textarea>
-        <br><br>
-        <input type="button" value="CANCEL" onclick="window.location.href='/admin'"> <input type="submit" value="SAVE">
+        <input type="submit" value="SAVE">
     </form>
 </section>
 {% endblock %}

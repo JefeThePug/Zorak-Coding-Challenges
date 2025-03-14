@@ -1,7 +1,6 @@
 import os
-from urllib.parse import urlencode
-
 import requests
+import sys
 from dotenv import load_dotenv
 from flask import (
     Flask,
@@ -17,6 +16,7 @@ from flask import (
     send_from_directory,
 )
 from itsdangerous import URLSafeTimedSerializer
+from urllib.parse import urlencode
 
 from cache import DataCache
 from models import db
@@ -42,6 +42,7 @@ DATABASE_URL = (
     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
     f"@{POSTGRES_SERVER}:{POSTGRES_PORT}/{DATABASE_NAME}"
 )
+
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = False
@@ -62,6 +63,8 @@ def set_progress(challenge_num: int, progress: int) -> str | None:
     Args:
         challenge_num (int): The challenge number.
         progress (int): The specific progress index (0 or 1).
+    Returns:
+        str | None: The serialized progress if user is not logged in, otherwise None.
     """
     if "user_data" in session:
         # Change database and update Data Cache
@@ -109,9 +112,9 @@ def obfuscate(value: str | int) -> str | int:
     """Obfuscate a value using the obfuscation database.
 
     Args:
-        value (str): The value to obfuscate.
+        value (str | int): The value to obfuscate.
     Returns:
-        str: The obfuscated value.
+        str | int: The obfuscated value.
     """
     return data_cache.html_nums[value]
 
@@ -121,7 +124,7 @@ def obscure_post(value: str | int) -> str:
     """Obscures week number using Data Cache (from database)
 
     Args:
-        value (str): The number to obfuscate.
+        value (str | int): The number to obfuscate.
     Returns:
         str: The obfuscated number to pass to the HTML.
     """
@@ -366,6 +369,23 @@ def help() -> str:
     return render_template("howto.html", img=user["img"], text=user["text"])
 
 
+@app.route("/champions")
+def champions() -> str:
+    """Render the champions page.
+
+    Returns:
+        str: Rendered champions.html template with user information.
+    """
+    user = get_progress()
+    names = []
+    links = []
+    for champion in data_cache.get_all_champions():
+        names.append(champion["name"])
+        links.append(champion["github"])
+
+    return render_template("champions.html", img=user["img"], text=user["text"], champions=names, githubs=links)
+
+
 @app.route("/logout")
 def logout() -> Response:
     """Log out the user by clearing the session.
@@ -379,13 +399,40 @@ def logout() -> Response:
     return redirect(url_for("index"))
 
 
-@app.route("/update", methods=["GET", "POST"])
-def update() -> str | Response | tuple[str, int]:
-    """Render the update page or process update requests.
+@app.route("/admin", methods=["GET", "POST"])
+def admin() -> str | Response | tuple[str, int]:
+    """Render the admin dashboard home which links to other admin menus and sets release week
+
+    Returns:
+        str: Rendered admin.html template or error response.
+        Response: Refreshed endpoint if complete or data missing
+        tuple[str, int]: Error message with HTTP status code.
+    """
+    user = get_progress()
+    if (user["id"] or "bad") not in data_cache.permissions:
+        return f"Error: No authorization {user['id']}", 400
+
+    if request.method == "GET":
+        return render_template("admin.html", img=user["img"], text=user["text"], release=data_cache.release)
+    else:
+        try:
+            release = min(10, max(1, int(request.form.get("release").strip())))
+        except ValueError:
+            flash("Invalid release number (must be a number 1 through 10)", "error")
+            return redirect(url_for("admin"))
+
+        data_cache.update_release(release)
+
+        return redirect(url_for("admin"))
+
+
+@app.route("/update-html", methods=["GET", "POST"])
+def update_html() -> str | Response | tuple[str, int]:
+    """Render the update HTML page or process update HTML requests.
 
     Returns:
         str: Rendered update.html template or error response.
-        Response: Refreshed endpoint if data missing
+        Response: Refreshed endpoint if data missing or incorrect
         tuple[str, int]: Error message with HTTP status code.
     """
     user = get_progress()
@@ -394,31 +441,32 @@ def update() -> str | Response | tuple[str, int]:
 
     if request.method == "GET":
         return render_template("update.html", img=user["img"], text=user["text"], selected=0)
-    else:
-        if not (week := int(request.form.get('selection'))):
-            return redirect(url_for('update'))
 
-        try:
-            data = data_cache.html[week]
-            a, b, ee = data[1], data[2], data["ee"]
-        except KeyError:
-            return redirect(url_for("update"))
+    # POST
+    if not (week := int(request.form.get('selection'))):
+        return redirect(url_for('update_html'))
 
-        params = {
-            "img": user["img"],
-            "text": user["text"],
-            "num": week,
-            "selected": week,
-            "a": a,
-            "b": b,
-            "ee": ee,
-        }
-        return render_template("update.html", **params)
+    try:
+        data = data_cache.html[week]
+        a, b, ee = data[1], data[2], data["ee"]
+    except KeyError:
+        return redirect(url_for("update-html"))
+
+    params = {
+        "img": user["img"],
+        "text": user["text"],
+        "num": week,
+        "selected": week,
+        "a": a,
+        "b": b,
+        "ee": ee,
+    }
+    return render_template("update.html", **params)
 
 
 @app.route("/update-db", methods=["POST"])
 def update_db() -> Response | tuple[str, int]:
-    """Update the database with new data from the form.
+    """Update the database with new HTML data from the form.
 
     Returns:
         Response: Redirect to the update page with flash messages.
@@ -440,15 +488,51 @@ def update_db() -> Response | tuple[str, int]:
     week_num = int(request.form.get("num"))
 
     data_cache.update_html(week_num, a, b, ee)
-    return redirect(url_for("update"))
+    return redirect(url_for("update_html"))
 
 
-@app.route("/admin", methods=["GET"])
-def admin() -> str | tuple[str, int]:
-    """Render the admin page with settings and permissions.
+@app.route("/edit-champions", methods=["GET", "POST"])
+def edit_champions() -> str | Response | tuple[str, int]:
+    """Edit the champions list to add or remove GitHub usernames upon request
 
     Returns:
-        Response: Rendered admin.html template or error response.
+        str: Rendered set_champions.html template or error response.
+        Response: Redirect to the edit champions page.
+        tuple[str, int]: Error message with HTTP status code.
+    """
+    user = get_progress()
+    if (user["id"] or "bad") not in data_cache.permissions:
+        return f"Error: No authorization {user['id']}", 400
+
+    if request.method == "GET":
+        params = {
+            "img": user["img"],
+            "text": user["text"],
+            "champions": data_cache.get_all_champions(),
+        }
+        return render_template("set_champions.html", **params)
+
+    # POST
+    champions = []
+    form_data = request.form
+
+    champion_count = len([key for key in form_data if key.startswith("name_")])
+
+    for i in range(1, champion_count + 1):
+        champions.append({"name": form_data.get(f"name_{i}", ""), "github": form_data.get(f"github_{i}", "")})
+
+    data_cache.update_champions(champions)
+
+    return redirect(url_for("edit_champions"))
+
+
+@app.route("/edit-discord", methods=["GET", "POST"])
+def edit_discord() -> str | Response | tuple[str, int]:
+    """Update the discord ID page for Guild, Channel, and Admin User IDs.
+
+    Returns:
+        str: Rendered edit_discord.html template.
+        Response: Redirect to the edit_discord page.
         tuple[str, int]: Error message with HTTP status code.
     """
     user = get_progress()
@@ -456,57 +540,68 @@ def admin() -> str | tuple[str, int]:
     if (user["id"] or "bad") not in permitted:
         return f"Error: No authorization {user['id']}", 400
 
-    release = data_cache.release
-    guild = data_cache.discord_ids["guild"]
-    channels = [data_cache.discord_ids[f"{i}"] for i in range(1, 11)]
-    permitted.remove("609283782897303554")
+    if request.method == "GET":
+        guild = data_cache.discord_ids["guild"]
+        channels = [data_cache.discord_ids[f"{i}"] for i in range(1, 11)]
+        permitted.remove("609283782897303554")
 
-    params = {
-        "img": user["img"],
-        "text": user["text"],
-        "guild": guild,
-        "channels": channels,
-        "release": release,
-        "perms": permitted,
-    }
-    return render_template("admin.html", **params)
+        params = {
+            "img": user["img"],
+            "text": user["text"],
+            "guild": guild,
+            "channels": channels,
+            "perms": permitted,
+        }
+        return render_template("edit_discord.html", **params)
 
-
-@app.route("/update-admin", methods=["POST"])
-def update_admin() -> Response | tuple[str, int]:
-    """Update admin settings based on form input.
-
-    Returns:
-        Response: Redirect to the admin page with flash messages.
-        tuple[str, int]: Error message with HTTP status code.
-    """
-    user = get_progress()
-    print("in update admin")
-    print(data_cache.permissions)
-    if (user["id"] or "bad") not in data_cache.permissions:
-        return f"Error: No authorization {user['id']}", 400
-
+    # POST
     channels = {f"{i}": request.form.get(f"c{i}").strip() for i in range(1, 11)}
     channels["guild"] = request.form.get("guild").strip()
     permitted = [perm for perm in request.form.get("perms").splitlines() if perm]
-    try:
-        release = min(10, max(1, int(request.form.get("release").strip())))
-    except ValueError:
-        flash("Invalid release number (must be a number 1 through 10)", "error")
-        return redirect(url_for("admin"))
 
-    data_cache.update_constants(channels, permitted, release)
+    data_cache.update_constants(channels, permitted)
 
-    return redirect(url_for("admin"))
+    return redirect(url_for("edit_discord"))
+
+
+@app.route("/edit-solutions", methods=["GET", "POST"])
+def edit_solutions() -> str | Response | tuple[str, int]:
+    """Update the solutions for challenges.
+
+    Returns:
+        str: Rendered edit_solutions.html template if the request method is GET.
+        Response: Redirect to the edit_solutions page.
+        tuple[str, int]: Error message with HTTP status code if the user is not authorized.
+    """
+    user = get_progress()
+    if (user["id"] or "bad") not in data_cache.permissions:
+        return f"Error: No authorization {user['id']}", 400
+
+    if request.method == "GET":
+        solutions = data_cache.solutions
+
+        params = {
+            "img": user["img"],
+            "text": user["text"],
+            "solutions": solutions,
+        }
+        return render_template("edit_solutions.html", **params)
+
+    # POST
+    new_solutions = {i: {} for i in range(1, 11)}
+
+    for key, value in request.form.items():
+        week, part = map(int, key.split("_"))
+        new_solutions[week][f"part{part}"] = value
+
+    data_cache.update_solutions(new_solutions)
+
+    return redirect(url_for("edit_solutions"))
 
 
 @app.route('/418')
 def trigger_418() -> None:
-    """Trigger a 418 error for testing purposes.
-
-    Returns:
-        Response: Abort with a 404 error.
-    """
+    """Trigger a 418 error for testing purposes."""
     abort(404)
 
 
@@ -515,7 +610,7 @@ def teapot(e: Exception) -> Response:
     """Handle 404 errors and return a custom response.
 
     Args:
-        e: The error that occurred.
+        e (Exception): The error that occurred.
     Returns:
         Response: Custom response with a 418 status code and an image.
     """

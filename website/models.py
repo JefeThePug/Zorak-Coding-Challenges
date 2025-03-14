@@ -61,6 +61,7 @@ class Progress(db.Model):
     c9: Mapped[list[bool]] = mapped_column(db.ARRAY(db.Boolean))
     c10: Mapped[list[bool]] = mapped_column(db.ARRAY(db.Boolean))
     name: Mapped[str] = mapped_column(db.String(255))
+    github: Mapped[str] = mapped_column(db.String(255))
 
 
 class Solution(db.Model):
