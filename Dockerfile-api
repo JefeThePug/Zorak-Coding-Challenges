@@ -4,12 +4,13 @@ WORKDIR /website
 
 COPY /website /website
 
-RUN apt update && \
-    apt upgrade -y && \
-    chmod +x entrypoint.sh
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    chmod +x /website/entrypoint.sh
 
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r /website/requirements.txt
-
+# Install requirements with pip cache for efficiency
+RUN --mount=type=cache,target=/root/.cache/pip pip install --no-cache-dir -r /website/requirements.txt
 
 EXPOSE 5000
-CMD ["./entrypoint.sh"]
+
+CMD ["/website/entrypoint.sh"]
