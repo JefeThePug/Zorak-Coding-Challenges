@@ -1,7 +1,5 @@
 import os
-import re
 import sys
-import time
 
 from dotenv import load_dotenv
 from flask import Flask
@@ -20,22 +18,25 @@ from models import (
     Release,
 )
 
-load_dotenv()
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+path = os.path.join(parent_dir, '.env')
+load_dotenv(path)
 
 # Initialize Flask application
 app = Flask(__name__)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
 # Configure SQLAlchemy database URI and settings
-PGUSER = os.getenv("PGUSER")
+POSTGRES_USER = os.getenv("POSTGRES_USER")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD")
 POSTGRES_SERVER = os.getenv("POSTGRES_SERVER")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 DATABASE_NAME = os.getenv("DATABASE_NAME")
 DATABASE_URL = (
-    f"postgresql://{PGUSER}:{POSTGRES_PASSWORD}"
+    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}"
     f"@{POSTGRES_SERVER}:{POSTGRES_PORT}/{DATABASE_NAME}"
 )
+
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = False
@@ -61,22 +62,20 @@ def check_args():
 
 def check_database_exists(database_url):
     """Create database in PostgreSQL if it doesn't exist"""
-    pattern = r"postgresql://(?P<user>.*):(?P<pass>.*)@(?P<host>.*):(?P<port>.*)/(?P<dbname>.*)"
-    match = re.match(pattern, database_url).groupdict()
     connection = connect(
-        user=match["user"],
-        password=match["pass"],
-        host=match["host"],
-        port=match["port"],
+        user=POSTGRES_USER,
+        password=POSTGRES_PASSWORD,
+        host=POSTGRES_SERVER,
+        port=POSTGRES_PORT,
         dbname="postgres",
     )
     connection.autocommit = True
     cursor = connection.cursor()
 
-    cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = %s", (match["dbname"],))
+    cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = %s", (DATABASE_NAME,))
     if cursor.fetchone() is None:
-        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(match["dbname"])))
-        print(f"Database {match['dbname']} created.")
+        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(DATABASE_NAME)))
+        print(f"Database {DATABASE_NAME} created.")
     cursor.close()
     connection.close()
 
@@ -156,12 +155,21 @@ def fill_permanent_data(inspector):
 
         if "permissions" in table_names:
             if not db.session.query(Permissions).first():
+                # If the table is blank
                 permissions = [
                     Permissions(user_id="609283782897303554"),
                     Permissions(user_id=sys.argv[1].strip()),
                 ]
                 db.session.add_all(permissions)
                 print("Inserted initial admin permissions.")
+            else:
+                # Check if sys.argv[1] is already in the Permissions table
+                existing_permission = db.session.query(Permissions).filter_by(user_id=sys.argv[1].strip()).first()
+                if not existing_permission:
+                    db.session.add(Permissions(user_id=sys.argv[1].strip()))
+                    print(f"Inserted permission for user {sys.argv[1].strip()}.")
+                else:
+                    print(f"User {sys.argv[1].strip()} already has permissions.")
 
         if "obfuscation" in table_names:
             if not db.session.query(Obfuscation).first():

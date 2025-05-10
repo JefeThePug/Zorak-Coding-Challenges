@@ -23,6 +23,10 @@
   font-style: normal;
 }
 
+.material-symbols-outlined {
+  font-size: 20px;
+}
+
 body {
   background-color: var(--b-main);
   color: var(--t-main);
@@ -196,10 +200,19 @@ a.float {
   width: 50%;
 }
 #help {
-  margin: 0;
-  margin-bottom: -20px;
+  margin: 0 0 -20px;
   max-width: 850px;
-  width: 100%;
+  width: calc(100% - 40px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 20px;
+}
+
+#help a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Table */

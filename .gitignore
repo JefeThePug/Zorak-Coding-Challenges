@@ -154,6 +154,9 @@ cython_debug/
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+/website/.idea
+.idea
+/db/*
 
 # General
 .DS_Store
@@ -184,4 +187,3 @@ Temporary Items
 
 # Excel 
 ~$*
-/website/.idea
