@@ -270,7 +270,8 @@ def get_challenge(num) -> str | Response:
     user = get_progress()
     progress = user["progress"][f"c{num}"]
     try:
-        a, b, _ = data_cache.html[num].values()
+        a = data_cache.html[num][1]
+        b = data_cache.html[num][2]
     except KeyError:
         return redirect(url_for("index"))
 
