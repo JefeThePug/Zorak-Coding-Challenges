@@ -1,4 +1,2 @@
 # https://hub.docker.com/_/postgres
 FROM postgres:17.2-alpine3.21
-
-RUN su postgres
