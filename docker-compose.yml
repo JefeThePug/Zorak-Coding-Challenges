@@ -24,7 +24,7 @@ services:
     env_file: .env
     image: zorak-postgres:latest
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-U", "postgres"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -33,9 +33,13 @@ services:
     networks:
       - zorak
     restart: unless-stopped
+    user: "postgres"
     volumes:
-      - ./db/postgres-data:/var/lib/postgresql/data  # Database data is stored here!
+      - postgres-data:/var/lib/postgresql/data
 
 networks:
   zorak:
     driver: bridge
+
+volumes:
+  postgres-data:
