@@ -417,7 +417,7 @@ def admin() -> str | Response | tuple[str, int]:
         return render_template("admin.html", img=user["img"], text=user["text"], release=data_cache.release)
     else:
         try:
-            release = min(10, max(1, int(request.form.get("release").strip())))
+            release = min(10, max(0, int(request.form.get("release").strip())))
         except ValueError:
             flash("Invalid release number (must be a number 1 through 10)", "error")
             return redirect(url_for("admin"))
