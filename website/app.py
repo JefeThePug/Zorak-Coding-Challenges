@@ -68,7 +68,8 @@ def set_progress(challenge_num: int, progress: int) -> str | None:
     """
     if "user_data" in session:
         # Change database and update Data Cache
-        data_cache.update_progress(challenge_num, progress)
+        data_cache.update_progress(session["user_data"]["id"], challenge_num, progress)
+        session["progress"] = data_cache.load_progress(session["user_data"]["id"])
     else:
         # Alter Browser Cookies
         return serializer.dumps(f"{challenge_num}{'AB'[progress]}")
@@ -82,14 +83,14 @@ def get_progress() -> dict[str, str | None | list | dict[str, bool]]:
     """
     if "user_data" in session:
         # Retrieve information from Flask session and Data Cache
-        data_cache.load_progress(session["user_data"]["id"])
+        session["progress"] = data_cache.load_progress(session["user_data"]["id"])
         return {
             "id": session["user_data"]["id"],
             "img": session["user_data"]["img"],
             "text": "Logout",
             "login": "logout.html",
-            "progress": data_cache.progress,
-            "rockets": [data_cache.progress[f"c{i}"] for i in range(1, 11)],
+            "progress": session["progress"],
+            "rockets": [session["progress"][f"c{i}"] for i in range(1, 11)],
         }
     else:
         # Retrieve information from Browser Cookies
@@ -187,7 +188,7 @@ def callback() -> Response | tuple[str, int]:
         tuple[str, int]: Error message with HTTP status code 400.
     """
     if request.args.get("error"):
-        print(session)
+        app.logger.exception(f"Request Error (/callback): {request.args}")
         return redirect(url_for("index"))
 
     if not (code := request.args.get("code")):
@@ -230,8 +231,8 @@ def callback() -> Response | tuple[str, int]:
     session["user_data"]["img"] = avatar_url
 
     # Add to database if not present
-    data_cache.load_progress(session["user_data"]["id"])
-    if not data_cache.progress:
+    session["progress"] = data_cache.load_progress(session["user_data"]["id"])
+    if not session["progress"]:
         added = data_cache.add_user(session["user_data"]["id"], session["user_data"]["username"])
         if not added:
             return redirect(url_for("logout"))
@@ -307,7 +308,7 @@ def access() -> str | tuple[str, int]:
     guild_id = data_cache.discord_ids["guild"]
     user_id = session["user_data"]["id"]
     channel_id = data_cache.discord_ids[f"{num}"]
-    verified_role = "1343857328700657695"
+    verified_role = "1173170054695764050"
 
     headers = {"Authorization": f"Bot {bot_token}", "Content-Type": "application/json"}
     url = f"https://discord.com/api/v9/guilds/{guild_id}/members/{user_id}"
@@ -396,7 +397,7 @@ def logout() -> Response:
     """
     session.pop("token", None)
     session.pop("user_data", None)
-    data_cache.progress = {}
+    session.pop("progress", None)
     return redirect(url_for("index"))
 
 

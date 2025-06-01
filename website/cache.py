@@ -21,7 +21,6 @@ class DataCache:
         self.html = {}
         self.obfuscations = {}
         self.html_nums = {}
-        self.progress = {}
         self.solutions = {}
         self.permissions = []
         self.release = None
@@ -68,6 +67,7 @@ class DataCache:
             except Exception as e:
                 db.session.rollback()
                 flash(f"Update failed: {str(e)}", "error")
+                self.app.logger.exception(f"Update release failed: {str(e)}")
                 return False
         return True
 
@@ -109,6 +109,7 @@ class DataCache:
             except Exception as e:
                 db.session.rollback()
                 flash(f"Update failed: {str(e)}", "error")
+                self.app.logger.exception(f"Update admin settings failed: {str(e)}")
                 return False
 
         return True
@@ -166,6 +167,7 @@ class DataCache:
                 self.load_html()
             except Exception as e:
                 flash(f"Update failed: {str(e)}", "error")
+                self.app.logger.exception(f"Update HTML failed: {str(e)}")
                 db.session.rollback()
                 return False
         return True
@@ -175,31 +177,36 @@ class DataCache:
         fields = ["title", "content", "instructions", "input", "form", "solution"]
         return sum(self.normalize(data[field]) != self.html[week][part][field] for field in fields)
 
-    def load_progress(self, user_id: str) -> bool:
-        """Load progress data for current user from the database into memory."""
-        with self.app.app_context():
-            progress = Progress.query.filter_by(user_id=user_id).first()
-            if progress is None:
-                return False
-            self.progress = progress.__dict__.copy()
-            self.progress.pop('_sa_instance_state', None)
-        return True
 
-    def update_progress(self, challenge_num: int, index: int) -> bool:
+    def load_progress(self, user_id: str) -> dict:
+        """Query user progress from the database. Returns a dict if found, else an empty dict."""
+        with self.app.app_context():
+            try:
+                progress = Progress.query.filter_by(user_id=user_id).first()
+                if progress is None:
+                    self.app.logger.warning(f"User {user_id} not found in database when loading data.")
+                    return {}
+                return {k: v for k, v in progress.__dict__.items() if k != "_sa_instance_state"}
+            except Exception as e:
+                self.app.logger.exception(f"Failed to load progress for user {user_id}")
+                return {}
+
+    def update_progress(self, user_id: str, challenge_num: int, index: int) -> bool:
         """Update individual user progress in the database and refresh the cache."""
-        user_id = self.progress["user_id"]
         with self.app.app_context():
             progress = Progress.query.filter_by(user_id=user_id).first()
             if progress is None:
+                self.app.logger.warning(f"User {user_id} not found in database when updating data.")
                 return False
             challenge = getattr(progress, f"c{challenge_num}", None)
             if challenge is None or not isinstance(challenge, list):
+                self.app.logger.warning(f"Unexpected error with updating challenge. {progress=} {challenge=}")
                 return False
             challenge = challenge[:index] + [True] + challenge[index + 1:]
             setattr(progress, f"c{challenge_num}", challenge)
             db.session.commit()
-            self.load_progress(user_id)
         return True
+
 
     def add_user(self, user_id: str, name: str) -> bool:
         """Insert a new progress record into the database."""
@@ -213,9 +220,10 @@ class DataCache:
                 )
                 db.session.add(new_progress)
                 db.session.commit()
+                self.app.logger.info(f"User {name}:{user_id} added to database.")
             return True
         except Exception as e:
-            print(f"Error adding user: {e}")
+            self.app.logger.exception(f"Error adding user: {e}")
             db.session.rollback()
             return False
 
@@ -227,7 +235,7 @@ class DataCache:
                 champions = Progress.query.filter(*conditions).all()
                 return [{"name": champ.name, "github": champ.github} for champ in champions]
         except Exception as e:
-            print(f"Error fetching champions: {e}")
+            self.app.logger.exception(f"Error fetching champions: {e}")
             return []
 
     def update_champions(self, champions: list[dict[str, str]]) -> bool:
@@ -237,12 +245,12 @@ class DataCache:
             try:
                 progress = Progress.query.all()
                 if not progress:
+                    self.app.logger.warning(f"Error getting all progress from database.")
                     return False
                 for champion in champions:
                     matching_progress = Progress.query.filter(Progress.name == champion["name"]).first()
                     if matching_progress.github != champion["github"]:
                         matching_progress.github = champion["github"]
-                        # db.session.add(matching_progress)
                         modified = True
 
                 db.session.commit()
@@ -253,7 +261,7 @@ class DataCache:
                     flash("No changes made", "success")
 
             except Exception as e:
-                print(f"Error adding user: {e}", file=sys.stderr)
+                self.app.logger.exception(f"Error updating champions: {e}")
                 db.session.rollback()
                 return False
 
@@ -266,6 +274,7 @@ class DataCache:
             try:
                 solution_table = Solution.query.all()
                 if not solution_table:
+                    self.app.logger.warning(f"Error getting all solutions from database.")
                     return False
                 for i, parts in solutions.items():
                     solution = Solution.query.filter(Solution.id == i).first()
@@ -283,7 +292,7 @@ class DataCache:
                     flash("No changes made", "success")
 
             except Exception as e:
-                print(f"Error adding user: {e}", file=sys.stderr)
+                self.app.logger.exception(f"Error updating solutions: {e}")
                 db.session.rollback()
                 return False
 
