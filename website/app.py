@@ -28,7 +28,7 @@ load_dotenv(path)
 
 # Initialize Flask application
 app = Flask(__name__)
-app.config["TEMPLATES_AUTO_RELOAD"] = True  # DEBUG Environment ONLY
+# app.config["TEMPLATES_AUTO_RELOAD"] = True  # DEBUG Environment ONLY
 app.secret_key = os.getenv("SECRET_KEY")
 serializer = URLSafeTimedSerializer(app.secret_key, salt="cookie")
 
