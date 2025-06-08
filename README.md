@@ -1,83 +1,156 @@
-# Coding Challenge Adventure
+# Practical Python Coding Adventure
 
-Coding Challenge Adventure is a series of 10 coding challenges, each with two parts, inspired by Advent of Code. This project is hosted on a Flask web application with a MongoDB database and is intended for members of the Practical Python Discord server. Completing both parts of each challenge grants access to a special discussion channel (Private Thread) where participants can share their approaches and solutions.
+**Live at:** [https://adventure.practicalpython.org](https://adventure.practicalpython.org)
 
-**This project is currently a work in progress.**
+**Coding Adventure** is a series of 10 interactive coding challenges (each with two parts), inspired by [Advent of Code](https://adventofcode.com/). Built with Flask, PostgreSQL, and Docker, the app is designed for members of the Practical Python Discord community. Solving both parts of a challenge grants access to a private discussion thread where participants can share their solutions and strategies.
+
+The project is containerized and deployed on an AWS EC2 instance.
+
+---
 
 ## Features
 
-- **Interactive Challenges**: Each challenge consists of two parts, allowing users to test their coding skills and problem-solving abilities with increasing difficulty.
-- **Discord Integration**: Users can log in with their Discord accounts to track their progress and gain access to exclusive channels.
-- **Progress Tracking**: The application tracks user progress, enabling them to see which challenges they have completed.
-- **Obfuscation**: Challenge identifiers are obfuscated to add an extra layer of engagement and mystery.
-- **Dynamic Content**: The challenges and their solutions are stored in a MongoDB database, allowing for easy updates and modifications.
-- **Admin Dashboards**: Administrative API endpoints to allow CRUD operations to be performed on the database via a GUI in the browser. 
+- **Interactive Challenges** – Solve progressively difficult problems across 10 themed challenges.
+- **Two-Part Format** – Each challenge has two parts to deepen engagement and difficulty.
+- **Discord Integration** – Authenticate with Discord and unlock private solution threads.
+- **Progress Tracking** – See which challenges you've completed and continue where you left off.
+- **Challenge Obfuscation** – IDs are masked to encourage creative problem-solving.
+- **Admin Dashboard** – Browser-based interface for editing challenge data and managing users.
+- **PostgreSQL Backend** – All data is stored and managed using a relational schema.
+
+---
+
+## Tech Stack
+
+- Python 3.x
+- Flask
+- PostgreSQL
+- SQLAlchemy
+- Docker / Docker Compose
+- Discord OAuth2
+
+---
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.x
-- Flask
-- Flask-PyMongo
-- Requests
-- dotenv
-- MongoDB
+- Python 3.x (for local development)
+- Docker + Docker Compose
+- PostgreSQL (via Docker or local install)
 
-### Installation
+---
 
-1. Clone the repository:
+### Environment Variables
+
+Create a `.env` file in the project root with the following contents:
+
+```ini
+# PostgreSQL
+POSTGRES_USER="postgres"
+POSTGRES_PASSWORD="postgres"
+POSTGRES_SERVER="db"         # Docker container name
+POSTGRES_PORT="5432"
+DATABASE_NAME="zorak"
+
+# SQLAlchemy
+SECRET_KEY="Something_secret_goes_here"
+
+# Discord OAuth
+DISCORD_ADMIN_USER_ID='ABCDE'
+DISCORD_REDIRECT_URI="http://127.0.0.1:5002/callback"
+CLIENT_ID='your_discord_client_id'
+CLIENT_SECRET='your_discord_client_secret'
+BOT_TOKEN='your_discord_bot_token'
+```
+
+The application internally constructs the database URL from these values:
+
+```
+postgresql://<POSTGRES_USER>:<POSTGRES_PASSWORD>@<POSTGRES_SERVER>:<POSTGRES_PORT>/<DATABASE_NAME>
+```
+
+---
+
+## Local Development
+
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/JefeThePug/Zorak-Coding-Challenges.git
    cd Zorak-Coding-Challenges
    ```
 
-2. Install the required packages:
+2. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
 
-3. Create a `.env` file in the root directory and add your environment variables:
-   ```
-    SECRET_KEY=your_secret_key MONGO_URI=your_mongo_uri
-    CLIENT_ID=your_discord_client_id
-    CLIENT_SECRET=your_discord_client_secret
-    BOT_TOKEN=your_discord_bot_token
+3. **Ensure PostgreSQL is running**, and that your `.env` file matches the database configuration.
+
+4. **Start the application**:
+   ```bash
+   python app.py
    ```
 
-4. Start the Flask application:
-    ```bash
-    python app.py
-    ```
+5. **Access the app**:
+   Open your browser and visit: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
-5. Open your browser and navigate to `http://127.0.0.1:5000` to access the application.
+---
+
+## Running with Docker
+
+1. **Build and start the containers**:
+   ```bash
+   docker-compose up --build
+   ```
+
+2. **Visit the app**:
+   Once running, go to: [http://localhost:5000](http://localhost:5000)
+
+> The `db` hostname is used internally by the Flask app to connect to the PostgreSQL container, as defined by `POSTGRES_SERVER=db` in your `.env`.
+
+---
 
 ## Usage
 
 - **Login**: Users can log in using their Discord accounts, which allows the application to track their progress.
 - **Challenges**: Navigate to the challenges through the main page. Each challenge will have two parts that can be solved independently.
 - **Submit Solutions**: Users can submit their answers for each part of a challenge. Correct answers will update their progress and grant access to the discussion channel.
+- **Collaborate**: Share and discuss solutions with others in the Discord server.
+
+---
 
 ## Code Overview
 
-### Main Application (`app.py`)
+### `app.py`
 
-The main application is built using Flask and includes the following key components:
+- Handles Flask routes for login, challenges, and admin tools.
+- Uses SQLAlchemy for database interaction.
+- Implements OAuth2 with Discord for authentication and role management.
 
-- **Routes**: Various routes handle user authentication, challenge retrieval, and solution submission.
-- **Database Integration**: MongoDB is used to store user progress, challenge data, and solutions.
-- **Discord OAuth2**: The application uses Discord's OAuth2 for user authentication and role management.
+### `models.py` 
+- Defines the database schema using SQLAlchemy ORM. Models include:
+  - `DiscordID`, `MainEntry`, `SubEntry`, `Progress`, `Solution`, `Obfuscation`, `Permissions`, and `Release`.
 
-### Client-Side Script (`ending.js`)
+### `cache.py`
+- Implements the `DataCache` class. This module loads and stores frequently accessed data (e.g., HTML content, permissions, obfuscations, and progress) into memory, reducing redundant database queries and improving runtime performance.
 
-This script manages the display of end-of-challenge animations, utilizing the `confetti` library to create celebratory effects upon completing a challenge.
+### `setup.py`
+- Handles initial project setup, such as creating the database schema and optionally prepopulating data for development or testing. Run this file once before launching the app to ensure your environment is ready.
 
+### `ending.js`
+
+- Controls celebratory animations (confetti) triggered after completing challenges.
+
+---
 
 ## License
 
-This project is open-source and available for personal or educational use.
+This project is open-source and intended for educational and community-building use.
+
+---
 
 ## Acknowledgments
 
-- Inspired by [Advent of Code](https://adventofcode.com/)
-- Built for the Practical Python Discord community
+- Inspired by [Advent of Code](https://adventofcode.com)
+- Built for the [Practical Python Discord](https://github.com/practical-python-org)
